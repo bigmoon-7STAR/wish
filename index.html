@@ -281,6 +281,26 @@
     <audio id="audio-element"></audio>
 
     <script>
+    // 1. デザインを修正して保存するたびに、この数字を自分で書き換える
+    const APP_VERSION = "1.0.6"; // 次回修正したら "1.0.7" にする
+    
+    // --- 以下、さっきのキャッシュ回避コード ---
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            for (let r of regs) r.unregister();
+        });
+    }
+
+    (function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('v') !== APP_VERSION) {
+            window.location.replace(window.location.pathname + '?v=' + APP_VERSION);
+        }
+    })();
+
+    // --- ここから下に、音楽プレイヤーのメインコードを続ける ---
+    let db, tracks = [];
+    ...
         // JSロジックは元のまま維持（デザイン変更に合わせたクラス名の微調整のみ）
         let db, tracks = [], playlists = [], isEditing = false, currentView = 'library', currentPlaylistId = null;
         let editingTrackId = null, currentTrackIdx = -1;
