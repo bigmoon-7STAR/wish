@@ -48,29 +48,63 @@
             transaction.oncomplete = () => displayPlaylist();
         });
 
-        // 3. リスト表示と再生
-        function displayPlaylist() {
-            const list = document.getElementById('playlist');
-            list.innerHTML = "";
-            const transaction = db.transaction(["songs"], "readonly");
-            const store = transaction.objectStore("songs");
+       // 3. リスト表示（削除ボタン付き）
+function displayPlaylist() {
+    const list = document.getElementById('playlist');
+    list.innerHTML = "";
+    const transaction = db.transaction(["songs"], "readonly");
+    const store = transaction.objectStore("songs");
 
-            store.getAll().onsuccess = (e) => {
-                e.target.result.forEach(song => {
-                    const li = document.createElement('li');
-                    li.textContent = song.name;
-                    li.onclick = () => playSong(song.data);
-                    list.appendChild(li);
-                });
+    store.getAll().onsuccess = (e) => {
+        e.target.result.forEach(song => {
+            const li = document.createElement('li');
+            li.style.display = "flex";
+            li.style.justifyContent = "between";
+            li.style.alignItems = "center";
+
+            // 曲名表示部分
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = song.name;
+            nameSpan.style.flexGrow = "1";
+            nameSpan.onclick = () => playSong(song.data);
+            
+            // 削除ボタン
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = "削除";
+            deleteBtn.style.marginLeft = "10px";
+            deleteBtn.style.background = "#ff4444";
+            deleteBtn.style.color = "white";
+            deleteBtn.style.border = "none";
+            deleteBtn.style.padding = "5px 10px";
+            deleteBtn.style.borderRadius = "3px";
+            deleteBtn.style.cursor = "pointer";
+            
+            deleteBtn.onclick = (event) => {
+                event.stopPropagation(); // 親要素のクリックイベント（再生）を防ぐ
+                deleteSong(song.name);
             };
-        }
 
-        function playSong(blob) {
-            const url = URL.createObjectURL(blob);
-            const player = document.getElementById('audioPlayer');
-            player.src = url;
-            player.play();
-        }
+            li.appendChild(nameSpan);
+            li.appendChild(deleteBtn);
+            list.appendChild(li);
+        });
+    };
+}
+
+// 4. データを削除する関数
+function deleteSong(name) {
+    if (!confirm(`${name} を削除しますか？`)) return;
+
+    const transaction = db.transaction(["songs"], "readwrite");
+    const store = transaction.objectStore("songs");
+    const request = store.delete(name);
+
+    request.onsuccess = () => {
+        console.log("削除成功");
+        displayPlaylist(); // リストを再描画
+    };
+}
+
 
         // Service Workerの登録
         if ('serviceWorker' in navigator) {
