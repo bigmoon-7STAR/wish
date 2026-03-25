@@ -12,6 +12,7 @@
             --key-color: #ff2d55;
             --text-main: #5e5e7e;
             --sub-text: rgba(94, 94, 126, 0.6);
+            --bg-color: #f5f7fa;
             --glass: rgba(255, 255, 255, 0.5);
         }
 
@@ -22,60 +23,54 @@
             background-image: linear-gradient(135deg, #f5f7fa 0%, #e8ecf9 50%, #fdf2f8 100%);
             margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column;
             color: var(--text-main);
+            letter-spacing: 0.02em;
         }
 
-        /* --- UI Elements --- */
+        /* --- Header & Search --- */
         .header { padding: calc(45px + env(safe-area-inset-top)) 20px 10px; background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 0.5px solid rgba(0,0,0,0.05); z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; }
-        .header-top h2 { font-size: 18px; font-weight: 800; margin: 0; color: #000; opacity: 0.8; }
+        .header-top h2 { font-size: 17px; font-weight: 600; color: #000; opacity: 0.8; margin: 0; }
 
-        .search-container { padding: 10px 20px; display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
-        #search-input { flex: 1; padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); background: rgba(255,255,255,0.4); outline: none; font-size: 14px; }
-        .sort-select { background: none; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; padding: 6px; font-size: 12px; color: var(--text-main); }
+        .search-container { padding: 10px 20px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); display: flex; gap: 10px; align-items: center; border-bottom: 0.5px solid rgba(0,0,0,0.03); }
+        #search-input { flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); background: rgba(255,255,255,0.4); font-size: 14px; outline: none; }
+        .sort-select { background: none; border: 1px solid rgba(0,0,0,0.1); border-radius: 5px; font-size: 11px; color: var(--sub-text); padding: 4px; }
 
+        /* --- Content Area --- */
         #content { flex: 1; overflow-y: auto; padding-bottom: 180px; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 15px; padding: 20px; }
-        .card { position: relative; cursor: pointer; transition: 0.3s; }
-        .card:active { transform: scale(0.96); }
-        .card-img { width: 100%; aspect-ratio: 1/1; border-radius: 18px; object-fit: cover; box-shadow: 0 8px 20px rgba(167, 139, 250, 0.1); border: 1px solid rgba(255,255,255,0.8); }
-        .card-title { margin-top: 8px; font-size: 13px; font-weight: 700; color: #000; opacity: 0.8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .card-sub { font-size: 11px; color: var(--sub-text); }
+        
+        .card { position: relative; cursor: pointer; transition: transform 0.2s; }
+        .card:active { transform: scale(0.98); }
+        .card-img { width: 100%; aspect-ratio: 1/1; border-radius: 14px; object-fit: cover; box-shadow: 0 8px 20px rgba(167, 139, 250, 0.1); border: 1px solid rgba(255,255,255,0.8); }
+        .card-title { margin-top:8px; font-size:13px; font-weight:600; color:#000; opacity:0.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .card-sub { font-size:11px; color: var(--sub-text); }
+        .card-tag { display: inline-block; font-size: 9px; background: rgba(255,45,85,0.05); color: var(--key-color); padding: 1px 5px; border-radius: 4px; margin-top: 4px; }
 
         .list-item { display: flex; align-items: center; padding: 12px 20px; border-bottom: 0.5px solid rgba(0,0,0,0.03); cursor: pointer; }
         .list-item img { width: 50px; height: 50px; border-radius: 10px; margin-right: 15px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
         /* --- Full Player --- */
-        .full-player {
-            position: fixed; inset: 0; z-index: 5000; display: flex; flex-direction: column;
-            transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-            visibility: hidden; background: linear-gradient(150deg, #fef2f2, #e0e7ff, #fae8ff);
-            background-size: 300% 300%; animation: moveBG 15s ease infinite;
-        }
+        .full-player { position: fixed; inset: 0; z-index: 5000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); visibility: hidden; background: linear-gradient(150deg, #fef2f2, #e0e7ff, #fae8ff); background-size: 300% 300%; animation: moveBG 15s ease infinite; }
         @keyframes moveBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .full-player.active { transform: translateY(0); visibility: visible; }
-        .blur-overlay { position: absolute; inset: 0; z-index: -1; backdrop-filter: blur(60px) saturate(1.5); -webkit-backdrop-filter: blur(60px) saturate(1.5); background: rgba(255, 255, 255, 0.1); }
+        #bg-blur-overlay { position: absolute; inset: 0; z-index: -1; backdrop-filter: blur(60px) saturate(1.5); -webkit-backdrop-filter: blur(60px) saturate(1.5); background: rgba(255, 255, 255, 0.1); }
 
-        #f-img { width: 80vw; max-width: 320px; aspect-ratio: 1/1; border-radius: 24px; object-fit: cover; box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.8); }
-        .f-btn { background:none; border:none; cursor:pointer; color: #1d1d1f; transition: 0.2s; }
-        .f-btn.active { color: var(--key-color); text-shadow: 0 0 10px rgba(255,45,45,0.3); }
-
+        #f-img { width: 80vw; max-width: 320px; aspect-ratio: 1/1; border-radius: 20px; object-fit: cover; box-shadow: 0 20px 50px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.8); }
         .seeker { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(0, 0, 0, 0.05); border-radius: 10px; outline: none; margin: 25px 0 10px; }
         .seeker::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* --- Other UI --- */
+        /* --- Navigation & UI --- */
         .mini-player { position: fixed; bottom: calc(85px + env(safe-area-inset-bottom)); left: 12px; right: 12px; height: 60px; background: rgba(255,255,255,0.6); backdrop-filter: blur(20px); border-radius: 14px; display: none; align-items: center; padding: 0 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); z-index: 2000; border: 1px solid rgba(255,255,255,0.5); }
-        
         .tab-bar { position: fixed; bottom: 0; width: 100%; height: calc(65px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.6); backdrop-filter: blur(25px); display: flex; justify-content: space-around; padding-top: 10px; border-top: 0.5px solid rgba(0,0,0,0.05); z-index: 1000; }
-        .tab-item { border:none; background:none; color: var(--sub-text); font-weight: 600; font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .tab-item { border:none; background:none; color: var(--sub-text); font-weight: 600; font-size: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 25%; }
         .tab-item.active { color: var(--key-color); }
         .tab-item i { font-size: 22px; }
 
-        .modal { position: fixed; inset: 0; background: #fff; background: linear-gradient(135deg, #fff 0%, #f0f4ff 100%); z-index: 9000; display: none; flex-direction: column; }
+        .modal { position: fixed; inset: 0; background: linear-gradient(135deg, #fff 0%, #f0f4ff 100%); z-index: 7000; display: none; flex-direction: column; }
         .modal.active { display: flex; }
-        .edit-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); background: rgba(255,255,255,0.6); margin-bottom: 20px; outline: none; font-size: 16px; }
+        .edit-input { width: 100%; padding: 12px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: 15px; outline: none; }
 
-        #left-btn, #right-btn { color: var(--key-color); font-weight: 600; background: none; border: none; font-size: 16px; }
-        .del-badge { position: absolute; top: -8px; left: -8px; width: 24px; height: 24px; background: #ff3b30; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; z-index: 10; border: 2px solid #fff; }
+        .del-badge { position: absolute; top: -8px; left: -8px; width: 24px; height: 24px; background: #FF3B30; color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 2px solid white; z-index: 10; }
         .editing .del-badge { display: flex; }
     </style>
 </head>
@@ -84,7 +79,7 @@
     <div class="header">
         <div class="header-top">
             <button id="left-btn" onclick="handleHeaderLeft()">編集</button>
-            <h2 id="view-title">Library</h2>
+            <h2 id="view-title">ライブラリ</h2>
             <button id="right-btn" onclick="handleHeaderRight()"><i class="fa-solid fa-circle-plus"></i></button>
         </div>
     </div>
@@ -92,7 +87,7 @@
     <div class="search-container">
         <input type="text" id="search-input" placeholder="なにを聴く？" oninput="render()">
         <select id="sort-type" class="sort-select" onchange="render()">
-            <option value="added">追加順</option>
+            <option value="added">登録順</option>
             <option value="year">発行日順</option>
         </select>
     </div>
@@ -106,51 +101,37 @@
     </div>
 
     <div class="full-player" id="full">
-        <div class="blur-overlay"></div>
+        <div id="bg-blur-overlay"></div>
         <div onclick="closeFull()" style="padding:20px; text-align:center;"><div style="width:36px; height:5px; border-radius:3px; background:rgba(0,0,0,0.1); margin:0 auto;"></div></div>
         
         <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 30px;">
             <img id="f-img">
             <div style="width:100%; margin-top:40px;">
                 <div id="f-title" style="font-size:22px; font-weight:800; color:#000; opacity:0.9;"></div>
-                <div id="f-artist" style="font-size:18px; color:var(--key-color); margin-top:5px; font-weight:500;"></div>
+                <div id="f-artist" style="font-size:18px; color:var(--key-color); margin-top:5px;"></div>
             </div>
-            
             <input type="range" class="seeker" id="seeker" value="0" step="0.1" oninput="audio.currentTime=this.value">
-            <div style="width:100%; display:flex; justify-content:space-between; color:rgba(0,0,0,0.4); font-size:12px; font-weight:600;">
+            <div style="width:100%; display:flex; justify-content:space-between; color:rgba(0,0,0,0.4); font-size:12px;">
                 <span id="cur-time">0:00</span><span id="dur-time">0:00</span>
             </div>
-
             <div style="display:flex; width:100%; justify-content:space-between; align-items:center; margin-top:30px;">
-                <button class="f-btn" id="btn-shuffle" onclick="toggleShuffle()" style="font-size:20px;"><i class="fa-solid fa-shuffle"></i></button>
+                <button onclick="toggleShuffle()" id="btn-shuffle" style="background:none; border:none; font-size:20px; color:rgba(0,0,0,0.2);"><i class="fa-solid fa-shuffle"></i></button>
                 <div style="display:flex; align-items:center; gap:35px;">
                     <i class="fa-solid fa-backward-step" style="font-size:30px;" onclick="prev()"></i>
                     <i id="f-pp" class="fa-solid fa-play" style="font-size:55px;" onclick="togglePlay()"></i>
                     <i class="fa-solid fa-forward-step" style="font-size:30px;" onclick="next()"></i>
                 </div>
-                <button class="f-btn" id="btn-repeat" onclick="toggleRepeat()" style="font-size:20px; position:relative;">
-                    <i id="repeat-icon" class="fa-solid fa-repeat"></i>
-                    <span id="repeat-badge" style="display:none; position:absolute; top:-5px; right:-8px; background:var(--key-color); color:white; border-radius:50%; width:14px; height:14px; font-size:9px; text-align:center; line-height:14px;">1</span>
-                </button>
+                <button onclick="toggleRepeat()" id="btn-repeat" style="background:none; border:none; font-size:20px; color:rgba(0,0,0,0.2); position:relative;"><i class="fa-solid fa-repeat"></i><span id="repeat-badge" style="display:none; position:absolute; top:-5px; right:-8px; background:var(--key-color); color:white; border-radius:50%; width:14px; height:14px; font-size:9px; text-align:center; line-height:14px;">1</span></button>
             </div>
         </div>
-        <div style="height:100px;"></div>
     </div>
 
-    <div id="edit-modal" class="modal">
-        <div class="header" style="background:#fff;"><div class="header-top"><button onclick="closeEdit()">キャンセル</button><h2>情報を編集</h2><button onclick="saveEdit()" style="color:var(--key-color); font-weight:bold;">保存</button></div></div>
-        <div class="modal-body" style="padding:25px;">
-            <label style="font-size:12px; color:var(--sub-text); font-weight:bold;">曲名</label>
-            <input type="text" id="edit-name" class="edit-input">
-            <label style="font-size:12px; color:var(--sub-text); font-weight:bold;">アーティスト</label>
-            <input type="text" id="edit-artist" class="edit-input">
-            <label style="font-size:12px; color:var(--sub-text); font-weight:bold;">発行日 (Year)</label>
-            <input type="number" id="edit-year" class="edit-input" placeholder="2026">
-        </div>
-    </div>
+    <div id="edit-modal" class="modal"><div class="header"><div class="header-top"><button onclick="closeEdit()">閉じる</button><h2>編集</h2><button onclick="saveEdit()" style="color:var(--key-color); font-weight:bold;">保存</button></div></div><div class="modal-body" style="padding:25px;"><label style="font-size:12px; color:var(--sub-text);">曲名</label><input type="text" id="edit-name" class="edit-input"><label style="font-size:12px; color:var(--sub-text);">アーティスト</label><input type="text" id="edit-artist" class="edit-input"><label style="font-size:12px; color:var(--sub-text);">発行日 (Year)</label><input type="number" id="edit-year" class="edit-input" placeholder="2026"><label style="font-size:12px; color:var(--sub-text);">歌詞</label><textarea id="edit-lyrics" class="edit-input" style="height:100px;"></textarea></div></div>
+
+    <div id="pl-edit-modal" class="modal"><div class="header"><div class="header-top"><button onclick="closePlEdit()">閉じる</button><h2>プレイリスト編集</h2><button onclick="savePlEdit()" style="color:var(--key-color); font-weight:bold;">保存</button></div></div><div class="modal-body" style="padding:25px; text-align:center;"><img id="pl-edit-img" style="width:150px; height:150px; border-radius:15px; object-fit:cover; background:#eee; margin-bottom:20px; border:1px solid #fff; cursor:pointer;" onclick="document.getElementById('pl-img-input').click()"><input type="file" id="pl-img-input" style="display:none" onchange="previewPlImg(event)"><input type="text" id="pl-edit-name" class="edit-input" placeholder="プレイリスト名"><input type="text" id="pl-edit-tag" class="edit-input" placeholder="タグ (例: #作業用 #癒やし)"></div></div>
 
     <div class="tab-bar">
-        <button class="tab-item active" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-square-poll-vertical"></i><span>ライブラリ</span></button>
+        <button class="tab-item active" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-heart"></i><span>ライブラリ</span></button>
         <button class="tab-item" id="tab-artist" onclick="switchTab('artists')"><i class="fa-solid fa-user-tag"></i><span>アーティスト</span></button>
         <button class="tab-item" id="tab-play" onclick="switchTab('playlist')"><i class="fa-solid fa-music"></i><span>リスト</span></button>
     </div>
@@ -160,11 +141,11 @@
 
     <script>
         let db, tracks = [], playlists = [], isEditing = false, currentView = 'library', currentArtist = null, currentPlaylistId = null;
-        let playingTracks = [], currentTrackIdx = -1, isShuffle = false, repeatMode = 0; // 0:OFF, 1:ALL, 2:ONE
-        let editingId = null;
+        let playingTracks = [], currentTrackIdx = -1, isShuffle = false, repeatMode = 0;
+        let editingId = null, editingPlId = null, tempPlImg = null;
         const audio = document.getElementById('audio-element');
 
-        const req = indexedDB.open("MusicStudio_Wishcore_Final", 1);
+        const req = indexedDB.open("MusicStudioWishcore_V2", 1);
         req.onupgradeneeded = (e) => {
             let d = e.target.result;
             d.createObjectStore("songs", {keyPath:"id", autoIncrement:true});
@@ -184,9 +165,8 @@
             const search = document.getElementById('search-input').value.toLowerCase();
             const sort = document.getElementById('sort-type').value;
 
-            document.getElementById('tab-lib').classList.toggle('active', currentView === 'library');
-            document.getElementById('tab-artist').classList.toggle('active', currentView === 'artists');
-            document.getElementById('tab-play').classList.toggle('active', currentView === 'playlist');
+            document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + (currentView === 'playlist' ? 'play' : currentView === 'artists' ? 'artist' : 'lib')).classList.add('active');
 
             if (currentView === 'library') {
                 title.innerText = "Library"; display.className = "grid";
@@ -208,19 +188,22 @@
             } else if (currentView === 'playlist') {
                 if (currentPlaylistId === null) {
                     title.innerText = "Playlists"; display.className = "grid";
-                    display.innerHTML = playlists.map(p => `<div class="card ${isEditing?'editing':''}" onclick="isEditing?deletePlaylist(${p.id}):openPlaylist(${p.id})"><div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-minus"></i></div><div class="card-img" style="background:#fff; display:flex; align-items:center; justify-content:center; color:var(--key-color); font-size:40px;"><i class="fa-solid fa-compact-disc"></i></div><div class="card-title">${p.name}</div></div>`).join('');
+                    display.innerHTML = playlists.map(p => {
+                        const firstSong = tracks.find(t => p.songIds.includes(t.id));
+                        return `<div class="card ${isEditing?'editing':''}" onclick="isEditing?openPlEdit(${p.id}):openPlaylist(${p.id})"><div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-minus"></i></div><img src="${p.cover || (firstSong?firstSong.cover:'')}" class="card-img" style="background:#fff;"><div class="card-title">${p.name}</div><div class="card-sub">${p.songIds.length} tracks</div>${p.tag?`<div class="card-tag">${p.tag}</div>`:''}</div>`;
+                    }).join('');
                 } else {
                     const pl = playlists.find(p => p.id === currentPlaylistId);
                     title.innerText = pl.name; display.className = "";
                     let plSongs = pl.songIds.map(id => tracks.find(t => t.id === id)).filter(t => t);
-                    display.innerHTML = plSongs.map(t => `<div class="list-item" onclick="playSong(${t.id},'pl')"><img src="${t.cover||''}"><div><div style="font-weight:700;">${t.name}</div><div style="font-size:12px; color:var(--key-color);">${t.artist}</div></div></div>`).join('');
+                    display.innerHTML = plSongs.map(t => `<div class="list-item" onclick="playSong(${t.id},'pl')"><img src="${t.cover||''}"><div><div style="font-weight:700;">${t.name}</div><div style="font-size:12px; color:var(--key-color);">${t.artist}</div></div></div>`).join('') + `<div style="padding:20px; text-align:center;"><button onclick="openAddModal()" style="background:var(--key-color); color:white; border:none; padding:10px 20px; border-radius:20px; font-weight:bold;">曲を追加</button></div>`;
                 }
             }
             document.getElementById('left-btn').innerText = (currentArtist || currentPlaylistId) ? "戻る" : (isEditing ? "完了" : "編集");
         }
 
+        // --- 曲の再生制御 ---
         function playSong(id, mode) {
-            const t = tracks.find(x => x.id === id); if(!t) return;
             let original = [];
             if(mode === 'pl') original = playlists.find(p => p.id === currentPlaylistId).songIds.map(sid => tracks.find(tx => tx.id === sid)).filter(x=>x);
             else if(mode === 'art') original = tracks.filter(tx => tx.artist === currentArtist);
@@ -230,8 +213,8 @@
             currentTrackIdx = playingTracks.findIndex(x => x.id === id);
             loadTrack(playingTracks[currentTrackIdx]);
         }
-
         function loadTrack(t) {
+            if(!t) return;
             if(audio.src) URL.revokeObjectURL(audio.src);
             audio.src = URL.createObjectURL(t.data);
             document.getElementById('m-img').src = t.cover || ''; document.getElementById('m-title').innerText = t.name;
@@ -240,49 +223,51 @@
             audio.play();
         }
 
-        function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('btn-shuffle').classList.toggle('active', isShuffle); }
-        function toggleRepeat() {
-            repeatMode = (repeatMode + 1) % 3;
-            const btn = document.getElementById('btn-repeat');
-            const badge = document.getElementById('repeat-badge');
-            btn.classList.toggle('active', repeatMode !== 0);
-            badge.style.display = (repeatMode === 2) ? 'block' : 'none';
-        }
-
-        function next() {
-            if(playingTracks.length === 0) return;
-            if (repeatMode === 2) { audio.currentTime = 0; audio.play(); return; }
-            currentTrackIdx++;
-            if (currentTrackIdx >= playingTracks.length) {
-                if (repeatMode === 1) currentTrackIdx = 0;
-                else { currentTrackIdx = playingTracks.length - 1; audio.pause(); return; }
-            }
-            loadTrack(playingTracks[currentTrackIdx]);
-        }
-        function prev() {
-            if(audio.currentTime > 3) audio.currentTime = 0;
-            else { currentTrackIdx = (currentTrackIdx - 1 + playingTracks.length) % playingTracks.length; loadTrack(playingTracks[currentTrackIdx]); }
-        }
-        audio.onended = next;
-
-        function openEdit(id) { editingId = id; const t = tracks.find(x => x.id === id); document.getElementById('edit-name').value = t.name; document.getElementById('edit-artist').value = t.artist; document.getElementById('edit-year').value = t.year || ""; document.getElementById('edit-modal').classList.add('active'); }
+        // --- モーダル制御 ---
+        function openEdit(id) { editingId = id; const t = tracks.find(x => x.id === id); document.getElementById('edit-name').value = t.name; document.getElementById('edit-artist').value = t.artist; document.getElementById('edit-year').value = t.year || ""; document.getElementById('edit-lyrics').value = t.lyrics || ""; document.getElementById('edit-modal').classList.add('active'); }
         function closeEdit() { document.getElementById('edit-modal').classList.remove('active'); }
-        function saveEdit() { const t = tracks.find(x => x.id === editingId); t.name = document.getElementById('edit-name').value; t.artist = document.getElementById('edit-artist').value; t.year = document.getElementById('edit-year').value; db.transaction("songs","readwrite").objectStore("songs").put(t).onsuccess = () => { closeEdit(); loadAll(); }; }
+        function saveEdit() { const t = tracks.find(x => x.id === editingId); t.name = document.getElementById('edit-name').value; t.artist = document.getElementById('edit-artist').value; t.year = document.getElementById('edit-year').value; t.lyrics = document.getElementById('edit-lyrics').value; db.transaction("songs","readwrite").objectStore("songs").put(t).onsuccess = () => { closeEdit(); loadAll(); }; }
 
+        function openPlEdit(id) {
+            editingPlId = id; const pl = playlists.find(p => p.id === id);
+            document.getElementById('pl-edit-name').value = pl.name; document.getElementById('pl-edit-tag').value = pl.tag || "";
+            tempPlImg = pl.cover; document.getElementById('pl-edit-img').src = tempPlImg || "";
+            document.getElementById('pl-edit-modal').classList.add('active');
+        }
+        function closePlEdit() { document.getElementById('pl-edit-modal').classList.remove('active'); }
+        function previewPlImg(e) { const f = e.target.files[0]; if(f){ const r = new FileReader(); r.onload = (ev) => { tempPlImg = ev.target.result; document.getElementById('pl-edit-img').src = tempPlImg; }; r.readAsDataURL(f); } }
+        function savePlEdit() { const pl = playlists.find(p => p.id === editingPlId); pl.name = document.getElementById('pl-edit-name').value; pl.tag = document.getElementById('pl-edit-tag').value; pl.cover = tempPlImg; db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = () => { closePlEdit(); loadAll(); }; }
+
+        // --- 画面遷移 ---
+        function switchTab(v) { currentView=v; currentArtist=null; currentPlaylistId=null; isEditing=false; render(); }
+        function openArtist(n) { currentArtist=n; render(); }
+        function openPlaylist(id) { currentPlaylistId=id; render(); }
+        function handleHeaderLeft() { if(currentArtist) currentArtist=null; else if(currentPlaylistId) currentPlaylistId=null; else isEditing=!isEditing; render(); }
+        function handleHeaderRight() { if(currentPlaylistId) openAddModal(); else if(currentView==='library') document.getElementById('audio-upload').click(); else if(currentView==='playlist'){ const n=prompt("名前"); if(n) db.transaction("playlists","readwrite").objectStore("playlists").add({name:n, songIds:[], tag:"", cover:null}).oncomplete=loadAll; } }
+
+        function openAddModal() {
+            const list = tracks.map(t => `<div class="list-item" onclick="toggleToPl(${t.id})"><img src="${t.cover||''}"><div><div style="font-weight:700;">${t.name}</div></div></div>`).join('');
+            const div = document.createElement('div'); div.id="add-modal"; div.className="modal active";
+            div.innerHTML = `<div class="header"><div class="header-top"><button onclick="this.closest('.modal').remove()">閉じる</button><h2>追加</h2></div></div><div class="modal-body">${list}</div>`;
+            document.body.appendChild(div);
+        }
+        function toggleToPl(sid) { const pl = playlists.find(p => p.id === currentPlaylistId); if(!pl.songIds.includes(sid)) pl.songIds.push(sid); db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = () => { loadAll(); document.getElementById('add-modal').remove(); }; }
+
+        // --- プレイヤー基本機能 ---
         function togglePlay() { audio.paused ? audio.play() : audio.pause(); }
+        function next() { currentTrackIdx = (currentTrackIdx + 1) % playingTracks.length; loadTrack(playingTracks[currentTrackIdx]); }
+        function prev() { audio.currentTime > 3 ? audio.currentTime = 0 : (currentTrackIdx = (currentTrackIdx - 1 + playingTracks.length) % playingTracks.length, loadTrack(playingTracks[currentTrackIdx])); }
+        function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('btn-shuffle').style.color = isShuffle ? "var(--key-color)" : "rgba(0,0,0,0.2)"; }
+        function toggleRepeat() { repeatMode = (repeatMode + 1) % 3; document.getElementById('btn-repeat').style.color = repeatMode ? "var(--key-color)" : "rgba(0,0,0,0.2)"; document.getElementById('repeat-badge').style.display = repeatMode === 2 ? "block" : "none"; }
+        audio.onended = () => repeatMode === 2 ? loadTrack(playingTracks[currentTrackIdx]) : next();
         audio.onplay = () => { document.getElementById('m-pp').className = 'fa-solid fa-pause'; document.getElementById('f-pp').className = 'fa-solid fa-pause'; };
         audio.onpause = () => { document.getElementById('m-pp').className = 'fa-solid fa-play'; document.getElementById('f-pp').className = 'fa-solid fa-play'; };
         audio.ontimeupdate = () => { if(!isNaN(audio.duration)){ const s = document.getElementById('seeker'); s.max = audio.duration; s.value = audio.currentTime; document.getElementById('cur-time').innerText = formatTime(audio.currentTime); document.getElementById('dur-time').innerText = formatTime(audio.duration); } };
         function formatTime(s) { let m=Math.floor(s/60), sec=Math.floor(s%60); return `${m}:${sec<10?'0':''}${sec}`; }
-
         function openFull() { document.getElementById('full').classList.add('active'); }
         function closeFull() { document.getElementById('full').classList.remove('active'); }
-        function openArtist(name) { currentArtist = name; render(); }
-        function openPlaylist(id) { currentPlaylistId = id; render(); }
-        function handleHeaderLeft() { if(currentArtist) currentArtist=null; else if(currentPlaylistId) currentPlaylistId=null; else isEditing=!isEditing; render(); }
-        function handleHeaderRight() { if(currentView==='library') document.getElementById('audio-upload').click(); else if(currentView==='playlist'){ const n=prompt("名"); if(n) db.transaction("playlists","readwrite").objectStore("playlists").add({name:n, songIds:[]}).oncomplete=loadAll; } }
-        function switchTab(v) { currentView=v; currentArtist=null; currentPlaylistId=null; isEditing=false; render(); }
         function deleteSong(id) { if(confirm("消去？")) db.transaction("songs","readwrite").objectStore("songs").delete(id).onsuccess=loadAll; }
+        function deletePlaylist(id) { if(confirm("消去？")) db.transaction("playlists","readwrite").objectStore("playlists").delete(id).onsuccess=loadAll; }
 
         document.getElementById('audio-upload').onchange = (e) => {
             for (let f of e.target.files) {
@@ -291,7 +276,7 @@
                         let d = tag.tags.picture.data, s = ""; for(let i=0; i<d.length; i++) s += String.fromCharCode(d[i]);
                         c = `data:${tag.tags.picture.format};base64,${btoa(s)}`;
                     }
-                    db.transaction("songs","readwrite").objectStore("songs").add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "不明", year: tag.tags.year || "", cover: c, data: f }).oncomplete = loadAll;
+                    db.transaction("songs","readwrite").objectStore("songs").add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "不明", year: tag.tags.year || "", cover: c, data: f, lyrics: "" }).oncomplete = loadAll;
                 }});
             }
         };
