@@ -42,10 +42,10 @@
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 15s infinite alternate; }
         @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 50px); } }
 
-        /* --- Header --- (アイコンとテキストを少し下に下げるためpadding-topを調整) */
+        /* --- Header --- (73px短縮し、内部のアイコンとテキストのみ下に配置) */
         .header { 
             margin-top: -50px;
-            padding: calc(75px + env(safe-area-inset-top)) 20px 18px; 
+            padding: calc(2px + env(safe-area-inset-top)) 20px 18px; /* 75px -> 2px (73px短縮) */
             background: var(--glass); 
             backdrop-filter: blur(40px); 
             -webkit-backdrop-filter: blur(40px); 
@@ -54,7 +54,7 @@
             box-shadow: 0 2px 15px rgba(0,0,0,0.02); 
             max-width: 390px; margin-left: auto; margin-right: auto; left: 0; right: 0; position: relative; width: 100%; 
         }
-        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; transform: translateY(35px); position: relative; z-index: 101; }
         .header-top h2 { font-size: 20px; font-weight: 700; color: #6a89cc; margin: 0; letter-spacing: 0.08em; text-transform: uppercase; }
         #left-btn, #right-btn { background: none; border: none; color: #a6cbe3; font-size: 14px; font-weight: 700; cursor: pointer; padding: 8px; }
         #right-btn i { font-size: 20px; color: #fff; background: var(--grad-primary); width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 6px 15px rgba(166,203,227,0.4); }
@@ -64,9 +64,9 @@
         #search-input, .bulk-search-input { flex: 1; padding: 11px 20px; border-radius: 25px; border: 2px solid #fff; background: rgba(255,255,255,0.9); font-size: 13px; outline: none; box-shadow: 0 8px 20px rgba(0,0,0,0.03); color: var(--text-main); }
         .sort-select { background: #fff; border: 1.5px solid #fff; border-radius: 14px; font-size: 11px; color: #7d8bb1; padding: 8px 12px; outline: none; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
 
-        /* アーティスト絞り込み用チップコンテナ */
-        #bulk-artist-suggestions { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
-        #bulk-artist-suggestions::-webkit-scrollbar { display: none; }
+        /* アーティスト絞り込み用＆プレイリストタグ絞り込み用チップコンテナ */
+        #bulk-artist-suggestions, #playlist-tag-suggestions { display: flex; gap: 10px; overflow-x: auto; padding: 4px 0; scrollbar-width: none; }
+        #bulk-artist-suggestions::-webkit-scrollbar, #playlist-tag-suggestions::-webkit-scrollbar { display: none; }
         .bulk-artist-icon-chip { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; animation: fadeIn 0.3s ease; }
         .bulk-artist-icon-chip img, .bulk-artist-icon-chip .placeholder { width: 45px; height: 45px; clip-path: var(--star-clip); object-fit: cover; background: var(--grad-primary); }
         .bulk-artist-icon-chip span { font-size: 9px; font-weight: 800; color: #a6cbe3; max-width: 50px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -133,18 +133,18 @@
         .mini-player { position: fixed; bottom: calc(60px + env(safe-area-inset-bottom)); height: 65px; background: rgba(255,255,255,0.75); backdrop-filter: blur(25px) saturate(160%); -webkit-backdrop-filter: blur(25px) saturate(160%); border-radius: 26px; display: none; align-items: center; padding: 0 20px; box-shadow: 0 15px 40px rgba(180,190,220,0.25); z-index: 2000; border: 2.5px solid rgba(255,255,255,0.8); max-width: 360px; margin: 0 auto; left: 0; right: 0; width: 90%; }
         #m-img { width: 54px; height: 54px; border-radius: 16px; margin-right: 15px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); opacity: 1 !important; }
         
-        /* --- Tab Bar (リボン) --- (アイコンが見切れないよう上に配置しパディングを調整) */
+        /* --- Tab Bar (リボン) --- (48px短縮し、見切れないよう位置調整) */
         .tab-bar { 
             position: fixed; bottom: 0; width: 100%; 
-            height: calc(85px + env(safe-area-inset-bottom)); 
+            height: calc(37px + env(safe-area-inset-bottom)); /* 85px -> 37px (48px短縮) */
             background: rgba(255,255,255,0.9); backdrop-filter: blur(40px); display: flex; justify-content: space-around; 
-            padding-top: 15px; 
+            padding-top: 2px; /* 15px -> 2px に変更 */
             padding-bottom: env(safe-area-inset-bottom);
             border-top: 1.5px solid rgba(255,255,255,0.8); z-index: 1000; max-width: 390px; margin: 0 auto; left: 0; right: 0; 
         }
-        .tab-item { border:none; background:none; color: #bcc1d8; font-weight: 700; font-size: 11px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; width: 33%; transition: all 0.4s; }
+        .tab-item { border:none; background:none; color: #bcc1d8; font-weight: 700; font-size: 11px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; width: 33%; transition: all 0.4s; transform: translateY(-8px); }
         .tab-item.active { color: #a6cbe3; }
-        .tab-item i { font-size: 24px; filter: drop-shadow(0 0 8px rgba(166,203,227,0)); transition: 0.3s; }
+        .tab-item i { font-size: 18px; filter: drop-shadow(0 0 8px rgba(166,203,227,0)); transition: 0.3s; }
         .tab-item.active i { filter: drop-shadow(0 0 5px rgba(166,203,227,0.5)); }
 
         .modal { position: fixed; inset: 0; background: #ffffff; z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.5s cubic-bezier(0.2, 1, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
@@ -194,7 +194,7 @@
     
     <div class="search-container">
         <div class="search-bar-row">
-            <input type="text" id="search-input" placeholder="Search track, artist..." oninput="render()">
+            <input type="text" id="search-input" placeholder="Search track, artist..." oninput="handleSearchInput()">
             <select id="sort-type" class="sort-select" onchange="render()">
                 <option value="added">Newest</option>
                 <option value="name_asc">Title A-Z</option>
@@ -203,6 +203,7 @@
                 <option value="custom">Custom</option>
             </select>
         </div>
+        <div id="playlist-tag-suggestions" style="display: none;"></div>
     </div>
 
     <div id="content"><div id="main-display"></div></div>
@@ -325,6 +326,9 @@
         let editingId = null, editingPlId = null, tempPlImg = null, editingArtistName = null;
         const audio = document.getElementById('audio-element');
 
+        // 各タブの検索履歴を独立させるための状態管理オブジェクトを追加
+        let searchQueries = { artists: '', library: '', playlist: '' };
+
         const req = indexedDB.open("MusicStudioWishcore_V4", 3);
         req.onupgradeneeded = (e) => {
             let d = e.target.result;
@@ -350,6 +354,36 @@
             if (type === 'name_desc') return list.sort((a,b) => (b.name||'').localeCompare(a.name||'','ja'));
             if (type === 'year') return list.sort((a,b) => (b.year||'').toString().localeCompare((a.year||'').toString()));
             return list;
+        }
+
+        // 新機能: 検索入力ハンドリング (履歴独立・タグサジェスト機能)
+        function handleSearchInput() {
+            const val = document.getElementById('search-input').value;
+            // 現在のタブの検索履歴を更新
+            searchQueries[currentView] = val;
+
+            const suggestBox = document.getElementById('playlist-tag-suggestions');
+            // プレイリスト画面で、なおかつプレイリストの中身を見ていない状態の場合
+            if (currentView === 'playlist' && currentPlaylistId === null && val.length > 0) {
+                // 既存のタグ名から入力内容を含むものを抽出
+                const matchedTags = [...new Set(playlists.map(p => p.tag).filter(t => t && t.toLowerCase().includes(val.toLowerCase())))];
+                if (matchedTags.length > 0) {
+                    suggestBox.style.display = 'flex';
+                    suggestBox.innerHTML = matchedTags.map(t => `<div class="bulk-artist-icon-chip" style="flex-direction:row; padding:6px 14px; border-radius:20px; background:#fff; border:1px solid #e1f1fa;" onclick="applyTagFilter('${t}')"><i class="fa-solid fa-tag" style="color:#a6cbe3;"></i> <span style="font-size:11px; max-width:none; color:var(--text-main); margin-left:4px;">${t}</span></div>`).join('');
+                    render();
+                    return;
+                }
+            }
+            if(suggestBox) suggestBox.style.display = 'none';
+            render();
+        }
+
+        // 新機能: タグサジェスト選択時にタグ名で絞り込む
+        function applyTagFilter(t) {
+            document.getElementById('search-input').value = t;
+            searchQueries[currentView] = t;
+            document.getElementById('playlist-tag-suggestions').style.display = 'none';
+            render();
         }
 
         function render() {
@@ -388,7 +422,11 @@
                     let artists = [...new Set(tracks.map(t => t.artist))].filter(a => a.toLowerCase().includes(search));
                     artists.sort((a,b) => sort === 'name_desc' ? b.localeCompare(a,'ja') : a.localeCompare(b,'ja'));
                     display.innerHTML = artists.map(a => {
-                        const icon = artistMeta[a] ? `<img src="${artistMeta[a]}" class="artist-icon">` : `<div class="artist-icon"><i class="fa-solid fa-user"></i></div>`;
+                        // 修正: アイコン未設定の場合、そのアーティストの楽曲カバー画像を自動的にフォールバック表示する
+                        const artistSong = tracks.find(t => t.artist === a && t.cover);
+                        const fallbackIcon = artistSong ? `<img src="${artistSong.cover}" class="artist-icon">` : `<div class="artist-icon"><i class="fa-solid fa-user" style="font-size:30px;"></i></div>`;
+                        const icon = artistMeta[a] ? `<img src="${artistMeta[a]}" class="artist-icon">` : fallbackIcon;
+                        
                         return `<div class="list-item" onclick="isEditing ? selectArtistIcon('${a}') : openArtist('${a}')">
                                 <div class="artist-icon-container">${icon}</div>
                                 <div style="font-weight:700; font-size:17px; letter-spacing:0.02em;">${a}</div>
@@ -589,7 +627,20 @@
             render(); 
         }
 
-        function switchTab(v) { currentView=v; currentArtist=null; currentPlaylistId=null; isEditing=false; render(); }
+        // 追加機能: 検索履歴の独立化 (それぞれの検索履歴を保持・復元する)
+        function switchTab(v) { 
+            currentView=v; currentArtist=null; currentPlaylistId=null; isEditing=false; 
+            
+            const searchInput = document.getElementById('search-input');
+            if(searchInput) {
+                searchInput.value = searchQueries[v] || "";
+            }
+            const suggestBox = document.getElementById('playlist-tag-suggestions');
+            if(suggestBox) suggestBox.style.display = 'none';
+
+            render(); 
+        }
+
         function openArtist(n) { currentArtist=n; render(); }
         function openPlaylist(id) { currentPlaylistId=id; render(); }
         function openFull() { fPlayer.classList.add('active'); fPlayer.style.transform = 'translateY(0)'; }
