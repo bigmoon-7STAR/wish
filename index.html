@@ -1,179 +1,441 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/music-metadata-browser/2.5.9/index.min.js"></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Music Player</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/music-metadata-browser/2.5.9/index.min.js"></script>
     <style>
-        :root { --bg-color: #121212; --accent-color: #1e90ff; }
+        :root {
+            /* Apple Musicの色定義 */
+            --am-pink: #fa243c;
+            --am-bg: #000000;
+            --am-card: rgba(30, 30, 30, 0.75);
+            --am-text: #ffffff;
+            --am-sub-text: #888888;
+        }
+
         body {
-            margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color); color: white;
-            transition: background 0.8s ease; /* 背景色変化の演出 */
-            height: 100vh; overflow: hidden;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background-color: var(--am-bg);
+            color: var(--am-text);
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
-        /* 動的なグラデーション背景 */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(30,144,255,0.3) 0%, rgba(0,0,0,0.8) 100%);
+
+        /* 🎨 Apple Music風の動的オーロラ背景（アニメーション付き） */
+        #bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
+            transition: background 2s ease; /* ゆったりとした変化 */
+            overflow: hidden;
         }
-        .container { padding: 20px; height: calc(100vh - 100px); overflow-y: auto; }
-        h1 { font-size: 24px; margin-bottom: 20px; }
 
-        /* 曲リスト */
-        .track-item {
-            display: flex; align-items: center; padding: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            cursor: pointer;
+        .aurora {
+            position: absolute;
+            width: 150%; height: 150%;
+            border-radius: 50%;
+            filter: blur(80px); /* 強いぼかし */
+            opacity: 0.3; /* ほのかに光らせる */
+            animation: moveAurora 20s infinite linear alternate;
         }
-        .track-item:hover { background: rgba(255,255,255,0.05); }
 
-        /* ミニプレイヤー（常時表示） */
-        .mini-player {
-            position: fixed; bottom: 0; width: 100%; height: 90px;
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex; align-items: center; padding: 0 20px;
-            box-sizing: border-box; border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .album-art {
-            width: 60px; height: 60px; border-radius: 4px;
-            background: #333; margin-right: 15px; object-fit: cover;
-        }
-        .info { flex: 1; }
-        .title { font-weight: bold; font-size: 16px; display: block; }
-        .artist { color: #aaa; font-size: 13px; }
-        .controls { display: flex; gap: 20px; font-size: 24px; cursor: pointer; }
+        .aurora-1 { top: -20%; left: -20%; background: rgba(255, 255, 255, 0.2); }
+        .aurora-2 { bottom: -20%; right: -20%; background: var(--am-pink); } /* デフォルト色 */
 
-        /* ドロップエリア */
+        @keyframes moveAurora {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-10%, -10%) rotate(10deg); }
+        }
+
+        /* メインコンテナ */
+        .container {
+            padding: 20px;
+            padding-top: 130px; /* 検索バーとヘッダーのスペース */
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* 🔍 固定検索バー（すりガラス） */
+        .header-fixed {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        #search-bar {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 17px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        /* ➕ シンプルな追加ボタン */
         #drop-zone {
-            border: 2px dashed #444; padding: 20px; text-align: center;
-            border-radius: 10px; margin-bottom: 20px; color: #888;
+            display: inline-block;
+            padding: 10px 20px;
+            color: var(--am-pink);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 20px;
+            background: rgba(250, 36, 60, 0.1);
+            margin-bottom: 25px;
+            transition: background 0.3s;
         }
+        #drop-zone:hover { background: rgba(250, 36, 60, 0.2); }
+
+        /* 🎶 曲リストアイテム（Apple Music風） */
+        .track-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .track-item:active { background: rgba(255, 255, 255, 0.05); } /* タップ時の反応 */
+
+        .track-item img {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            margin-right: 15px;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .track-info-text {
+            flex: 1;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 10px;
+        }
+
+        .track-name {
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--am-text);
+            display: block;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        .track-meta {
+            font-size: 14px;
+            color: var(--am-sub-text);
+            display: block;
+            margin-top: 2px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
+        /* 📱 ミニプレイヤー（フローティング・すりガラス） */
+        .mini-player {
+            position: fixed;
+            bottom: 25px; /* 少し浮かせる */
+            left: 15px; right: 15px;
+            height: 64px;
+            background: var(--am-card);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            z-index: 100;
+        }
+
+        .player-art {
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
+            margin-right: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .player-text {
+            flex: 1;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+
+        .player-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--am-text);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            display: block;
+        }
+
+        .player-artist {
+            color: var(--am-sub-text);
+            font-size: 12px;
+            display: block;
+            margin-top: 1px;
+        }
+
+        /* コントロールボタンの見直し */
+        .controls {
+            display: flex;
+            gap: 18px;
+            font-size: 26px;
+            align-items: center;
+        }
+        .control-btn {
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .control-btn:active { opacity: 0.5; } /* タップ時の反応 */
+
+        /* シャッフル・リピートボタン（小型化） */
+        .am-icon {
+            font-size: 16px;
+            opacity: 0.4;
+            color: var(--am-text);
+        }
+        .am-icon.active {
+            opacity: 1;
+            color: var(--am-pink); /* ONの時はピンク */
+        }
+
+        /* 隠しCanvas (色抽出用) */
+        #color-canvas { display: none; }
     </style>
 </head>
 <body>
-    <div class="overlay" id="bg-overlay"></div>
+    <div id="bg-overlay">
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2" id="aurora-sub"></div>
+    </div>
+
+    <div class="header-fixed">
+        <h1>ライブラリ</h1>
+        <input type="text" id="search-bar" placeholder="曲名、アーティストで検索...">
+    </div>
 
     <div class="container">
-        <h1>ライブラリ</h1>
-        <div id="drop-zone">ここにM4aファイルをドラッグ＆ドロップ</div>
+        <div id="drop-zone">＋ M4aファイルを追加</div>
         <div id="track-list">
-            <div class="track-item">
-                <div style="flex: 1;">曲を選択するか、ファイルを読み込んでください</div>
             </div>
-        </div>
     </div>
 
     <div class="mini-player">
-        <canvas id="color-canvas" style="display:none;"></canvas>
-        <img src="https://via.placeholder.com/60" class="album-art" id="player-art">
-        <div class="info">
-            <span class="title" id="player-title">未選択</span>
-            <span class="artist" id="player-artist">-</span>
+        <canvas id="color-canvas"></canvas>
+        <img src="https://via.placeholder.com/44/333/555?text=..." class="player-art" id="player-art">
+        <div class="player-text">
+            <span class="player-title" id="player-title">未選択</span>
+            <span class="player-artist" id="player-artist">-</span>
         </div>
         <div class="controls">
-            <span>⏮</span> <span id="play-btn">▶️</span> <span>⏭</span>
+            <span id="shuffle-btn" class="control-btn am-icon">🔀</span>
+            <span id="play-btn" class="control-btn">▶️</span>
+            <span id="repeat-btn" class="control-btn am-icon">🔁</span>
         </div>
     </div>
 
     <script>
+        const canvas = document.getElementById('color-canvas');
+        const ctx = canvas.getContext('2d');
+        const dropZone = document.getElementById('drop-zone');
+        const trackList = document.getElementById('track-list');
+        const searchBar = document.getElementById('search-bar');
         
-   const dropZone = document.getElementById('drop-zone');
-const trackList = document.getElementById('track-list');
-const playBtn = document.getElementById('play-btn');
-const playerTitle = document.getElementById('player-title');
-const playerArtist = document.getElementById('player-artist');
+        // プレイヤーの要素
+        const playBtn = document.getElementById('play-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
+        const playerTitle = document.getElementById('player-title');
+        const playerArtist = document.getElementById('player-artist');
+        const playerArt = document.getElementById('player-art');
+        const auroraSub = document.getElementById('aurora-sub');
 
-// オーディオ再生用の本体
-let audio = new Audio();
-let isPlaying = false;
+        let audio = new Audio();
+        let isPlaying = false;
+        let playlist = []; 
+        let currentIndex = -1; 
+        let isShuffle = false;
+        let isRepeat = false;
 
-// ドラッグ＆ドロップおよびファイル選択の処理
-dropZone.addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'audio/m4a, audio/mp4, audio/mpeg';
-    input.multiple = true;
-    input.onchange = (e) => handleFiles(e.target.files);
-    input.click();
-});
+        // 1. ファイル追加 & メタデータ解析
+        dropZone.onclick = () => {
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = 'audio/m4a, audio/mp4'; input.multiple = true;
+            input.onchange = (e) => handleFiles(e.target.files);
+            input.click();
+        };
 
-dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#1e90ff'; });
-dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#444'; });
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    handleFiles(e.dataTransfer.files);
-});
+        async function handleFiles(files) {
+            for (const file of Array.from(files)) {
+                // M4Aファイル解析開始
+                const metadata = await musicMetadata.parseBlob(file).catch(() => null);
+                const common = metadata?.common;
+                
+                // ジャケット写真の処理
+                let coverUrl = "https://via.placeholder.com/150/333/fff?text=No+Image";
+                if (common?.picture?.[0]) {
+                    const pic = common.picture[0];
+                    coverUrl = URL.createObjectURL(new Blob([pic.data], { type: pic.format }));
+                }
 
-// ファイルをライブラリに追加する関数
-function handleFiles(files) {
-    trackList.innerHTML = ''; // リストをリセット
-    Array.from(files).forEach((file, index) => {
-        const url = URL.createObjectURL(file);
-        
-        // リスト用の要素を作成
-        const item = document.createElement('div');
-        item.className = 'track-item';
-        item.innerHTML = `
-            <div style="flex: 1;">
-                <strong>${file.name}</strong><br>
-                <small>M4A Audio</small>
-            </div>
-        `;
+                const track = {
+                    url: URL.createObjectURL(file),
+                    title: common?.title || file.name,
+                    artist: common?.artist || "不明なアーティスト",
+                    cover: coverUrl
+                };
+                
+                playlist.push(track);
+                renderPlaylist(playlist); // リスト全体を再描画（インデックスの整合性を保つため）
+            }
+        }
 
-        // クリックしたら再生
-        item.onclick = () => playTrack(url, file.name);
-        trackList.appendChild(item);
-    });
-}
+        // 2. プレイリスト全体の再描画（検索対応）
+        function renderPlaylist(tracksToRender) {
+            trackList.innerHTML = '';
+            tracksToRender.forEach((track, index) => {
+                // UI表示
+                const div = document.createElement('div');
+                div.className = 'track-item';
+                div.innerHTML = `
+                    <img src="${track.cover}">
+                    <div class="track-info-text">
+                        <span class="track-name">${track.title}</span>
+                        <span class="track-meta">${track.artist}</span>
+                    </div>
+                `;
+                div.onclick = () => {
+                    currentIndex = index; // プレイリスト全体におけるインデックス
+                    playTrack(track);
+                };
+                trackList.appendChild(div);
+            });
+        }
 
-// 再生処理
-function playTrack(url, name) {
-    audio.src = url;
-    audio.play();
-    isPlaying = true;
-    playBtn.innerText = '⏸';
-    playerTitle.innerText = name;
-    playerArtist.innerText = 'Local File';
-    
-    // 背景色をランダムに変える演出（仮）
-    const colors = ['#1e90ff', '#ff4757', '#2ed573', '#ffa502'];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    document.getElementById('bg-overlay').style.background = 
-        `linear-gradient(135deg, ${randomColor}33 0%, rgba(0,0,0,0.9) 100%)`;
-}
+        // 3. 再生 & ✨動的背景色（高度化）
+        function playTrack(track) {
+            if(!track) return;
+            audio.src = track.url;
+            audio.play();
+            isPlaying = true;
+            playBtn.innerText = '⏸';
+            
+            // ミニプレイヤーの情報を更新
+            playerTitle.innerText = track.title;
+            playerArtist.innerText = track.artist;
+            playerArt.src = track.cover;
 
-// 再生・停止ボタンの切り替え
-playBtn.onclick = () => {
-    if (isPlaying) {
-        audio.pause();
-        playBtn.innerText = '▶️';
-    } else {
-        audio.play();
-        playBtn.innerText = '⏸';
-    }
-    isPlaying = !isPlaying;
-};
+            // 🎨 ジャケット写真から色を抽出してオーロラ背景を更新
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = track.cover;
+            img.onload = () => {
+                const color = getDominantColors(img);
+                updateAuroraBackground(color);
+            };
+        }
 
-        
-        // ドラッグ＆ドロップの基本処理
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.style.borderColor = '#1e90ff';
-        });
+        // 画像から2つのメインカラーを抽出（簡易版：中心と端）
+        function getDominantColors(img) {
+            canvas.width = 10; canvas.height = 10;
+            ctx.drawImage(img, 0, 0, 10, 10);
+            
+            // 2箇所のピクセルデータを取得
+            const dataCenter = ctx.getImageData(5, 5, 1, 1).data; // 中心
+            const dataEdge = ctx.getImageData(1, 1, 1, 1).data;   // 端
+            
+            return {
+                color1: `rgb(${dataCenter[0]}, ${dataCenter[1]}, ${dataCenter[2]})`,
+                color2: `rgb(${dataEdge[0]}, ${dataEdge[1]}, ${dataEdge[2]})`
+            };
+        }
 
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.style.borderColor = '#444';
-        });
+        // 🎨 オーロラ背景の更新
+        function updateAuroraBackground(colors) {
+            const { color1, color2 } = colors;
+            
+            // 2つのオーロラの色をゆっくり変化させる
+            // aurora-1（全体）はcolor1をほのかに、aurora-sub（右下）はcolor2を
+            document.querySelector('.aurora-1').style.background = `radial-gradient(circle at center, ${color1} 0%, transparent 80%)`;
+            auroraSub.style.background = color2;
+        }
 
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const files = e.dataTransfer.files;
-            alert(`${files.length}個のファイルを読み込みました（実装中）`);
-        });
+        // 🔍 検索機能の統合
+        searchBar.oninput = (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            const filteredPlaylist = playlist.filter(track => {
+                return track.title.toLowerCase().includes(searchTerm) ||
+                       track.artist.toLowerCase().includes(searchTerm);
+            });
+            
+            renderPlaylist(filteredPlaylist);
+
+            if (playlist.length > 0 && filteredPlaylist.length === 0) {
+                trackList.innerHTML = '<p style="color: #666; text-align: center; margin-top: 30px;">一致する曲が見つかりません</p>';
+            }
+        };
+
+        // 4. 再生コントロール & シャッフル・リピート（デザイン対応）
+        playBtn.onclick = () => {
+            if (isPlaying) { audio.pause(); playBtn.innerText = '▶️'; }
+            else { if(audio.src) audio.play(); playBtn.innerText = '⏸'; }
+            isPlaying = !isPlaying;
+        };
+
+        shuffleBtn.onclick = () => {
+            isShuffle = !isShuffle;
+            if(isShuffle) { shuffleBtn.classList.add('active'); }
+            else { shuffleBtn.classList.remove('active'); }
+        };
+
+        repeatBtn.onclick = () => {
+            isRepeat = !isRepeat;
+            if(isRepeat) { repeatBtn.classList.add('active'); }
+            else { repeatBtn.classList.remove('active'); }
+        };
+
+        // 5. 自動次曲再生ロジック
+        audio.onended = () => {
+            if (isRepeat) {
+                playTrack(playlist[currentIndex]);
+                return;
+            }
+
+            let nextIndex;
+            if (isShuffle) {
+                nextIndex = Math.floor(Math.random() * playlist.length);
+            } else {
+                nextIndex = currentIndex + 1;
+            }
+
+            if (nextIndex < playlist.length) {
+                currentIndex = nextIndex;
+                playTrack(playlist[currentIndex]);
+            } else {
+                // 最後まで行ったら最初に戻る（Apple Music風）
+                currentIndex = 0;
+                playTrack(playlist[currentIndex]);
+            }
+        };
     </script>
 </body>
 </html>
