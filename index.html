@@ -54,9 +54,9 @@
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 15s infinite alternate; }
         @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 50px); } }
 
-        /* --- Header: 高さを統一し、さらに上に配置 --- */
+        /* --- Header: すべての画面で高さを統一し、より上に配置 --- */
         .header { 
-            padding: calc(15px + env(safe-area-inset-top)) 20px 10px; 
+            padding: calc(10px + env(safe-area-inset-top)) 20px 8px; 
             background: var(--glass); 
             backdrop-filter: blur(40px); 
             -webkit-backdrop-filter: blur(40px); 
@@ -68,7 +68,8 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            min-height: 80px; /* 全画面で高さを統一し、少し詰める */
+            min-height: 80px; 
+            height: 80px;
         }
         .header-top { 
             display: flex; 
@@ -78,7 +79,7 @@
             z-index: 1001; 
             width: 100%;
         }
-        .header-top h2 { font-size: 18px; font-weight: 800; color: #6a89cc; margin: 0; letter-spacing: 0.05em; text-align: center; flex: 1; }
+        .header-top h2 { font-size: 17px; font-weight: 800; color: #6a89cc; margin: 0; letter-spacing: 0.05em; text-align: center; flex: 1; }
         
         #left-btn, #right-btn, .modal-close-btn { 
             background: none; border: none; color: #a6cbe3; font-size: 18px; cursor: pointer; padding: 10px; min-width: 50px;
@@ -113,7 +114,6 @@
         .card-title { font-size: 13px; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-sub { font-size: 10px; color: var(--sub-text); margin-top: 3px; display: flex; align-items: center; justify-content: space-between; }
         .card-year { font-size: 9px; color: #a6cbe3; font-weight: 700; background: rgba(166,203,227,0.1); padding: 1px 6px; border-radius: 10px; }
-        .card-fav-star { position: absolute; top: 12px; right: 12px; color: #ffca28; font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); z-index: 5; }
         
         .card-tag { display: inline-block; font-size: 9px; background: linear-gradient(135deg, #e1f1fa, #fff); color: #5a9abf; padding: 3px 10px; border-radius: 20px; margin-top: 5px; font-weight: 800; border: 1px solid rgba(166,203,227,0.3); }
 
@@ -128,8 +128,9 @@
         .swipe-container .list-item { background: #ffffff; z-index: 2; position: relative; }
         .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 85px; background: #ffebee; color: #ff8a80; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; z-index: 1; }
 
-        .reorder-btns { display: flex; flex-direction: column; gap: 6px; margin-left: auto; z-index: 5; }
-        .reorder-btns i { color: #a6cbe3; padding: 4px; font-size: 14px; }
+        .reorder-btns { display: flex; flex-direction: column; gap: 8px; margin-left: auto; z-index: 5; padding-left: 10px; }
+        .reorder-btns i { color: #a6cbe3; padding: 6px; font-size: 16px; opacity: 0.7; }
+        .reorder-btns i:active { transform: scale(1.2); opacity: 1; color: #6a89cc; }
 
         /* --- Full Player --- */
         .full-player { 
@@ -170,29 +171,31 @@
         .seeker { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(166,203,227,0.25); border-radius: 10px; outline: none; margin: 40px 0 10px; }
         .seeker::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #fff; border: 3px solid #a6cbe3; border-radius: 50%; box-shadow: 0 2px 8px rgba(166,203,227,0.3); cursor: pointer; }
 
-        .mini-player { position: fixed; bottom: calc(85px + env(safe-area-inset-bottom)); height: 64px; background: rgba(255,255,255,0.8); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 24px; display: none; align-items: center; padding: 0 16px; box-shadow: 0 10px 30px rgba(180,190,220,0.2); z-index: 2000; border: 2px solid rgba(255,255,255,0.8); max-width: 360px; margin: 0 auto; left: 0; right: 0; width: 92%; }
+        .mini-player { position: fixed; bottom: calc(65px + env(safe-area-inset-bottom)); height: 64px; background: rgba(255,255,255,0.8); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 24px; display: none; align-items: center; padding: 0 16px; box-shadow: 0 10px 30px rgba(180,190,220,0.2); z-index: 2000; border: 2px solid rgba(255,255,255,0.8); max-width: 360px; margin: 0 auto; left: 0; right: 0; width: 92%; }
         #m-img { width: 48px; height: 48px; border-radius: 14px; margin-right: 14px; object-fit: cover; border: 2px solid #fff; }
         
-        /* --- Tab Bar: 以前より下に配置 --- */
+        /* --- Tab Bar: 以前より全体的に下に配置 --- */
         .tab-bar { 
             position: fixed; 
-            bottom: -10px; /* 全体的にさらに下に下げる */
+            bottom: -8px; 
             width: 100%; 
-            height: calc(85px + env(safe-area-inset-bottom)); 
+            height: calc(75px + env(safe-area-inset-bottom)); 
             background: rgba(255,255,255,0.92); backdrop-filter: blur(40px); display: flex; justify-content: space-around; 
-            padding-top: 10px; 
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            padding-top: 15px; 
+            padding-bottom: env(safe-area-inset-bottom);
             border-top: 1px solid rgba(255,255,255,0.8); z-index: 3000; max-width: 390px; margin: 0 auto; left: 0; right: 0; 
         }
         .tab-item { border:none; background:none; color: #bcc1d8; font-weight: 800; font-size: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; width: 33%; transition: 0.3s; }
         .tab-item.active { color: #a6cbe3; }
-        .tab-item i { font-size: 19px; }
+        /* タブ内のアイコンとテキストをさらに下に配置 */
+        .tab-item i { font-size: 19px; margin-top: 6px; }
+        .tab-item span { margin-top: 2px; }
 
         .modal { position: fixed; inset: 0; background: #ffffff; z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
         @keyframes modalSlide { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
         /* モーダル内のヘッダーも統一 */
-        .modal .header { min-height: 80px; padding-top: calc(15px + env(safe-area-inset-top)); }
+        .modal .header { min-height: 80px; height: 80px; padding-top: calc(10px + env(safe-area-inset-top)); }
 
         .modal-body { padding: 30px; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
         .edit-input { width: 100%; padding: 18px; border: 2.5px solid #f2f2f7; border-radius: 20px; margin-bottom: 22px; outline: none; font-size: 15px; background: #fbfbfc; color: var(--text-main); font-weight: 600; }
@@ -238,12 +241,12 @@
     <div class="search-container">
         <div class="search-bar-row">
             <input type="text" id="search-input" placeholder="Search track, artist, tag..." oninput="handleSearchInput()">
-            <select id="sort-type" class="sort-select" onchange="updateSortType(this.value)">
+            <select id="sort-type" class="sort-select" onchange="handleSortChange()">
                 <option value="added">Newest</option>
                 <option value="name_asc">A-Z</option>
                 <option value="name_desc">Z-A</option>
                 <option value="year">Date</option>
-                <option id="opt-custom" value="custom">Custom</option>
+                <option value="custom">Custom</option>
             </select>
         </div>
         <div id="playlist-tag-suggestions" style="display: none;"></div>
@@ -276,7 +279,6 @@
                     <div id="f-artist" style="font-size:16px; color:#a6cbe3; margin-top:6px; font-weight:700;"></div>
                 </div>
                 <div style="display:flex; gap:10px;">
-                    <button id="f-fav-btn" onclick="toggleFavorite()" style="background:rgba(255,202,40,0.1); border:none; color:#ffca28; border-radius:14px; font-size:17px; width:44px; height:44px;"><i class="fa-regular fa-star"></i></button>
                     <button id="f-lyric-btn" onclick="toggleLyrics()" style="background:rgba(166,203,227,0.1); border:none; color:#a6cbe3; border-radius:14px; font-size:17px; width:44px; height:44px;"><i class="fa-solid fa-quote-right"></i></button>
                     <button onclick="toggleQueue()" style="background:rgba(166,203,227,0.1); border:none; color:#a6cbe3; border-radius:14px; font-size:17px; width:44px; height:44px;"><i class="fa-solid fa-list-ul"></i></button>
                 </div>
@@ -347,17 +349,15 @@
     <script>
         let db, tracks = [], playlists = [], artistMeta = {}, isEditing = false, currentView = 'artists', currentArtist = null, currentPlaylistId = null;
         let playingTracks = [], currentTrackIdx = -1, isShuffle = false, repeatMode = 0; 
-        let historyTracks = []; 
         let editingId = null, editingPlId = null, tempPlImg = null, editingArtistName = null;
         const audio = document.getElementById('audio-element');
 
+        // 各画面のソート状態を独立して管理
+        let sortStates = { artists: 'added', library: 'added', playlist: 'added', playlistDetail: 'custom' };
         let searchQueries = { artists: '', library: '', playlist: '', playlistDetail: '', bulkAdd: '' };
         let activeArtistFilter = null; 
 
-        // 独立したソート状態の管理
-        let currentSort = { library: 'added', artists: 'added', playlist: 'added', playlistDetail: 'custom' };
-
-        const req = indexedDB.open("MusicStudioWishcore_V6", 1);
+        const req = indexedDB.open("MusicStudioWishcore_V5", 1);
         req.onupgradeneeded = (e) => {
             let d = e.target.result;
             if(!d.objectStoreNames.contains("songs")) d.createObjectStore("songs", {keyPath:"id", autoIncrement:true});
@@ -387,16 +387,11 @@
             render();
         }
 
-        function updateSortType(val) {
+        function handleSortChange() {
+            const val = document.getElementById('sort-type').value;
             const key = (currentView === 'playlist' && currentPlaylistId !== null) ? 'playlistDetail' : currentView;
-            currentSort[key] = val;
+            sortStates[key] = val;
             render();
-        }
-
-        function getArtistIcon(artistName) {
-            if (artistMeta[artistName]) return artistMeta[artistName];
-            const firstSong = tracks.find(t => t.artist === artistName && t.cover);
-            return firstSong ? firstSong.cover : null;
         }
 
         function render() {
@@ -405,31 +400,36 @@
             const rightBtn = document.getElementById('right-btn');
             const leftBtn = document.getElementById('left-btn');
             const searchInputEl = document.getElementById('search-input');
-            const sortSelect = document.getElementById('sort-type');
-            const optCustom = document.getElementById('opt-custom');
+            const sortSelectEl = document.getElementById('sort-type');
             const tagSuggest = document.getElementById('playlist-tag-suggestions');
             const artistFilter = document.getElementById('artist-filter-container');
             
             tagSuggest.style.display = 'none';
             artistFilter.style.display = 'none';
 
-            let currentSearch = (currentView === 'playlist' && currentPlaylistId !== null) ? searchQueries.playlistDetail : searchQueries[currentView];
+            // 現在のビューに対応する検索・ソート状態を取得
+            const viewKey = (currentView === 'playlist' && currentPlaylistId !== null) ? 'playlistDetail' : currentView;
+            let currentSearch = searchQueries[viewKey];
             if (searchInputEl && searchInputEl.value !== currentSearch) searchInputEl.value = currentSearch;
-
-            const isDetail = (currentView === 'playlist' && currentPlaylistId !== null);
-            const sortKey = isDetail ? 'playlistDetail' : currentView;
-            sortSelect.value = currentSort[sortKey];
-
-            // プレイリスト詳細以外では「カスタム」を非表示にする
-            optCustom.style.display = isDetail ? 'block' : 'none';
-            if (!isDetail && currentSort[sortKey] === 'custom') {
-                currentSort[sortKey] = 'added';
-                sortSelect.value = 'added';
+            
+            let currentSort = sortStates[viewKey];
+            if (sortSelectEl) {
+                sortSelectEl.value = currentSort;
+                // LibraryとArtistsからはCustomを非表示（または無効化）
+                const customOpt = sortSelectEl.querySelector('option[value="custom"]');
+                if (currentView === 'library' || (currentView === 'artists' && !currentArtist)) {
+                    customOpt.style.display = 'none';
+                    if (currentSort === 'custom') {
+                        currentSort = 'added';
+                        sortStates[viewKey] = 'added';
+                        sortSelectEl.value = 'added';
+                    }
+                } else {
+                    customOpt.style.display = 'block';
+                }
             }
 
             const search = currentSearch.toLowerCase();
-            const isFavSearch = search === 'お気に入り' || search === '★';
-            const sort = currentSort[sortKey];
 
             document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
             const activeTabId = currentView === 'playlist' ? 'tab-play' : currentView === 'artists' ? 'tab-artist' : 'tab-lib';
@@ -438,20 +438,26 @@
 
             if (currentView === 'library') {
                 title.innerText = "Library"; display.className = "grid";
-                let list = tracks.filter(t => {
-                    const matchText = t.name.toLowerCase().includes(search) || t.artist.toLowerCase().includes(search);
-                    return isFavSearch ? (t.isFav && matchText) : matchText;
-                });
-                renderCards(list, display, sort);
+                let list = tracks.filter(t => t.name.toLowerCase().includes(search) || t.artist.toLowerCase().includes(search));
+                renderCards(list, display, currentSort);
             
             } else if (currentView === 'artists') {
                 if (!currentArtist) {
                     title.innerText = "Artists"; display.className = "";
                     let artists = [...new Set(tracks.map(t => t.artist))].filter(a => a.toLowerCase().includes(search));
                     
+                    if (search.length > 0 && artists.length > 0) {
+                        artistFilter.style.display = 'flex';
+                        artistFilter.innerHTML = artists.map(a => {
+                            const firstSong = tracks.find(t => t.artist === a);
+                            const icon = artistMeta[a] ? `<img src="${artistMeta[a]}">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}">` : `<div class="placeholder"><i class="fa-solid fa-user" style="margin-top:10px;"></i></div>`);
+                            return `<div class="bulk-artist-icon-chip" onclick="openArtist('${a}')">${icon}<span>${a}</span></div>`;
+                        }).join('');
+                    }
+
                     display.innerHTML = artists.map(a => {
-                        const iconSrc = getArtistIcon(a);
-                        const icon = iconSrc ? `<img src="${iconSrc}" class="artist-icon">` : `<div class="artist-icon"><i class="fa-solid fa-user" style="font-size:24px;"></i></div>`;
+                        const firstSong = tracks.find(t => t.artist === a);
+                        const icon = artistMeta[a] ? `<img src="${artistMeta[a]}" class="artist-icon">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}" class="artist-icon">` : `<div class="artist-icon"><i class="fa-solid fa-user" style="font-size:24px;"></i></div>`);
                         return `<div class="list-item" onclick="isEditing ? selectArtistIcon('${a}') : openArtist('${a}')">
                                 <div class="artist-icon-container">${icon}</div>
                                 <div style="font-weight:800; font-size:16px;">${a}</div>
@@ -461,12 +467,20 @@
                 } else {
                     title.innerText = currentArtist; display.className = "grid";
                     let list = tracks.filter(t => t.artist === currentArtist && (t.name.toLowerCase().includes(search)));
-                    renderCards(list, display, sort);
+                    renderCards(list, display, currentSort);
                 }
 
             } else if (currentView === 'playlist') {
                 if (currentPlaylistId === null) {
                     title.innerText = "Playlists"; display.className = "grid";
+                    const allTags = [...new Set(playlists.map(p => p.tag).filter(t => t))];
+                    if (search.length > 0) {
+                        const matchedTags = allTags.filter(t => t.toLowerCase().includes(search));
+                        if (matchedTags.length > 0) {
+                            tagSuggest.style.display = 'flex';
+                            tagSuggest.innerHTML = matchedTags.map(t => `<div class="tag-chip" onclick="applyTagFilter('${t}')">#${t}</div>`).join('');
+                        }
+                    }
                     let list = playlists.filter(p => p.name.toLowerCase().includes(search) || (p.tag && p.tag.toLowerCase().includes(search)));
                     display.innerHTML = list.map(p => {
                         const firstSong = tracks.find(t => p.songIds.includes(t.id));
@@ -485,10 +499,17 @@
                     title.innerText = pl.name; display.className = "";
                     let plSongs = pl.songIds.map(id => tracks.find(t => t.id === id)).filter(t => t);
                     
-                    let filtered = plSongs.filter(t => {
-                        const matchText = t.name.toLowerCase().includes(search) || t.artist.toLowerCase().includes(search);
-                        return isFavSearch ? (t.isFav && matchText) : matchText;
-                    });
+                    const artistsInPl = [...new Set(plSongs.map(s => s.artist))].filter(a => a.toLowerCase().includes(search));
+                    if (artistsInPl.length > 0 && search.length > 0) {
+                        artistFilter.style.display = 'flex';
+                        artistFilter.innerHTML = artistsInPl.map(a => {
+                            const firstSong = tracks.find(t => t.artist === a);
+                            const icon = artistMeta[a] ? `<img src="${artistMeta[a]}" style="${activeArtistFilter===a?'border-color:#a6cbe3; opacity:1;':'opacity:0.6;'}">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}" style="${activeArtistFilter===a?'border-color:#a6cbe3; opacity:1;':'opacity:0.6;'}">` : `<div class="placeholder"><i class="fa-solid fa-user"></i></div>`);
+                            return `<div class="bulk-artist-icon-chip" onclick="toggleArtistFilter('${a}')">${icon}<span>${a}</span></div>`;
+                        }).join('');
+                    }
+
+                    let filtered = plSongs.filter(t => t.name.toLowerCase().includes(search) || t.artist.toLowerCase().includes(search));
                     if (activeArtistFilter) filtered = filtered.filter(t => t.artist === activeArtistFilter);
 
                     display.innerHTML = filtered.map((t, idx) => `
@@ -496,9 +517,8 @@
                             <div class="swipe-delete-btn" onclick="removeTrackFromPlaylist(${t.id})">Remove</div>
                             <div class="list-item" onclick="playSong(${t.id},'pl')" ontouchstart="handleTouchStart(event, ${t.id})" ontouchmove="handleTouchMove(event, ${t.id})" ontouchend="handleTouchEnd(event, ${t.id})">
                                 <img src="${t.cover||''}">
-                                <div><div style="font-weight:800; font-size:14px;">${t.name}</div><div style="font-size:11px; color:#a6cbe3; margin-top:3px; font-weight:700;">${t.artist}</div></div>
-                                ${sort==='custom'? `<div class="reorder-btns" onclick="event.stopPropagation()"><i class="fa-solid fa-chevron-up" onclick="moveTrack(${idx}, -1)"></i><i class="fa-solid fa-chevron-down" onclick="moveTrack(${idx}, 1)"></i></div>` : ''}
-                                ${t.isFav ? '<i class="fa-solid fa-star" style="margin-left:auto; color:#ffca28; font-size:12px;"></i>' : ''}
+                                <div style="flex:1;"><div style="font-weight:800; font-size:14px;">${t.name}</div><div style="font-size:11px; color:#a6cbe3; margin-top:3px; font-weight:700;">${t.artist}</div></div>
+                                ${currentSort==='custom'? `<div class="reorder-btns" onclick="event.stopPropagation()"><i class="fa-solid fa-chevron-up" onclick="moveTrack(${idx}, -1)"></i><i class="fa-solid fa-chevron-down" onclick="moveTrack(${idx}, 1)"></i></div>` : ''}
                             </div>
                         </div>`).join('') + `<div style="padding:40px; text-align:center;"><button onclick="openBulkAddModal()" style="background:#fff; color:#6a89cc; border:2px solid #e1f1fa; padding:15px 30px; border-radius:30px; font-weight:900; font-size:12px;">+ Add Tracks</button></div>`;
                 }
@@ -520,13 +540,35 @@
             container.innerHTML = list.map(t => `
                 <div class="card ${isEditing?'editing':''}" onclick="isEditing?openEdit(${t.id}):playSong(${t.id},'lib')">
                     <div class="del-badge" onclick="event.stopPropagation(); deleteSong(${t.id})"><i class="fa-solid fa-trash-can"></i></div>
-                    ${t.isFav ? '<i class="fa-solid fa-star card-fav-star"></i>' : ''}
                     <img src="${t.cover||''}" class="card-img">
                     <div class="card-info">
                         <div class="card-title">${t.name}</div>
                         <div class="card-sub">${t.artist} ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
                     </div>
                 </div>`).join('');
+        }
+
+        function moveTrack(idx, dir) {
+            const pl = playlists.find(p => p.id === currentPlaylistId);
+            if (!pl) return;
+            const newIdx = idx + dir;
+            if (newIdx < 0 || newIdx >= pl.songIds.length) return;
+            const temp = pl.songIds[idx];
+            pl.songIds[idx] = pl.songIds[newIdx];
+            pl.songIds[newIdx] = temp;
+            db.transaction("playlists", "readwrite").objectStore("playlists").put(pl).onsuccess = loadAll;
+        }
+
+        function applyTagFilter(tag) {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = tag;
+            searchQueries[currentView] = tag;
+            render();
+        }
+
+        function toggleArtistFilter(a) {
+            activeArtistFilter = (activeArtistFilter === a) ? null : a;
+            render();
         }
 
         const fPlayer = document.getElementById('full');
@@ -567,23 +609,6 @@
             if(isActive) view.innerText = playingTracks[currentTrackIdx]?.lyrics || "No lyrics available.";
         }
 
-        function toggleFavorite() {
-            const track = playingTracks[currentTrackIdx];
-            if (!track) return;
-            track.isFav = !track.isFav;
-            db.transaction("songs", "readwrite").objectStore("songs").put(track).onsuccess = () => {
-                updateFavIcon(track.isFav);
-                loadAll();
-            };
-        }
-
-        function updateFavIcon(isFav) {
-            const btn = document.getElementById('f-fav-btn');
-            btn.innerHTML = isFav ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>';
-            btn.style.color = isFav ? '#ffca28' : '#a6cbe3';
-            btn.style.background = isFav ? 'rgba(255,202,40,0.15)' : 'rgba(166,203,227,0.1)';
-        }
-
         function openBulkAddModal() {
             const pl = playlists.find(p => p.id === currentPlaylistId);
             const div = document.createElement('div'); div.id="bulk-modal"; div.className="modal"; div.style.display = "flex";
@@ -595,7 +620,7 @@
                     <label class="check-item" data-search="${t.name.toLowerCase()} ${t.artist.toLowerCase()}">
                         <input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}>
                         <img src="${t.cover||''}" style="width:48px; height:48px; border-radius:12px; margin-right:15px;">
-                        <div><b style="font-size:14px;">${t.name}</b><br><span style="font-size:11px; color:#a6cbe3;">${t.artist}</span></div>
+                        <div style="flex:1;"><b style="font-size:14px;">${t.name}</b><br><span style="font-size:11px; color:#a6cbe3;">${t.artist}</span></div>
                     </label>`).join('')}
                 </div>`;
             document.body.appendChild(div);
@@ -605,6 +630,16 @@
             const v = val.toLowerCase();
             const items = document.querySelectorAll('#bulk-list .check-item');
             items.forEach(el => el.style.display = el.getAttribute('data-search').includes(v) ? 'flex' : 'none');
+            const suggest = document.getElementById('bulk-artist-suggestions');
+            const matchedArtists = [...new Set(tracks.map(t => t.artist))].filter(a => a.toLowerCase().includes(v));
+            if (v.length > 0 && matchedArtists.length > 0) {
+                suggest.style.display = 'flex';
+                suggest.innerHTML = matchedArtists.map(a => {
+                    const firstSong = tracks.find(t => t.artist === a);
+                    const icon = artistMeta[a] ? `<img src="${artistMeta[a]}">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}">` : `<div class="placeholder"><i class="fa-solid fa-user" style="margin-top:10px;"></i></div>`);
+                    return `<div class="bulk-artist-icon-chip" onclick="document.getElementById('bulk-search-box').value='${a}'; filterBulk('${a}')">${icon}<span>${a}</span></div>`;
+                }).join('');
+            } else { suggest.style.display = 'none'; }
         }
 
         function switchTab(v) { 
@@ -632,9 +667,7 @@
         function next() { 
             if (playingTracks.length === 0) return;
             if (repeatMode === 2) { loadTrack(playingTracks[currentTrackIdx]); return; }
-            if (currentTrackIdx === playingTracks.length - 1 && repeatMode === 0) {
-                audio.pause(); audio.currentTime = 0; return;
-            }
+            if (currentTrackIdx === playingTracks.length - 1 && repeatMode === 0) { audio.pause(); audio.currentTime = 0; return; }
             currentTrackIdx = (currentTrackIdx + 1) % playingTracks.length;
             loadTrack(playingTracks[currentTrackIdx]);
         }
@@ -665,7 +698,6 @@
             document.getElementById('mini').style.display = 'flex';
             document.getElementById('f-lyrics-view').classList.remove('active');
             document.getElementById('f-img').style.opacity = "1";
-            updateFavIcon(t.isFav || false);
             audio.play();
         }
         function checkMarquee(elId, text) {
@@ -678,15 +710,6 @@
         audio.onplay = () => { document.getElementById('m-pp').className = 'fa-solid fa-pause'; document.getElementById('f-pp').className = 'fa-solid fa-pause'; };
         audio.onpause = () => { document.getElementById('m-pp').className = 'fa-solid fa-play'; document.getElementById('f-pp').className = 'fa-solid fa-play'; };
         audio.onended = () => { next(); };
-
-        function moveTrack(idx, dir) {
-            const pl = playlists.find(p => p.id === currentPlaylistId);
-            const newIdx = idx + dir;
-            if (newIdx < 0 || newIdx >= pl.songIds.length) return;
-            const item = pl.songIds.splice(idx, 1)[0];
-            pl.songIds.splice(newIdx, 0, item);
-            db.transaction("playlists", "readwrite").objectStore("playlists").put(pl).onsuccess = loadAll;
-        }
 
         function openEdit(id) { editingId = id; const t = tracks.find(x => x.id === id); document.getElementById('edit-name').value = t.name; document.getElementById('edit-artist').value = t.artist; document.getElementById('edit-year').value = t.year || ""; document.getElementById('edit-lyrics').value = t.lyrics || ""; updateArtistSuggest(t.artist); document.getElementById('edit-modal').style.display = 'flex'; }
         function closeEdit() { document.getElementById('edit-modal').style.display = 'none'; }
@@ -716,12 +739,12 @@
                             c = `data:${tag.tags.picture.format};base64,${btoa(s)}`;
                         }
                         const tx = db.transaction("songs", "readwrite");
-                        tx.objectStore("songs").add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "Unknown", year: tag.tags.year || "", cover: c, data: f, lyrics: "", isFav: false });
+                        tx.objectStore("songs").add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "Unknown", year: tag.tags.year || "", cover: c, data: f, lyrics: "" });
                         tx.oncomplete = () => loadAll();
                     },
                     onError: () => {
                         const tx = db.transaction("songs", "readwrite");
-                        tx.objectStore("songs").add({ name: f.name, artist: "Unknown", year: "", cover: null, data: f, lyrics: "", isFav: false });
+                        tx.objectStore("songs").add({ name: f.name, artist: "Unknown", year: "", cover: null, data: f, lyrics: "" });
                         tx.oncomplete = () => loadAll();
                     }
                 });
