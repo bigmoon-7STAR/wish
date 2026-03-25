@@ -47,6 +47,10 @@
     <div id="bg-overlay"></div>
     <div class="container">
         <h1>ライブラリ</h1>
+        <div style="margin-bottom: 20px;">
+    <input type="text" id="search-bar" placeholder="曲名、アーティストで検索..." 
+        style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; box-sizing: border-box; outline: none;">
+</div>
         <div id="drop-zone">タップしてM4aファイルを追加</div>
         <div id="track-list"></div>
     </div>
@@ -65,6 +69,7 @@
     </div>
 
     <script>
+        const searchBar = document.getElementById('search-bar');
         const canvas = document.getElementById('color-canvas');
         const ctx = canvas.getContext('2d');
         const dropZone = document.getElementById('drop-zone');
@@ -209,6 +214,50 @@
                 playBtn.innerText = '▶️';
             }
         };
+// 検索バーの入力イベント（改良版：追加ボタンを残す）
+searchBar.oninput = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    // リスト部分だけをクリア（drop-zoneは残す）
+    trackList.innerHTML = '';
+    
+    playlist.forEach((track, index) => {
+        const title = track.title.toLowerCase();
+        const artist = track.artist.toLowerCase();
+        
+        if (title.includes(searchTerm) || artist.includes(searchTerm)) {
+            addTrackToUI(track, index);
+        }
+    });
+
+    if (playlist.length > 0 && trackList.innerHTML === '') {
+        trackList.innerHTML = '<p style="color: #666; text-align: center;">一致する曲が見つかりません</p>';
+    }
+};
+
+// スクリプトの一番下、searchBar.oninput をこれ1つに書き換えてください
+searchBar.oninput = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    // リスト部分だけをクリア
+    trackList.innerHTML = '';
+    
+    // プレイリストの中から一致するものだけを再表示
+    playlist.forEach((track, index) => {
+        const title = track.title.toLowerCase();
+        const artist = track.artist.toLowerCase();
+        
+        if (title.includes(searchTerm) || artist.includes(searchTerm)) {
+            addTrackToUI(track, index);
+        }
+    });
+
+    // 検索結果がゼロの場合の表示
+    if (playlist.length > 0 && trackList.innerHTML === '') {
+        trackList.innerHTML = '<p style="color: #666; text-align: center;">一致する曲が見つかりません</p>';
+    }
+};
+
     </script>
 </body>
 </html>
