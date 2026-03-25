@@ -1,3 +1,12 @@
+・UIや文字にもう少し色をつけてください。
+・フルプレイヤーとミニプレイヤーにすりガラス効果をつけて少し透けさせてください。ジャケットは透けさせないでください。
+・ボタンにアニメーションをつけてみてください。魔法少女や、ウィッシュコアを意識してください。
+
+【必ず厳守してください】
+・既存の機能は絶対に消去せずに、機能の追加や変更のみ行ってください。
+・コード行数が今よりも減らないようにしてください。
+
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,18 +17,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     <style>
         :root {
-            --key-color: #ffdce5;
-            --key-color-dark: #ff85a2;
-            --accent-blue: #d0e9ff;
-            --accent-purple: #e0d1ff;
-            --text-main: #5d5d81;
-            --text-wish: #8a7fb9;
-            --glass: rgba(255, 255, 255, 0.4); 
-            --glass-heavy: rgba(255, 255, 255, 0.75);
+            /* パレットの微調整：シンプルすぎないよう深みを追加 */
+            --key-color: #fbe0e6;
+            --accent-blue: #e1f1fa;
+            --accent-green: #ebf5e6;
+            --accent-purple: #eee5f8;
+            --text-main: #4a4a6a;
+            --sub-text: #8e94b3;
+            --glass: rgba(255, 255, 255, 0.75);
             --star-clip: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            --card-shadow: 0 12px 30px rgba(255, 180, 200, 0.25);
-            --magic-glow: 0 0 15px rgba(255, 255, 255, 0.8);
-            --device-width: 390px; /* iPhone 12 Width */
+            --card-shadow: 0 12px 30px rgba(180, 190, 220, 0.2);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -27,248 +34,240 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Hiragino Sans", sans-serif;
             background: #ffffff;
+            /* 背景に動きのある装飾を追加 */
             background-image: 
                 radial-gradient(circle at 10% 20%, var(--accent-blue) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, var(--key-color) 0%, transparent 40%),
-                linear-gradient(135deg, #fff5f8 0%, #f0f7ff 100%);
+                linear-gradient(135deg, #fff 0%, #f9f9ff 100%);
             margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column;
             color: var(--text-main);
-            letter-spacing: 0.02em;
-            align-items: center; /* 端末サイズ調整用 */
+            letter-spacing: 0.01em;
         }
 
-        /* 全体コンテナ：iPhone12の横幅を超えないように設定 */
-        .app-container {
-            width: 100%;
-            max-width: var(--device-width);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            background: transparent;
-            box-shadow: 0 0 100px rgba(0,0,0,0.02);
-        }
+        /* 背景オーブ装飾 */
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 15s infinite alternate; }
+        @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 50px); } }
 
-        .bg-orb { position: absolute; border-radius: 50%; filter: blur(70px); z-index: -1; opacity: 0.6; animation: float 12s infinite alternate ease-in-out; }
-        @keyframes float { 
-            from { transform: translate(0,0) scale(1); } 
-            to { transform: translate(40px, 60px) scale(1.1); } 
-        }
-
-        button, i { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        button:active, i:active { transform: scale(0.85) rotate(5deg); filter: brightness(1.2); }
-        
-        .magic-btn { position: relative; overflow: hidden; }
-        .magic-btn::after {
-            content: '✧'; position: absolute; top: -10px; right: -10px; font-size: 10px; opacity: 0;
-            transition: 0.5s;
-        }
-        .magic-btn:hover::after { opacity: 1; transform: translate(-15px, 15px); }
-
-        /* --- Header: スタイリッシュな固定リボン --- */
-        .header { 
-            padding: calc(40px + env(safe-area-inset-top)) 20px 12px; 
-            background: var(--glass); 
-            backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); 
-            border-bottom: 1px solid rgba(255,255,255,0.3); 
-            z-index: 100;
-            width: 100%;
-        }
+        /* --- Header --- */
+        .header { padding: calc(45px + env(safe-area-inset-top)) 20px 15px; background: var(--glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-bottom: 1.5px solid rgba(255,255,255,0.9); z-index: 100; box-shadow: 0 2px 15px rgba(0,0,0,0.02); }
         .header-top { display: flex; justify-content: space-between; align-items: center; }
-        .header-top h2 { 
-            font-size: 18px; font-weight: 800; margin: 0;
-            background: linear-gradient(45deg, var(--text-main), var(--key-color-dark));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            letter-spacing: 0.05em;
-        }
-        #right-btn i { 
-            color: var(--key-color-dark); background: #fff; width: 34px; height: 34px; 
-            display: flex; align-items: center; justify-content: center; border-radius: 50%; 
-            box-shadow: 0 4px 12px rgba(255,133,162,0.15); 
-            border: 1.5px solid var(--key-color);
-            font-size: 14px;
+        .header-top h2 { font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: 0.08em; text-transform: uppercase; }
+        #left-btn, #right-btn { background: none; border: none; color: var(--sub-text); font-size: 14px; font-weight: 700; cursor: pointer; padding: 8px; }
+        #right-btn i { font-size: 20px; color: var(--text-main); background: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+        .search-container { padding: 12px 20px; background: rgba(255,255,255,0.3); backdrop-filter: blur(10px); display: flex; gap: 10px; align-items: center; border-bottom: 0.5px solid rgba(255,255,255,0.5); }
+        #search-input { flex: 1; padding: 11px 20px; border-radius: 25px; border: 2px solid #fff; background: rgba(255,255,255,0.9); font-size: 13px; outline: none; box-shadow: 0 8px 20px rgba(0,0,0,0.03); }
+        .sort-select { background: #fff; border: 1.5px solid #fff; border-radius: 14px; font-size: 11px; color: var(--sub-text); padding: 8px 12px; outline: none; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+
+        /* --- Content Area --- */
+        #content { flex: 1; overflow-y: auto; padding-bottom: 180px; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding: 20px; }
+        
+        .card { position: relative; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card:active { transform: scale(0.96); }
+        .card-img { width: 100%; aspect-ratio: 1/1; border-radius: 32px; object-fit: cover; box-shadow: var(--card-shadow); border: 5px solid #fff; display: block; background: #fff; }
+        .card-info { padding: 8px 4px; }
+        .card-title { font-size: 14px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-sub { font-size: 11px; color: var(--sub-text); margin-top: 4px; display: flex; align-items: center; justify-content: space-between; }
+        /* 年数を小さく表示 */
+        .card-year { font-size: 9px; opacity: 0.6; font-weight: 500; background: rgba(0,0,0,0.04); padding: 1px 6px; border-radius: 10px; }
+        
+        .card-tag { display: inline-block; font-size: 9px; background: linear-gradient(135deg, var(--accent-blue), #fff); color: var(--text-main); padding: 3px 10px; border-radius: 20px; margin-top: 6px; font-weight: 700; border: 1px solid #fff; }
+
+        .list-item { display: flex; align-items: center; padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,0.4); cursor: pointer; transition: 0.3s; position: relative; }
+        .list-item:active { background: rgba(255,255,255,0.6); }
+        .list-item img:not(.artist-icon) { width: 58px; height: 58px; border-radius: 18px; margin-right: 18px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+
+        /* アーティストアイコンの強化 */
+        .artist-icon-container { width: 72px; height: 72px; margin-right: 20px; flex-shrink: 0; filter: drop-shadow(0 10px 15px rgba(180,180,210,0.3)); position: relative; }
+        .artist-icon { 
+            width: 100%; height: 100%; object-fit: cover; 
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--key-color)); 
+            display: flex; align-items: center; justify-content: center; 
+            color: #fff; clip-path: var(--star-clip); border: none;
         }
 
-        #content { flex: 1; overflow-y: auto; padding-bottom: 180px; scroll-behavior: smooth; width: 100%; }
-        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; padding: 15px; }
-        
-        .card { position: relative; cursor: pointer; }
-        .card-img { 
-            width: 100%; aspect-ratio: 1/1; border-radius: 30px; object-fit: cover; 
-            box-shadow: var(--card-shadow); border: 5px solid #fff; display: block; background: #fff;
-            transition: transform 0.4s ease;
-        }
-        .card:hover .card-img { transform: translateY(-3px); }
-        .card-title { font-size: 13px; font-weight: 800; color: var(--text-main); margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-sub { font-size: 11px; color: var(--text-wish); font-weight: 600; }
-        
-        .card-tag { 
-            background: linear-gradient(135deg, var(--key-color), var(--accent-purple)); 
-            color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 9px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
+        .swipe-container { position: relative; overflow: hidden; background: transparent; }
+        .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 85px; background: #fff1f1; color: #ff8e8e; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
 
-        .mini-player { 
-            position: absolute; bottom: calc(85px + env(safe-area-inset-bottom)); left: 12px; right: 12px; height: 72px; 
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border-radius: 24px; display: none; align-items: center; padding: 0 12px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.06), inset 0 0 0 1px rgba(255,255,255,0.4); 
-            z-index: 2000;
-        }
-        
-        #m-img { 
-            width: 50px; height: 50px; border-radius: 14px; object-fit: cover; 
-            border: 2px solid #fff; box-shadow: 0 5px 10px rgba(0,0,0,0.05);
-        }
-
-        .full-player { 
-            position: fixed; inset: 0; z-index: 5000; display: flex; flex-direction: column; 
-            transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1); 
-            visibility: hidden; 
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(40px) saturate(150%); -webkit-backdrop-filter: blur(40px) saturate(150%);
-            width: 100%; max-width: var(--device-width); left: 50%; translate: -50% 0;
-        }
+        /* --- Full Player --- */
+        .full-player { position: fixed; inset: 0; z-index: 5000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0, 0, 1); visibility: hidden; background: #fff; }
         .full-player.active { transform: translateY(0); visibility: visible; }
 
-        #f-img { 
-            width: 100%; height: 100%; border-radius: 40px; object-fit: cover; 
-            box-shadow: 0 30px 60px rgba(180,150,180,0.3); 
-            border: 10px solid #fff;
-        }
+        #bg-blur-overlay { position: absolute; inset: 0; z-index: -1; background: #fff; overflow: hidden; }
+        .bg-sphere { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: radial-gradient(circle, var(--accent-blue) 0%, var(--accent-purple) 25%, var(--key-color) 50%, var(--accent-green) 100%); filter: blur(100px); opacity: 0.5; animation: rotateBg 30s linear infinite; }
+        @keyframes rotateBg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .seeker { 
-            -webkit-appearance: none; width: 100%; height: 6px; 
-            background: rgba(255, 255, 255, 0.4); border-radius: 10px;
-        }
-        .seeker::-webkit-slider-thumb { 
-            -webkit-appearance: none; width: 20px; height: 20px; background: var(--key-color-dark); 
-            border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 10px var(--key-color);
-        }
+        #f-artwork-container { width: 85vw; max-width: 360px; aspect-ratio: 1/1; position: relative; transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
+        #f-img { width: 100%; height: 100%; border-radius: 48px; object-fit: cover; box-shadow: 0 60px 120px rgba(150,150,180,0.3); border: 10px solid #fff; }
+        #f-lyrics-view { position: absolute; inset: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(40px); border-radius: 48px; padding: 50px 35px; overflow-y: auto; display: none; flex-direction: column; align-items: center; text-align: center; font-size: 19px; line-height: 2.4; color: var(--text-main); font-weight: 600; }
+        #f-lyrics-view.active { display: flex; }
 
-        /* --- Tab Bar: スタイリッシュな固定リボン --- */
-        .tab-bar { 
-            position: absolute; bottom: 0; width: 100%; height: calc(75px + env(safe-area-inset-bottom)); 
-            background: var(--glass-heavy); backdrop-filter: blur(25px); 
-            display: flex; justify-content: space-around; padding-top: 10px; 
-            border-top: 1px solid rgba(255,255,255,0.4); z-index: 1000; 
-        }
-        .tab-item { color: #bfc3da; transition: 0.3s; }
-        .tab-item.active { 
-            color: var(--key-color-dark); 
-            transform: translateY(-2px);
-        }
+        .seeker { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(0,0,0,0.06); border-radius: 12px; outline: none; margin: 50px 0 15px; }
+        .seeker::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #fff; border: 1px solid #f0f0f0; border-radius: 50%; box-shadow: 0 8px 20px rgba(0,0,0,0.12); cursor: pointer; }
 
-        /* スワイプ削除関連 */
-        .swipe-container { position: relative; overflow: hidden; background: transparent; width: 100%; }
-        /* Removeアイコンは初期状態で隠れている */
-        .swipe-delete-btn { 
-            position: absolute; right: 0; top: 0; bottom: 0; width: 85px; 
-            background: #ff7e9d; color: #fff; display: flex; align-items: center; 
-            justify-content: center; font-weight: 800; font-size: 13px;
-            transform: translateX(100%); transition: transform 0.3s ease;
-        }
-        .swiping .swipe-delete-btn { transform: translateX(0); }
+        .mini-player { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 15px; right: 15px; height: 76px; background: rgba(255,255,255,0.95); backdrop-filter: blur(40px); border-radius: 26px; display: none; align-items: center; padding: 0 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); z-index: 2000; border: 2px solid #fff; }
+        #m-img { width: 52px; height: 52px; border-radius: 16px; margin-right: 15px; object-fit: cover; border: 2.5px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        /* --- Tab Bar --- */
+        .tab-bar { position: fixed; bottom: 0; width: 100%; height: calc(85px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.9); backdrop-filter: blur(40px); display: flex; justify-content: space-around; padding-top: 15px; border-top: 1.5px solid rgba(255,255,255,0.8); z-index: 1000; }
+        .tab-item { border:none; background:none; color: #bcc1d8; font-weight: 700; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 7px; width: 33%; transition: all 0.4s; }
+        .tab-item.active { color: var(--text-main); }
+        .tab-item i { font-size: 24px; }
 
-        .modal { position: fixed; inset: 0; background: #ffffff; z-index: 7000; display: none; flex-direction: column; width: 100%; max-width: var(--device-width); left: 50%; translate: -50% 0; }
-        .list-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid rgba(0,0,0,0.03); cursor: pointer; transition: 0.3s; position: relative; background: transparent; z-index: 2; width: 100%; }
-        .artist-icon-container { width: 64px; height: 64px; margin-right: 15px; flex-shrink: 0; position: relative; }
-        .artist-icon { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; clip-path: var(--star-clip); background: var(--key-color); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
-        .del-badge { position: absolute; top: -8px; left: -8px; width: 30px; height: 30px; background: var(--key-color-dark); color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 2px solid #fff; z-index: 10; font-size: 12px; }
+        /* Modal & UI Elements */
+        .modal { position: fixed; inset: 0; background: #ffffff; z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.5s cubic-bezier(0.2, 1, 0.2, 1); }
+        @keyframes modalSlide { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-body { padding: 35px; overflow-y: auto; flex: 1; }
+        .edit-input { width: 100%; padding: 20px; border: 2px solid #f2f2f7; border-radius: 22px; margin-bottom: 24px; outline: none; font-size: 16px; background: #fbfbfc; color: var(--text-main); transition: 0.3s; }
+        .edit-input:focus { border-color: var(--accent-blue); background: #fff; }
+        .field-label { font-size: 11px; color: var(--sub-text); font-weight: 800; letter-spacing: 0.15em; display: block; margin-bottom: 12px; margin-left: 8px; text-transform: uppercase; }
+
+        .artist-chip { display: inline-block; padding: 10px 22px; background: #fff; border: 2px solid #f0f0f5; border-radius: 28px; font-size: 12px; margin: 0 8px 12px 0; color: var(--sub-text); font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .artist-chip:active { background: var(--accent-blue); border-color: #fff; }
+
+        .del-badge { position: absolute; top: -12px; left: -12px; width: 36px; height: 36px; background: #ff7e7e; color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 3px solid #fff; z-index: 10; font-size: 14px; box-shadow: 0 8px 20px rgba(255,126,126,0.3); }
         .editing .del-badge { display: flex; }
+        
+        .check-item { display: flex; align-items: center; padding: 20px 30px; border-bottom: 1.5px solid #f8f8fa; cursor: pointer; }
+        .check-item input[type="checkbox"] { width: 24px; height: 24px; margin-right: 22px; accent-color: #a6cbe3; border-radius: 8px; }
+
+        .queue-panel { position: absolute; inset: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(60px); z-index: 6000; transform: translateY(100%); transition: transform 0.7s cubic-bezier(0.2, 1, 0.2, 1); display: flex; flex-direction: column; }
+        .queue-panel.open { transform: translateY(0); }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="bg-orb" style="width:300px; height:300px; background:var(--accent-blue); top:-80px; left:-40px;"></div>
-        <div class="bg-orb" style="width:250px; height:250px; background:var(--key-color); bottom:120px; right:-40px;"></div>
+    <div class="bg-orb" style="width:300px; height:300px; background:var(--accent-blue); top:-100px; left:-50px;"></div>
+    <div class="bg-orb" style="width:250px; height:250px; background:var(--key-color); bottom:100px; right:-50px;"></div>
 
-        <div class="header">
-            <div class="header-top">
-                <button id="left-btn" onclick="handleHeaderLeft()" style="color:var(--text-wish); font-weight:800; border:none; background:none; font-size:14px;">Edit</button>
-                <h2 id="view-title">Artists</h2>
-                <button id="right-btn" onclick="handleHeaderRight()" style="border:none; background:none;"><i class="fa-solid fa-plus"></i></button>
-            </div>
+    <div class="header">
+        <div class="header-top">
+            <button id="left-btn" onclick="handleHeaderLeft()">Edit</button>
+            <h2 id="view-title">Artists</h2>
+            <button id="right-btn" onclick="handleHeaderRight()"><i class="fa-solid fa-plus"></i></button>
         </div>
-        
-        <div class="search-container" style="padding: 12px 15px; display: flex; gap: 8px;">
-            <input type="text" id="search-input" placeholder="Search..." oninput="render()" style="flex: 1; padding: 10px 18px; border-radius: 20px; border: 1px solid #fff; background: rgba(255,255,255,0.5); font-size: 13px; outline: none;">
-            <select id="sort-type" onchange="render()" style="background: rgba(255,255,255,0.8); border: none; border-radius: 12px; font-size: 10px; color: var(--text-wish); padding: 0 8px; font-weight: 700;">
-                <option value="added">New</option>
-                <option value="name_asc">A-Z</option>
-                <option value="year">Date</option>
-            </select>
-        </div>
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search track, artist..." oninput="render()">
+        <select id="sort-type" class="sort-select" onchange="render()">
+            <option value="added">Newest</option>
+            <option value="name_asc">Title A-Z</option>
+            <option value="name_desc">Title Z-A</option>
+            <option value="year">Release Date</option>
+        </select>
+    </div>
 
-        <div id="content"><div id="main-display"></div></div>
+    <div id="content"><div id="main-display"></div></div>
 
-        <div class="mini-player" id="mini" onclick="openFull()">
-            <img id="m-img" src="">
-            <div id="m-title" style="flex:1; font-weight:800; font-size:14px; color:var(--text-main); margin-left: 12px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;"></div>
-            <i id="m-pp" class="fa-solid fa-play" style="font-size:24px; color:var(--key-color-dark); padding:10px;" onclick="event.stopPropagation(); togglePlay();"></i>
-        </div>
-
-        <div class="tab-bar">
-            <button class="tab-item active" id="tab-artist" onclick="switchTab('artists')" style="border:none; background:none; font-size:10px; font-weight:800; display:flex; flex-direction:column; align-items:center; gap:4px;"><i class="fa-solid fa-user" style="font-size:22px;"></i><span>Artists</span></button>
-            <button class="tab-item" id="tab-lib" onclick="switchTab('library')" style="border:none; background:none; font-size:10px; font-weight:800; display:flex; flex-direction:column; align-items:center; gap:4px;"><i class="fa-solid fa-music" style="font-size:22px;"></i><span>Library</span></button>
-            <button class="tab-item" id="tab-play" onclick="switchTab('playlist')" style="border:none; background:none; font-size:10px; font-weight:800; display:flex; flex-direction:column; align-items:center; gap:4px;"><i class="fa-solid fa-list-ul" style="font-size:22px;"></i><span>Playlists</span></button>
+    <div class="mini-player" id="mini" onclick="openFull()">
+        <img id="m-img" src="">
+        <div id="m-title" style="flex:1; font-weight:700; font-size:15px; color:var(--text-main); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; letter-spacing:0.02em;"></div>
+        <div style="display:flex; align-items:center; gap:5px;">
+             <i id="m-pp" class="fa-solid fa-play" style="font-size:24px; color:var(--text-main); padding:15px;" onclick="event.stopPropagation(); togglePlay();"></i>
         </div>
     </div>
 
     <div class="full-player" id="full">
-        <div onclick="closeFull()" style="padding:20px; text-align:center;"><div style="width:40px; height:5px; border-radius:10px; background:rgba(0,0,0,0.1); margin:0 auto;"></div></div>
-        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 35px;">
-            <div id="f-artwork-container" style="width: 100%; aspect-ratio: 1/1; position: relative;">
+        <div id="bg-blur-overlay"><div class="bg-sphere"></div></div>
+        <div onclick="closeFull()" style="padding:30px; text-align:center;"><div style="width:45px; height:6px; border-radius:10px; background:rgba(0,0,0,0.1); margin:0 auto;"></div></div>
+        
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 40px;">
+            <div id="f-artwork-container">
                 <img id="f-img">
-                <div id="f-lyrics-view" onclick="toggleLyrics()" style="position: absolute; inset: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(15px); border-radius: 40px; padding: 30px; display: none; overflow-y: auto; text-align: center; font-weight: 700;"></div>
+                <div id="f-lyrics-view" onclick="toggleLyrics()"></div>
             </div>
-            <div style="width:100%; margin-top:40px; display:flex; justify-content:space-between; align-items:center;">
-                <div style="flex:1; overflow:hidden;">
-                    <div id="f-title" style="font-size:24px; font-weight:900; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-                    <div id="f-artist" style="font-size:16px; color:var(--text-wish); font-weight:700;"></div>
+            
+            <div style="width:100%; margin-top:60px; display:flex; justify-content:space-between; align-items:flex-end;">
+                <div style="flex:1; overflow:hidden; padding-right:20px;">
+                    <div id="f-title" style="font-size:26px; font-weight:800; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+                    <div id="f-artist" style="font-size:18px; color:var(--sub-text); margin-top:8px; font-weight:600;"></div>
                 </div>
-                <button onclick="toggleQueue()" style="background:rgba(255,255,255,0.6); border:none; color:var(--text-wish); border-radius:12px; width:40px; height:40px;"><i class="fa-solid fa-bars"></i></button>
+                <div style="display:flex; gap:8px;">
+                    <button id="f-lyric-btn" onclick="toggleLyrics()" style="background:rgba(0,0,0,0.03); border:none; color:var(--text-main); border-radius:12px; font-size:18px; width:44px; height:44px;"><i class="fa-solid fa-quote-right"></i></button>
+                    <button onclick="toggleQueue()" style="background:rgba(0,0,0,0.03); border:none; color:var(--text-main); border-radius:12px; font-size:18px; width:44px; height:44px;"><i class="fa-solid fa-list-ul"></i></button>
+                </div>
             </div>
-            <input type="range" class="seeker" id="seeker" value="0" step="0.1" oninput="audio.currentTime=this.value" style="margin-top:30px;">
-            <div style="width:100%; display:flex; justify-content:space-between; color:var(--text-wish); font-size:11px; font-weight:800; margin-top:8px;">
+            
+            <input type="range" class="seeker" id="seeker" value="0" step="0.1" oninput="audio.currentTime=this.value">
+            <div style="width:100%; display:flex; justify-content:space-between; color:var(--sub-text); font-size:12px; font-weight:700; letter-spacing:0.05em;">
                 <span id="cur-time">0:00</span><span id="dur-time">0:00</span>
             </div>
-            <div style="display:flex; width:100%; justify-content:space-between; align-items:center; margin-top:30px;">
-                <i class="fa-solid fa-shuffle" id="btn-shuffle" onclick="toggleShuffle()" style="opacity:0.5; font-size:20px;"></i>
-                <div style="display:flex; align-items:center; gap:35px;">
-                    <i class="fa-solid fa-backward-step" style="font-size:28px;" onclick="prev()"></i>
-                    <i id="f-pp" class="fa-solid fa-play" style="font-size:55px; color:var(--key-color-dark);" onclick="togglePlay()"></i>
-                    <i class="fa-solid fa-forward-step" style="font-size:28px;" onclick="next()"></i>
+
+            <div style="display:flex; width:100%; justify-content:space-between; align-items:center; margin-top:55px;">
+                <button onclick="toggleShuffle()" id="btn-shuffle" style="background:none; border:none; font-size:20px; color:var(--sub-text); opacity:0.4;"><i class="fa-solid fa-shuffle"></i></button>
+                <div style="display:flex; align-items:center; gap:48px;">
+                    <i class="fa-solid fa-backward-step" style="font-size:28px; color:var(--text-main);" onclick="prev()"></i>
+                    <i id="f-pp" class="fa-solid fa-play" style="font-size:58px; color:var(--text-main);" onclick="togglePlay()"></i>
+                    <i class="fa-solid fa-forward-step" style="font-size:28px; color:var(--text-main);" onclick="next()"></i>
                 </div>
-                <i class="fa-solid fa-repeat" id="btn-repeat" onclick="toggleRepeat()" style="opacity:0.5; font-size:20px;"></i>
+                <button onclick="toggleRepeat()" id="btn-repeat" style="background:none; border:none; font-size:20px; color:var(--sub-text); opacity:0.4; position:relative;"><i class="fa-solid fa-repeat"></i><span id="repeat-badge" style="display:none; position:absolute; top:-8px; right:-10px; background:var(--text-main); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; text-align:center; line-height:18px; font-weight:800;">1</span></button>
             </div>
         </div>
-        <div class="queue-panel" id="queue-panel" style="position:absolute; inset:0; background:#fff; transform:translateY(100%); transition:0.5s; z-index:6000; display:flex; flex-direction:column;">
-            <div style="padding:20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0; font-size:17px;">Queue</h3>
-                <button onclick="toggleQueue()" style="border:none; background:var(--key-color); padding:5px 15px; border-radius:10px; font-weight:800;">Close</button>
+
+        <div class="queue-panel" id="queue-panel">
+            <div style="padding:25px 30px; border-bottom:1.5px solid #f5f5f7; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:19px; font-weight:800;">Up Next</h3>
+                <button onclick="toggleQueue()" style="background:#f0f0f5; border:none; font-size:14px; color:var(--text-main); font-weight:700; padding:8px 18px; border-radius:15px;">Close</button>
             </div>
             <div id="queue-list" style="flex:1; overflow-y:auto;"></div>
         </div>
     </div>
 
     <div id="edit-modal" class="modal">
-        <div class="header"><div class="header-top"><button onclick="closeEdit()">Cancel</button><h2>Track</h2><button onclick="saveEdit()" style="color:var(--key-color-dark); font-weight:900;">Save</button></div></div>
-        <div style="padding:20px;">
-            <input type="text" id="edit-name" class="edit-input" placeholder="Title" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:15px;">
-            <input type="text" id="edit-artist" class="edit-input" placeholder="Artist" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee;">
-            <div id="artist-quick-select" style="margin-top:10px;"></div>
+        <div class="header">
+            <div class="header-top">
+                <button onclick="closeEdit()">Cancel</button>
+                <h2 style="font-size:17px;">Track Details</h2>
+                <button onclick="saveEdit()" style="color:var(--text-main); font-weight:800;">Save</button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <span class="field-label">Song Title</span>
+            <input type="text" id="edit-name" class="edit-input" placeholder="e.g. Pure Wish">
+            
+            <span class="field-label">Artist Name</span>
+            <input type="text" id="edit-artist" class="edit-input" placeholder="Artist" oninput="updateArtistSuggest(this.value)">
+            <div id="artist-quick-select" style="margin-bottom: 25px;"></div>
+            
+            <span class="field-label">Release Year</span>
+            <input type="text" id="edit-year" class="edit-input" placeholder="2026">
+            
+            <span class="field-label">Lyrics</span>
+            <textarea id="edit-lyrics" class="edit-input" style="height:250px; resize:none; font-family:inherit; line-height:1.7;" placeholder="Write lyrics..."></textarea>
         </div>
     </div>
 
     <div id="pl-edit-modal" class="modal">
-        <div class="header"><div class="header-top"><button onclick="closePlEdit()">Cancel</button><h2>Playlist</h2><button onclick="savePlEdit()" style="color:var(--key-color-dark); font-weight:800;">Done</button></div></div>
-        <div style="padding:20px; text-align:center;">
-            <img id="pl-edit-img" style="width:150px; height:150px; border-radius:20px; object-fit:cover; margin-bottom:20px;" onclick="document.getElementById('pl-img-input').click()">
-            <input type="file" id="pl-img-input" style="display:none" onchange="previewPlImg(event)">
-            <input type="text" id="pl-edit-name" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee;" placeholder="Name">
+        <div class="header">
+            <div class="header-top">
+                <button onclick="closePlEdit()">Cancel</button>
+                <h2 style="font-size:17px;">Playlist Settings</h2>
+                <button onclick="savePlEdit()" style="color:var(--text-main); font-weight:800;">Done</button>
+            </div>
         </div>
+        <div class="modal-body" style="text-align:center; padding-top:40px;">
+            <div style="position:relative; display:inline-block; margin-bottom:40px;">
+                <img id="pl-edit-img" style="width:220px; height:220px; border-radius:40px; object-fit:cover; background:#f9f9fb; border:6px solid #fff; box-shadow:0 30px 60px rgba(0,0,0,0.08); cursor:pointer;" onclick="document.getElementById('pl-img-input').click()">
+                <div style="position:absolute; bottom:12px; right:12px; background:#fff; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 15px rgba(0,0,0,0.1); pointer-events:none;">
+                    <i class="fa-solid fa-camera" style="font-size:18px; color:var(--sub-text);"></i>
+                </div>
+            </div>
+            <input type="file" id="pl-img-input" style="display:none" onchange="previewPlImg(event)">
+            
+            <div style="text-align:left;">
+                <span class="field-label">Playlist Name</span>
+                <input type="text" id="pl-edit-name" class="edit-input">
+                <span class="field-label">Hashtag / Tag</span>
+                <input type="text" id="pl-edit-tag" class="edit-input" placeholder="#Favorite">
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-item active" id="tab-artist" onclick="switchTab('artists')"><i class="fa-solid fa-user-astronaut"></i><span>Artists</span></button>
+        <button class="tab-item" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-layer-group"></i><span>Library</span></button>
+        <button class="tab-item" id="tab-play" onclick="switchTab('playlist')"><i class="fa-solid fa-heart-pulse"></i><span>Playlists</span></button>
     </div>
 
     <input type="file" id="audio-upload" multiple style="display:none">
@@ -276,9 +275,9 @@
     <audio id="audio-element"></audio>
 
     <script>
-        // --- 既存機能のロジックを完全継承 ---
         let db, tracks = [], playlists = [], artistMeta = {}, isEditing = false, currentView = 'artists', currentArtist = null, currentPlaylistId = null;
         let playingTracks = [], currentTrackIdx = -1, isShuffle = false, repeatMode = 0; 
+        let historyTracks = []; 
         let editingId = null, editingPlId = null, tempPlImg = null, editingArtistName = null;
         const audio = document.getElementById('audio-element');
 
@@ -302,164 +301,318 @@
             };
         }
 
+        function sortList(list, type) {
+            if (type === 'name_asc') return list.sort((a,b) => (a.name||'').localeCompare(b.name||'','ja'));
+            if (type === 'name_desc') return list.sort((a,b) => (b.name||'').localeCompare(a.name||'','ja'));
+            if (type === 'year') return list.sort((a,b) => (b.year||'').toString().localeCompare((a.year||'').toString()));
+            return list;
+        }
+
         function render() {
             const display = document.getElementById('main-display');
             const title = document.getElementById('view-title');
+            const rightBtn = document.getElementById('right-btn');
             const search = document.getElementById('search-input').value.toLowerCase();
-            
+            const sort = document.getElementById('sort-type').value;
+
             document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
             const activeTabId = currentView === 'playlist' ? 'tab-play' : currentView === 'artists' ? 'tab-artist' : 'tab-lib';
-            document.getElementById(activeTabId)?.classList.add('active');
+            const tabEl = document.getElementById(activeTabId);
+            if(tabEl) tabEl.classList.add('active');
+
+            if (currentArtist) rightBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            else rightBtn.innerHTML = '<i class="fa-solid fa-plus"></i>';
 
             if (currentView === 'library') {
                 title.innerText = "Library"; display.className = "grid";
                 let list = tracks.filter(t => t.name.toLowerCase().includes(search) || t.artist.toLowerCase().includes(search));
+                list = sortList(list, sort);
                 display.innerHTML = list.map(t => `
                     <div class="card ${isEditing?'editing':''}" onclick="isEditing?openEdit(${t.id}):playSong(${t.id},'lib')">
                         <div class="del-badge" onclick="event.stopPropagation(); deleteSong(${t.id})"><i class="fa-solid fa-trash"></i></div>
                         <img src="${t.cover||''}" class="card-img">
-                        <div class="card-title">${t.name}</div>
-                        <div class="card-sub">${t.artist}</div>
+                        <div class="card-info">
+                            <div class="card-title">${t.name}</div>
+                            <div class="card-sub">${t.artist} ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
+                        </div>
                     </div>`).join('');
+            
             } else if (currentView === 'artists') {
                 if (!currentArtist) {
                     title.innerText = "Artists"; display.className = "";
-                    let artists = [...new Set(tracks.map(t => t.artist))].filter(a => a.toLowerCase().includes(search)).sort();
+                    let artists = [...new Set(tracks.map(t => t.artist))].filter(a => a.toLowerCase().includes(search));
+                    artists.sort((a,b) => sort === 'name_desc' ? b.localeCompare(a,'ja') : a.localeCompare(b,'ja'));
+
                     display.innerHTML = artists.map(a => {
                         const icon = artistMeta[a] ? `<img src="${artistMeta[a]}" class="artist-icon">` : `<div class="artist-icon"><i class="fa-solid fa-user"></i></div>`;
                         return `<div class="list-item" onclick="isEditing ? selectArtistIcon('${a}') : openArtist('${a}')">
                                 <div class="artist-icon-container">${icon}</div>
-                                <div style="font-weight:800; color:var(--text-main);">${a}</div>
+                                <div style="font-weight:700; font-size:17px; letter-spacing:0.02em;">${a}</div>
+                                <i class="fa-solid fa-chevron-right" style="margin-left:auto; font-size:12px; opacity:0.3;"></i>
                             </div>`;
                     }).join('');
                 } else {
                     title.innerText = currentArtist; display.className = "grid";
-                    tracks.filter(t => t.artist === currentArtist).forEach(t => {
-                        display.innerHTML += `<div class="card" onclick="playSong(${t.id},'art')"><img src="${t.cover||''}" class="card-img"><div class="card-title">${t.name}</div></div>`;
-                    });
+                    let list = tracks.filter(t => t.artist === currentArtist);
+                    list = sortList(list, sort);
+                    display.innerHTML = list.map(t => `
+                        <div class="card" onclick="playSong(${t.id},'art')">
+                            <img src="${t.cover||''}" class="card-img">
+                            <div class="card-info">
+                                <div class="card-title">${t.name}</div>
+                                <div class="card-sub">Artist ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
+                            </div>
+                        </div>`).join('');
                 }
+
             } else if (currentView === 'playlist') {
                 if (currentPlaylistId === null) {
                     title.innerText = "Playlists"; display.className = "grid";
-                    playlists.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
-                        const first = tracks.find(t => p.songIds.includes(t.id));
-                        display.innerHTML += `<div class="card ${isEditing?'editing':''}" onclick="isEditing?openPlEdit(${p.id}):openPlaylist(${p.id})">
-                            <div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-x"></i></div>
-                            <img src="${p.cover || (first?first.cover:'')}" class="card-img"><div class="card-title">${p.name}</div>
+                    let list = playlists.filter(p => p.name.toLowerCase().includes(search) || (p.tag && p.tag.toLowerCase().includes(search)));
+                    list = sortList(list, sort);
+                    display.innerHTML = list.map(p => {
+                        const firstSong = tracks.find(t => p.songIds.includes(t.id));
+                        return `<div class="card ${isEditing?'editing':''}" onclick="isEditing?openPlEdit(${p.id}):openPlaylist(${p.id})">
+                            <div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-xmark"></i></div>
+                            <div style="position:relative;">
+                                <img src="${p.cover || (firstSong?firstSong.cover:'')}" class="card-img">
+                                <div style="position:absolute; inset:0; border-radius:32px; background:linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title">${p.name}</div>
+                                <div class="card-sub">${p.songIds.length} tracks</div>
+                                ${p.tag?`<div class="card-tag">${p.tag}</div>`:''}
+                            </div>
                         </div>`;
-                    });
+                    }).join('');
                 } else {
                     const pl = playlists.find(p => p.id === currentPlaylistId);
                     title.innerText = pl.name; display.className = "";
-                    display.innerHTML = pl.songIds.map(id => {
-                        const t = tracks.find(tx => tx.id === id);
-                        if(!t) return '';
-                        return `<div class="swipe-container" id="swipe-${t.id}">
+                    let plSongs = pl.songIds.map(id => tracks.find(t => t.id === id)).filter(t => t);
+                    display.innerHTML = plSongs.map(t => `
+                        <div class="swipe-container" id="swipe-${t.id}">
                             <div class="swipe-delete-btn" onclick="removeTrackFromPlaylist(${t.id})">Remove</div>
                             <div class="list-item" onclick="playSong(${t.id},'pl')"
                                  ontouchstart="handleTouchStart(event, ${t.id})" ontouchmove="handleTouchMove(event, ${t.id})" ontouchend="handleTouchEnd(event, ${t.id})">
-                                <img src="${t.cover||''}" style="width:50px; height:50px; border-radius:12px;">
-                                <div style="margin-left:12px;">
-                                    <div style="font-weight:800; font-size:15px;">${t.name}</div>
-                                    <div style="font-size:12px; color:var(--text-wish);">${t.artist}</div>
+                                <img src="${t.cover||''}">
+                                <div>
+                                    <div style="font-weight:700; font-size:15px;">${t.name}</div>
+                                    <div style="font-size:12px; color:var(--sub-text); margin-top:4px; font-weight:600;">${t.artist} ${t.year?`· ${t.year}`:''}</div>
                                 </div>
                             </div>
-                        </div>`;
-                    }).join('') + `<div style="padding:40px; text-align:center;"><button onclick="openBulkAddModal()" style="padding:12px 25px; border-radius:20px; border:none; background:var(--key-color); font-weight:800;">+ Add Tracks</button></div>`;
+                        </div>`).join('') + 
+                        `<div style="padding:60px 20px; text-align:center;"><button onclick="openBulkAddModal()" style="background:#fff; color:var(--text-main); border:none; padding:18px 45px; border-radius:35px; font-weight:800; font-size:13px; box-shadow: 0 15px 35px rgba(0,0,0,0.06);">+ Add More Tracks</button></div>`;
                 }
             }
             document.getElementById('left-btn').innerText = (currentArtist || currentPlaylistId) ? "Back" : (isEditing ? "Done" : "Edit");
         }
 
-        // --- Touch & Swipe Logic ---
-        let touchStartX = 0;
-        function handleTouchStart(e, id) { touchStartX = e.touches[0].clientX; }
-        function handleTouchMove(e, id) {
-            let moveX = e.touches[0].clientX - touchStartX;
-            const container = document.getElementById(`swipe-${id}`);
-            const el = container.querySelector('.list-item');
-            if (moveX < 0) {
-                el.style.transform = `translateX(${Math.max(moveX, -85)}px)`;
-                container.classList.add('swiping');
+        // --- Core Music Logic ---
+        function next() { 
+            if (playingTracks.length === 0) return;
+            if (repeatMode === 2) { loadTrack(playingTracks[currentTrackIdx]); return; }
+            let nextIdx = currentTrackIdx + 1;
+            if (nextIdx >= playingTracks.length) {
+                if (repeatMode === 1) nextIdx = 0; 
+                else { audio.pause(); audio.currentTime = 0; return; }
             }
+            currentTrackIdx = nextIdx; loadTrack(playingTracks[currentTrackIdx]);
         }
-        function handleTouchEnd(e, id) {
-            const container = document.getElementById(`swipe-${id}`);
-            const el = container.querySelector('.list-item');
-            let moveX = e.changedTouches[0].clientX - touchStartX;
-            el.style.transition = "transform 0.3s ease";
-            if (moveX < -50) {
-                el.style.transform = `translateX(-85px)`;
-            } else {
-                el.style.transform = `translateX(0)`;
-                setTimeout(() => container.classList.remove('swiping'), 300);
-            }
+        function prev() { 
+            if (audio.currentTime > 3) audio.currentTime = 0;
+            else { currentTrackIdx = (currentTrackIdx - 1 + playingTracks.length) % playingTracks.length; loadTrack(playingTracks[currentTrackIdx]); }
         }
-
-        // --- 以下、既存の音楽プレイヤー・管理ロジック一式 (省略せずに保持) ---
         function playSong(id, mode) {
-            let original = (mode==='pl') ? playlists.find(p=>p.id===currentPlaylistId).songIds.map(sid=>tracks.find(tx=>tx.id===sid)) : (mode==='art'?tracks.filter(tx=>tx.artist===currentArtist):[...tracks]);
-            playingTracks = isShuffle ? [...original].sort(()=>Math.random()-0.5) : [...original];
-            currentTrackIdx = playingTracks.findIndex(x=>x.id===id);
+            let original = [];
+            if(mode === 'pl') {
+                const pl = playlists.find(p => p.id === currentPlaylistId);
+                original = pl.songIds.map(sid => tracks.find(tx => tx.id === sid)).filter(x=>x);
+            }
+            else if(mode === 'art') original = tracks.filter(tx => tx.artist === currentArtist);
+            else original = [...tracks];
+            playingTracks = isShuffle ? [...original].sort(() => Math.random() - 0.5) : [...original];
+            currentTrackIdx = playingTracks.findIndex(x => x.id === id);
             loadTrack(playingTracks[currentTrackIdx]);
         }
         function loadTrack(t) {
             if(!t) return;
+            if(currentTrackIdx !== -1 && !historyTracks.some(h => h.id === t.id)) {
+                historyTracks.unshift(t); if(historyTracks.length > 20) historyTracks.pop();
+            }
             if(audio.src) URL.revokeObjectURL(audio.src);
             audio.src = URL.createObjectURL(t.data);
             document.getElementById('m-img').src = t.cover || ''; document.getElementById('m-title').innerText = t.name;
             document.getElementById('f-img').src = t.cover || ''; document.getElementById('f-title').innerText = t.name; document.getElementById('f-artist').innerText = t.artist;
             document.getElementById('mini').style.display = 'flex';
-            audio.play();
+            document.getElementById('f-lyrics-view').classList.remove('active');
+            document.getElementById('f-img').style.opacity = "1";
+            document.getElementById('f-artwork-container').style.transform = "scale(1)";
+            audio.play(); renderQueue();
         }
+
         function togglePlay() { audio.paused ? audio.play() : audio.pause(); }
-        function next() { currentTrackIdx = (currentTrackIdx + 1) % playingTracks.length; loadTrack(playingTracks[currentTrackIdx]); }
-        function prev() { currentTrackIdx = (currentTrackIdx - 1 + playingTracks.length) % playingTracks.length; loadTrack(playingTracks[currentTrackIdx]); }
-        function openFull() { document.getElementById('full').classList.add('active'); }
-        function closeFull() { document.getElementById('full').classList.remove('active'); }
+        function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('btn-shuffle').style.opacity = isShuffle ? "1" : "0.4"; }
+        function toggleRepeat() { 
+            repeatMode = (repeatMode + 1) % 3; 
+            document.getElementById('btn-repeat').style.opacity = repeatMode > 0 ? "1" : "0.4"; 
+            document.getElementById('repeat-badge').style.display = repeatMode === 2 ? "block" : "none"; 
+        }
+
+        function toggleLyrics() {
+            const view = document.getElementById('f-lyrics-view');
+            const isActive = view.classList.toggle('active');
+            document.getElementById('f-img').style.opacity = isActive ? "0.05" : "1";
+            document.getElementById('f-artwork-container').style.transform = isActive ? "scale(1.04)" : "scale(1)";
+            if(isActive) view.innerText = playingTracks[currentTrackIdx]?.lyrics || "...";
+        }
+
+        // --- Edit Logic ---
+        function openEdit(id) { 
+            editingId = id; const t = tracks.find(x => x.id === id); 
+            document.getElementById('edit-name').value = t.name; 
+            document.getElementById('edit-artist').value = t.artist; 
+            document.getElementById('edit-year').value = t.year || ""; 
+            document.getElementById('edit-lyrics').value = t.lyrics || ""; 
+            updateArtistSuggest(t.artist);
+            document.getElementById('edit-modal').style.display = 'flex'; 
+        }
+        function saveEdit() { 
+            const t = tracks.find(x => x.id === editingId); 
+            t.name = document.getElementById('edit-name').value; 
+            t.artist = document.getElementById('edit-artist').value; 
+            t.year = document.getElementById('edit-year').value; 
+            t.lyrics = document.getElementById('edit-lyrics').value; 
+            db.transaction("songs","readwrite").objectStore("songs").put(t).onsuccess = () => { closeEdit(); loadAll(); }; 
+        }
+        function closeEdit() { document.getElementById('edit-modal').style.display = 'none'; }
+
+        function openPlEdit(id) { editingPlId = id; const pl = playlists.find(p => p.id === id); document.getElementById('pl-edit-name').value = pl.name; document.getElementById('pl-edit-tag').value = pl.tag || ""; tempPlImg = pl.cover; document.getElementById('pl-edit-img').src = tempPlImg || ""; document.getElementById('pl-edit-modal').style.display = 'flex'; }
+        function savePlEdit() { const pl = playlists.find(p => p.id === editingPlId); pl.name = document.getElementById('pl-edit-name').value; pl.tag = document.getElementById('pl-edit-tag').value; pl.cover = tempPlImg; db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = () => { closePlEdit(); loadAll(); }; }
+        function closePlEdit() { document.getElementById('pl-edit-modal').style.display = 'none'; }
+        function previewPlImg(e) { const f = e.target.files[0]; if(f){ const r = new FileReader(); r.onload = (ev) => { tempPlImg = ev.target.result; document.getElementById('pl-edit-img').src = tempPlImg; }; r.readAsDataURL(f); } }
+
+        function handleHeaderRight() { 
+            if(currentArtist) {
+                const artTracks = tracks.filter(t => t.artist === currentArtist);
+                if(artTracks.length > 0) playSong(artTracks[0].id, 'art');
+            }
+            else if(currentPlaylistId) openBulkAddModal();
+            else if(currentView==='library') document.getElementById('audio-upload').click(); 
+            else if(currentView==='playlist') {
+                const n = prompt("New Playlist Name:");
+                if(n) db.transaction("playlists","readwrite").objectStore("playlists").add({ name: n, songIds: [], tag: "", cover: null }).onsuccess = loadAll;
+            } 
+        }
+
+        function handleHeaderLeft() { 
+            if(currentArtist) currentArtist=null; 
+            else if(currentPlaylistId) { if(isEditing) isEditing=false; else currentPlaylistId=null; } 
+            else isEditing=!isEditing; 
+            render(); 
+        }
+
         function switchTab(v) { currentView=v; currentArtist=null; currentPlaylistId=null; isEditing=false; render(); }
         function openArtist(n) { currentArtist=n; render(); }
         function openPlaylist(id) { currentPlaylistId=id; render(); }
-        function handleHeaderLeft() { if(currentArtist) currentArtist=null; else if(currentPlaylistId) currentPlaylistId=null; else isEditing=!isEditing; render(); }
-        function handleHeaderRight() { 
-            if(currentPlaylistId) openBulkAddModal();
-            else if(currentView==='library') document.getElementById('audio-upload').click(); 
-            else if(currentView==='playlist') { let n=prompt("Name:"); if(n) db.transaction("playlists","readwrite").objectStore("playlists").add({name:n, songIds:[], cover:null}).onsuccess=loadAll; }
-        }
-        function toggleShuffle() { isShuffle = !isShuffle; document.getElementById('btn-shuffle').style.opacity = isShuffle ? "1" : "0.5"; }
-        function toggleRepeat() { repeatMode = (repeatMode + 1) % 3; document.getElementById('btn-repeat').style.opacity = repeatMode > 0 ? "1" : "0.5"; }
-        function removeTrackFromPlaylist(sid) { const pl = playlists.find(p=>p.id===currentPlaylistId); pl.songIds = pl.songIds.filter(id=>id!==sid); db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess=loadAll; }
-        function deleteSong(id) { if(confirm("Delete?")) db.transaction("songs","readwrite").objectStore("songs").delete(id).onsuccess=loadAll; }
-        function deletePlaylist(id) { if(confirm("Delete?")) db.transaction("playlists","readwrite").objectStore("playlists").delete(id).onsuccess=loadAll; }
-        
-        audio.ontimeupdate = () => { if(!isNaN(audio.duration)){ const s = document.getElementById('seeker'); s.max = audio.duration; s.value = audio.currentTime; document.getElementById('cur-time').innerText = formatTime(audio.currentTime); document.getElementById('dur-time').innerText = formatTime(audio.duration); } };
-        function formatTime(s) { let m=Math.floor(s/60), sec=Math.floor(s%60); return `${m}:${sec<10?'0':''}${sec}`; }
-        
-        document.getElementById('audio-upload').onchange = (e) => {
-            const files = e.target.files; const tx = db.transaction("songs", "readwrite");
-            for (let f of files) {
-                jsmediatags.read(f, { onSuccess: (tag) => {
-                    let c = null; if(tag.tags.picture){
-                        let d = tag.tags.picture.data, s = ""; for(let i=0; i<d.length; i++) s += String.fromCharCode(d[i]);
-                        c = `data:${tag.tags.picture.format};base64,${btoa(s)}`;
-                    }
-                    tx.objectStore("songs").add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "Unknown", cover: c, data: f });
-                }});
+        function openFull() { document.getElementById('full').classList.add('active'); }
+        function closeFull() { document.getElementById('full').classList.remove('active'); }
+        function toggleQueue() { document.getElementById('queue-panel').classList.toggle('open'); renderQueue(); }
+
+        function renderQueue() {
+            const list = document.getElementById('queue-list');
+            let html = "";
+            const nextTracks = playingTracks.slice(currentTrackIdx + 1);
+            if (nextTracks.length > 0) {
+                html += `<div style="padding:20px 30px; font-size:11px; font-weight:800; color:var(--sub-text); letter-spacing:0.12em;">NEXT UP</div>`;
+                html += nextTracks.map((t, i) => `<div class="list-item" onclick="jumpToQueue(${currentTrackIdx + 1 + i})"><img src="${t.cover||''}" style="width:44px; height:44px;"><div><div style="font-weight:700; font-size:15px;">${t.name}</div><div style="font-size:12px; color:var(--sub-text);">${t.artist}</div></div></div>`).join('');
             }
-            tx.oncomplete = () => setTimeout(loadAll, 500);
-        };
+            if (historyTracks.length > 0) {
+                html += `<div style="padding:20px 30px; font-size:11px; font-weight:800; color:var(--sub-text); letter-spacing:0.12em;">RECENTLY PLAYED</div>`;
+                html += historyTracks.map(t => `<div class="list-item" onclick="loadTrackById(${t.id})"><img src="${t.cover||''}" style="width:44px; height:44px; opacity:0.5;"><div><div style="font-weight:700; font-size:15px; color:#999;">${t.name}</div><div style="font-size:12px; color:#ccc;">${t.artist}</div></div></div>`).join('');
+            }
+            list.innerHTML = html || `<div style="padding:100px; text-align:center; color:#ccc; font-weight:700;">No more tracks</div>`;
+        }
+
         function openBulkAddModal() {
             const pl = playlists.find(p => p.id === currentPlaylistId);
-            const div = document.createElement('div'); div.id="bulk-modal"; div.className="modal"; div.style.display="flex";
-            div.innerHTML = `<div class="header"><div class="header-top"><button onclick="this.closest('.modal').remove()">Cancel</button><h2>Select</h2><button onclick="saveBulkAdd()">Done</button></div></div>
-                             <div id="bulk-list" style="flex:1; overflow-y:auto;">${tracks.map(t=>`<label class="list-item"><input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}> ${t.name}</label>`).join('')}</div>`;
-            document.body.appendChild(div);
+            const div = document.createElement('div'); div.id="bulk-modal"; div.className="modal active";
+            let html = `<div class="header"><div class="header-top"><button onclick="this.closest('.modal').remove()">Cancel</button><h2>Select Songs</h2><button onclick="saveBulkAdd()" style="font-weight:800;">Done</button></div></div>`;
+            html += `<div class="search-container"><input type="text" placeholder="Filter songs..." oninput="filterBulk(this.value)"></div>`;
+            html += `<div id="bulk-list" style="flex:1; overflow-y:auto; padding-bottom:100px;">`;
+            html += tracks.map(t => `
+                <label class="check-item" data-search="${t.name.toLowerCase()} ${t.artist.toLowerCase()}">
+                    <input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}>
+                    <img src="${t.cover||''}" style="width:50px; height:50px; border-radius:14px; margin-right:18px;">
+                    <div><b style="color:var(--text-main); font-size:15px;">${t.name}</b><br><span style="font-size:12px; color:var(--sub-text);">${t.artist}</span></div>
+                </label>`).join('');
+            html += `</div>`;
+            div.innerHTML = html; document.body.appendChild(div);
         }
         function saveBulkAdd() {
             const pl = playlists.find(p => p.id === currentPlaylistId);
             pl.songIds = Array.from(document.querySelectorAll('#bulk-list input:checked')).map(i => parseInt(i.value));
             db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = () => { document.getElementById('bulk-modal').remove(); loadAll(); };
         }
+        function filterBulk(val) { const v = val.toLowerCase(); document.querySelectorAll('#bulk-list .check-item').forEach(el => { el.style.display = el.getAttribute('data-search').includes(v) ? 'flex' : 'none'; }); }
+
+        function jumpToQueue(idx) { currentTrackIdx = idx; loadTrack(playingTracks[idx]); }
+        function loadTrackById(id) { const t = tracks.find(x => x.id === id); if(t) loadTrack(t); }
+
+        let touchStartX = 0;
+        function handleTouchStart(e, id) { if(isEditing) return; touchStartX = e.touches[0].clientX; }
+        function handleTouchMove(e, id) {
+            if(isEditing) return;
+            let moveX = e.touches[0].clientX - touchStartX;
+            const el = document.querySelector(`#swipe-${id} .list-item`);
+            if (moveX < 0) { el.style.transform = `translateX(${Math.max(moveX, -85)}px)`; el.style.transition = "none"; }
+        }
+        function handleTouchEnd(e, id) {
+            if(isEditing) return;
+            const el = document.querySelector(`#swipe-${id} .list-item`);
+            let moveX = e.changedTouches[0].clientX - touchStartX;
+            el.style.transition = "transform 0.5s cubic-bezier(0.15, 0, 0.15, 1)";
+            el.style.transform = moveX < -50 ? `translateX(-85px)` : `translateX(0)`;
+        }
+
+        function updateArtistSuggest(val) {
+            const container = document.getElementById('artist-quick-select');
+            const artists = [...new Set(tracks.map(t => t.artist))].filter(a => a.toLowerCase().includes(val.toLowerCase())).sort();
+            container.innerHTML = artists.map(a => `<div class="artist-chip" onclick="document.getElementById('edit-artist').value='${a}'">${a}</div>`).join('');
+        }
+        function selectArtistIcon(name) { editingArtistName = name; document.getElementById('artist-icon-upload').click(); }
+        function saveArtistIcon(e) {
+            const f = e.target.files[0];
+            if(f && editingArtistName) {
+                const r = new FileReader();
+                r.onload = (ev) => { db.transaction("artistMeta", "readwrite").objectStore("artistMeta").put({name: editingArtistName, icon: ev.target.result}).onsuccess = loadAll; };
+                r.readAsDataURL(f);
+            }
+        }
+        function deleteSong(id) { if(confirm("Remove this track?")) db.transaction("songs","readwrite").objectStore("songs").delete(id).onsuccess=loadAll; }
+        function deletePlaylist(id) { if(confirm("Delete this playlist?")) db.transaction("playlists","readwrite").objectStore("playlists").delete(id).onsuccess=loadAll; }
+        function removeTrackFromPlaylist(sid) { const pl = playlists.find(p => p.id === currentPlaylistId); pl.songIds = pl.songIds.filter(id => id !== sid); db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = loadAll; }
+
+        audio.onended = () => { if(repeatMode === 2) { audio.currentTime = 0; audio.play(); } else { next(); } };
+        audio.onplay = () => { document.getElementById('m-pp').className = 'fa-solid fa-pause'; document.getElementById('f-pp').className = 'fa-solid fa-pause'; };
+        audio.onpause = () => { document.getElementById('m-pp').className = 'fa-solid fa-play'; document.getElementById('f-pp').className = 'fa-solid fa-play'; };
+        audio.ontimeupdate = () => { if(!isNaN(audio.duration)){ const s = document.getElementById('seeker'); s.max = audio.duration; s.value = audio.currentTime; document.getElementById('cur-time').innerText = formatTime(audio.currentTime); document.getElementById('dur-time').innerText = formatTime(audio.duration); } };
+        function formatTime(s) { let m=Math.floor(s/60), sec=Math.floor(s%60); return `${m}:${sec<10?'0':''}${sec}`; }
+
+        document.getElementById('audio-upload').onchange = (e) => {
+            const files = e.target.files; if (files.length === 0) return;
+            const tx = db.transaction("songs", "readwrite");
+            const store = tx.objectStore("songs");
+            for (let f of files) {
+                jsmediatags.read(f, { onSuccess: (tag) => {
+                    let c = null; if(tag.tags.picture){
+                        let d = tag.tags.picture.data, s = ""; for(let i=0; i<d.length; i++) s += String.fromCharCode(d[i]);
+                        c = `data:${tag.tags.picture.format};base64,${btoa(s)}`;
+                    }
+                    store.add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "Unknown", year: tag.tags.year || "", cover: c, data: f, lyrics: "" });
+                }});
+            }
+            tx.oncomplete = () => { setTimeout(loadAll, 600); };
+        };
     </script>
 </body>
 </html>
