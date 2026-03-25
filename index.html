@@ -8,16 +8,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     <style>
         :root {
-            /* パレットの微調整：シンプルすぎないよう深みを追加 */
+            /* パレットの強化：ウィッシュコア・魔法少女感を強調 */
             --key-color: #fbe0e6;
             --accent-blue: #e1f1fa;
             --accent-green: #ebf5e6;
             --accent-purple: #eee5f8;
-            --text-main: #4a4a6a;
-            --sub-text: #8e94b3;
-            --glass: rgba(255, 255, 255, 0.75);
+            --magic-pink: #ffb7c5;
+            --magic-star: #fff9ae;
+            --text-main: #5a5a8a;
+            --text-bright: #ff7eb9;
+            --sub-text: #a0a6cc;
+            --glass: rgba(255, 255, 255, 0.45);
+            --glass-heavy: rgba(255, 255, 255, 0.65);
             --star-clip: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            --card-shadow: 0 12px 30px rgba(180, 190, 220, 0.2);
+            --card-shadow: 0 12px 30px rgba(220, 180, 210, 0.25);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -25,117 +29,136 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Hiragino Sans", sans-serif;
             background: #ffffff;
-            /* 背景に動きのある装飾を追加 */
             background-image: 
                 radial-gradient(circle at 10% 20%, var(--accent-blue) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, var(--key-color) 0%, transparent 40%),
-                linear-gradient(135deg, #fff 0%, #f9f9ff 100%);
+                radial-gradient(circle at 50% 50%, var(--accent-purple) 0%, transparent 60%),
+                linear-gradient(135deg, #fff 0%, #fef4f7 100%);
             margin: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column;
             color: var(--text-main);
-            letter-spacing: 0.01em;
+            letter-spacing: 0.02em;
         }
 
-        /* 背景オーブ装飾 */
-        .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 15s infinite alternate; }
-        @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 50px); } }
+        /* 背景オーブ装飾の強化 */
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(70px); z-index: -1; opacity: 0.6; animation: float 12s infinite alternate ease-in-out; }
+        @keyframes float { 
+            from { transform: translate(0,0) scale(1); } 
+            to { transform: translate(40px, 60px) scale(1.1); } 
+        }
+
+        /* --- ボタンアニメーション (魔法少女/ウィッシュコア風) --- */
+        button, i[class*="fa-"] { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+        button:active, i[class*="fa-"]:active { transform: scale(0.85) rotate(-5deg); filter: brightness(1.2); text-shadow: 0 0 12px var(--magic-pink); }
+        
+        .magic-btn-glow { position: relative; overflow: hidden; }
+        .magic-btn-glow::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 5px; height: 5px;
+            background: rgba(255,255,255,0.8); opacity: 0; border-radius: 50%; transform: translate(-50%, -50%);
+        }
+        .magic-btn-glow:active::after { animation: magic-spark 0.6s ease-out; }
+        @keyframes magic-spark {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 100px; height: 100px; opacity: 0; }
+        }
 
         /* --- Header --- */
-        .header { padding: calc(45px + env(safe-area-inset-top)) 20px 15px; background: var(--glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-bottom: 1.5px solid rgba(255,255,255,0.9); z-index: 100; box-shadow: 0 2px 15px rgba(0,0,0,0.02); }
+        .header { padding: calc(45px + env(safe-area-inset-top)) 20px 15px; background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-bottom: 1.5px solid rgba(255,255,255,0.5); z-index: 100; box-shadow: 0 4px 20px rgba(255,182,197,0.1); }
         .header-top { display: flex; justify-content: space-between; align-items: center; }
-        .header-top h2 { font-size: 20px; font-weight: 700; color: var(--text-main); margin: 0; letter-spacing: 0.08em; text-transform: uppercase; }
-        #left-btn, #right-btn { background: none; border: none; color: var(--sub-text); font-size: 14px; font-weight: 700; cursor: pointer; padding: 8px; }
-        #right-btn i { font-size: 20px; color: var(--text-main); background: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .header-top h2 { font-size: 20px; font-weight: 800; background: linear-gradient(135deg, var(--text-main), var(--text-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; letter-spacing: 0.1em; }
+        #left-btn, #right-btn { background: none; border: none; color: var(--text-bright); font-size: 14px; font-weight: 800; padding: 8px; text-transform: uppercase; }
+        #right-btn i { font-size: 18px; color: #fff; background: linear-gradient(135deg, var(--magic-pink), var(--accent-purple)); width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 6px 15px rgba(255,183,197,0.4); border: 2px solid #fff; }
 
-        .search-container { padding: 12px 20px; background: rgba(255,255,255,0.3); backdrop-filter: blur(10px); display: flex; gap: 10px; align-items: center; border-bottom: 0.5px solid rgba(255,255,255,0.5); }
-        #search-input { flex: 1; padding: 11px 20px; border-radius: 25px; border: 2px solid #fff; background: rgba(255,255,255,0.9); font-size: 13px; outline: none; box-shadow: 0 8px 20px rgba(0,0,0,0.03); }
-        .sort-select { background: #fff; border: 1.5px solid #fff; border-radius: 14px; font-size: 11px; color: var(--sub-text); padding: 8px 12px; outline: none; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .search-container { padding: 12px 20px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); display: flex; gap: 10px; align-items: center; }
+        #search-input { flex: 1; padding: 11px 20px; border-radius: 25px; border: 2.5px solid #fff; background: rgba(255,255,255,0.7); font-size: 13px; outline: none; box-shadow: 0 8px 25px rgba(255,182,197,0.1); color: var(--text-main); }
+        .sort-select { background: #fff; border: 2px solid var(--accent-blue); border-radius: 14px; font-size: 11px; color: var(--text-main); padding: 8px 12px; outline: none; font-weight: 700; }
 
         /* --- Content Area --- */
-        #content { flex: 1; overflow-y: auto; padding-bottom: 180px; }
+        #content { flex: 1; overflow-y: auto; padding-bottom: 180px; scroll-behavior: smooth; }
         .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding: 20px; }
         
         .card { position: relative; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .card:active { transform: scale(0.96); }
-        .card-img { width: 100%; aspect-ratio: 1/1; border-radius: 32px; object-fit: cover; box-shadow: var(--card-shadow); border: 5px solid #fff; display: block; background: #fff; }
-        .card-info { padding: 8px 4px; }
-        .card-title { font-size: 14px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card-sub { font-size: 11px; color: var(--sub-text); margin-top: 4px; display: flex; align-items: center; justify-content: space-between; }
-        /* 年数を小さく表示 */
-        .card-year { font-size: 9px; opacity: 0.6; font-weight: 500; background: rgba(0,0,0,0.04); padding: 1px 6px; border-radius: 10px; }
+        .card:active { transform: translateY(-5px) scale(0.98); }
+        .card-img { width: 100%; aspect-ratio: 1/1; border-radius: 32px; object-fit: cover; box-shadow: var(--card-shadow); border: 5px solid #fff; display: block; background: #fff; transition: 0.3s; }
+        .card:hover .card-img { border-color: var(--key-color); }
+        .card-info { padding: 10px 4px; }
+        .card-title { font-size: 14px; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-sub { font-size: 11px; color: var(--sub-text); margin-top: 4px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
+        .card-year { font-size: 9px; color: var(--text-bright); background: var(--key-color); padding: 2px 8px; border-radius: 10px; font-weight: 800; }
         
-        .card-tag { display: inline-block; font-size: 9px; background: linear-gradient(135deg, var(--accent-blue), #fff); color: var(--text-main); padding: 3px 10px; border-radius: 20px; margin-top: 6px; font-weight: 700; border: 1px solid #fff; }
+        .card-tag { display: inline-block; font-size: 9px; background: linear-gradient(135deg, var(--magic-pink), var(--accent-purple)); color: #fff; padding: 4px 12px; border-radius: 20px; margin-top: 8px; font-weight: 800; box-shadow: 0 4px 10px rgba(255,183,197,0.3); }
 
-        .list-item { display: flex; align-items: center; padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,0.4); cursor: pointer; transition: 0.3s; position: relative; }
-        .list-item:active { background: rgba(255,255,255,0.6); }
-        .list-item img:not(.artist-icon) { width: 58px; height: 58px; border-radius: 18px; margin-right: 18px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .list-item { display: flex; align-items: center; padding: 16px 22px; border-bottom: 1px solid rgba(255,182,197,0.15); cursor: pointer; transition: 0.3s; position: relative; }
+        .list-item:active { background: rgba(255,224,230,0.4); }
+        .list-item img:not(.artist-icon) { width: 60px; height: 60px; border-radius: 20px; margin-right: 18px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 8px 20px rgba(255,182,197,0.2); }
 
-        /* アーティストアイコンの強化 */
-        .artist-icon-container { width: 72px; height: 72px; margin-right: 20px; flex-shrink: 0; filter: drop-shadow(0 10px 15px rgba(180,180,210,0.3)); position: relative; }
+        .artist-icon-container { width: 75px; height: 75px; margin-right: 20px; flex-shrink: 0; filter: drop-shadow(0 10px 15px rgba(255,180,210,0.4)); position: relative; animation: hover-star 4s infinite alternate ease-in-out; }
+        @keyframes hover-star { from { transform: translateY(0); } to { transform: translateY(-6px); } }
         .artist-icon { 
             width: 100%; height: 100%; object-fit: cover; 
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--key-color)); 
+            background: linear-gradient(135deg, var(--accent-blue), var(--magic-pink), var(--magic-star)); 
             display: flex; align-items: center; justify-content: center; 
             color: #fff; clip-path: var(--star-clip); border: none;
         }
 
-        .swipe-container { position: relative; overflow: hidden; background: transparent; }
-        .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 85px; background: #fff1f1; color: #ff8e8e; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
-
         /* --- Full Player --- */
-        .full-player { position: fixed; inset: 0; z-index: 5000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0, 0, 1); visibility: hidden; background: #fff; }
+        .full-player { position: fixed; inset: 0; z-index: 5000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0, 0, 1); visibility: hidden; background: transparent; }
         .full-player.active { transform: translateY(0); visibility: visible; }
+        /* すりガラス背景 */
+        .full-player-glass { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(45px); -webkit-backdrop-filter: blur(45px); z-index: -1; }
 
-        #bg-blur-overlay { position: absolute; inset: 0; z-index: -1; background: #fff; overflow: hidden; }
-        .bg-sphere { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: radial-gradient(circle, var(--accent-blue) 0%, var(--accent-purple) 25%, var(--key-color) 50%, var(--accent-green) 100%); filter: blur(100px); opacity: 0.5; animation: rotateBg 30s linear infinite; }
+        #bg-blur-overlay { position: absolute; inset: 0; z-index: -2; background: #fff; overflow: hidden; }
+        .bg-sphere { position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: radial-gradient(circle, var(--accent-blue) 0%, var(--magic-pink) 30%, var(--magic-star) 60%, var(--accent-green) 100%); filter: blur(100px); opacity: 0.4; animation: rotateBg 40s linear infinite; }
         @keyframes rotateBg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        #f-artwork-container { width: 85vw; max-width: 360px; aspect-ratio: 1/1; position: relative; transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
-        #f-img { width: 100%; height: 100%; border-radius: 48px; object-fit: cover; box-shadow: 0 60px 120px rgba(150,150,180,0.3); border: 10px solid #fff; }
-        #f-lyrics-view { position: absolute; inset: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(40px); border-radius: 48px; padding: 50px 35px; overflow-y: auto; display: none; flex-direction: column; align-items: center; text-align: center; font-size: 19px; line-height: 2.4; color: var(--text-main); font-weight: 600; }
+        #f-artwork-container { width: 82vw; max-width: 360px; aspect-ratio: 1/1; position: relative; z-index: 10; }
+        #f-img { width: 100%; height: 100%; border-radius: 50px; object-fit: cover; box-shadow: 0 40px 100px rgba(255,150,180,0.4); border: 12px solid #fff; transition: opacity 0.5s; }
+        #f-lyrics-view { position: absolute; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(30px); border-radius: 50px; padding: 50px 35px; overflow-y: auto; display: none; flex-direction: column; align-items: center; text-align: center; font-size: 19px; line-height: 2.4; color: var(--text-main); font-weight: 700; text-shadow: 0 0 10px rgba(255,255,255,1); }
         #f-lyrics-view.active { display: flex; }
 
-        .seeker { -webkit-appearance: none; width: 100%; height: 6px; background: rgba(0,0,0,0.06); border-radius: 12px; outline: none; margin: 50px 0 15px; }
-        .seeker::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: #fff; border: 1px solid #f0f0f0; border-radius: 50%; box-shadow: 0 8px 20px rgba(0,0,0,0.12); cursor: pointer; }
+        .seeker { -webkit-appearance: none; width: 100%; height: 8px; background: rgba(255,255,255,0.5); border-radius: 12px; outline: none; margin: 50px 0 15px; border: 1px solid rgba(255,182,197,0.3); }
+        .seeker::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: linear-gradient(135deg, #fff, var(--key-color)); border: 2px solid var(--magic-pink); border-radius: 50%; box-shadow: 0 4px 12px rgba(255,150,180,0.4); cursor: pointer; }
 
-        .mini-player { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 15px; right: 15px; height: 76px; background: rgba(255,255,255,0.95); backdrop-filter: blur(40px); border-radius: 26px; display: none; align-items: center; padding: 0 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); z-index: 2000; border: 2px solid #fff; }
-        #m-img { width: 52px; height: 52px; border-radius: 16px; margin-right: 15px; object-fit: cover; border: 2.5px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        /* --- Mini Player --- */
+        .mini-player { position: fixed; bottom: calc(95px + env(safe-area-inset-bottom)); left: 15px; right: 15px; height: 80px; background: rgba(255,255,255,0.5); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-radius: 30px; display: none; align-items: center; padding: 0 20px; box-shadow: 0 15px 40px rgba(255,182,197,0.25); z-index: 2000; border: 2.5px solid rgba(255,255,255,0.8); }
+        #m-img { width: 56px; height: 56px; border-radius: 18px; margin-right: 15px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 5px 15px rgba(255,150,180,0.2); flex-shrink: 0; }
         
         /* --- Tab Bar --- */
-        .tab-bar { position: fixed; bottom: 0; width: 100%; height: calc(85px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.9); backdrop-filter: blur(40px); display: flex; justify-content: space-around; padding-top: 15px; border-top: 1.5px solid rgba(255,255,255,0.8); z-index: 1000; }
-        .tab-item { border:none; background:none; color: #bcc1d8; font-weight: 700; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 7px; width: 33%; transition: all 0.4s; }
-        .tab-item.active { color: var(--text-main); }
+        .tab-bar { position: fixed; bottom: 0; width: 100%; height: calc(85px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.7); backdrop-filter: blur(30px); display: flex; justify-content: space-around; padding-top: 15px; border-top: 1.5px solid rgba(255,255,255,0.5); z-index: 1000; }
+        .tab-item { border:none; background:none; color: var(--sub-text); font-weight: 800; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 7px; width: 33%; transition: all 0.4s; }
+        .tab-item.active { color: var(--text-bright); text-shadow: 0 0 8px rgba(255,126,185,0.3); }
         .tab-item i { font-size: 24px; }
 
         /* Modal & UI Elements */
         .modal { position: fixed; inset: 0; background: #ffffff; z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.5s cubic-bezier(0.2, 1, 0.2, 1); }
         @keyframes modalSlide { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-body { padding: 35px; overflow-y: auto; flex: 1; }
-        .edit-input { width: 100%; padding: 20px; border: 2px solid #f2f2f7; border-radius: 22px; margin-bottom: 24px; outline: none; font-size: 16px; background: #fbfbfc; color: var(--text-main); transition: 0.3s; }
-        .edit-input:focus { border-color: var(--accent-blue); background: #fff; }
-        .field-label { font-size: 11px; color: var(--sub-text); font-weight: 800; letter-spacing: 0.15em; display: block; margin-bottom: 12px; margin-left: 8px; text-transform: uppercase; }
+        .modal-body { padding: 35px; overflow-y: auto; flex: 1; background: linear-gradient(to bottom, #fff, #fff9fb); }
+        .edit-input { width: 100%; padding: 20px; border: 2.5px solid #fff; border-radius: 22px; margin-bottom: 24px; outline: none; font-size: 16px; background: rgba(255,224,230,0.2); color: var(--text-main); font-weight: 600; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
+        .edit-input:focus { border-color: var(--magic-pink); background: #fff; }
+        .field-label { font-size: 11px; color: var(--text-bright); font-weight: 900; letter-spacing: 0.2em; display: block; margin-bottom: 12px; margin-left: 8px; text-transform: uppercase; }
 
-        .artist-chip { display: inline-block; padding: 10px 22px; background: #fff; border: 2px solid #f0f0f5; border-radius: 28px; font-size: 12px; margin: 0 8px 12px 0; color: var(--sub-text); font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .artist-chip:active { background: var(--accent-blue); border-color: #fff; }
+        .artist-chip { display: inline-block; padding: 10px 22px; background: #fff; border: 2px solid var(--accent-blue); border-radius: 28px; font-size: 12px; margin: 0 8px 12px 0; color: var(--text-main); font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .artist-chip:active { background: var(--magic-pink); color: #fff; border-color: #fff; }
 
-        .del-badge { position: absolute; top: -12px; left: -12px; width: 36px; height: 36px; background: #ff7e7e; color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 3px solid #fff; z-index: 10; font-size: 14px; box-shadow: 0 8px 20px rgba(255,126,126,0.3); }
+        .del-badge { position: absolute; top: -12px; left: -12px; width: 36px; height: 36px; background: var(--text-bright); color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 3px solid #fff; z-index: 10; font-size: 14px; box-shadow: 0 8px 20px rgba(255,126,185,0.4); }
         .editing .del-badge { display: flex; }
         
-        .check-item { display: flex; align-items: center; padding: 20px 30px; border-bottom: 1.5px solid #f8f8fa; cursor: pointer; }
-        .check-item input[type="checkbox"] { width: 24px; height: 24px; margin-right: 22px; accent-color: #a6cbe3; border-radius: 8px; }
+        .check-item { display: flex; align-items: center; padding: 20px 30px; border-bottom: 1.5px solid #fef4f7; cursor: pointer; }
+        .check-item input[type="checkbox"] { width: 24px; height: 24px; margin-right: 22px; accent-color: var(--text-bright); border-radius: 8px; }
 
-        .queue-panel { position: absolute; inset: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(60px); z-index: 6000; transform: translateY(100%); transition: transform 0.7s cubic-bezier(0.2, 1, 0.2, 1); display: flex; flex-direction: column; }
+        .queue-panel { position: absolute; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(60px); z-index: 6000; transform: translateY(100%); transition: transform 0.7s cubic-bezier(0.2, 1, 0.2, 1); display: flex; flex-direction: column; }
         .queue-panel.open { transform: translateY(0); }
     </style>
 </head>
 <body>
-    <div class="bg-orb" style="width:300px; height:300px; background:var(--accent-blue); top:-100px; left:-50px;"></div>
-    <div class="bg-orb" style="width:250px; height:250px; background:var(--key-color); bottom:100px; right:-50px;"></div>
+    <div class="bg-orb" style="width:350px; height:350px; background:var(--accent-blue); top:-100px; left:-50px;"></div>
+    <div class="bg-orb" style="width:300px; height:300px; background:var(--key-color); bottom:150px; right:-50px;"></div>
+    <div class="bg-orb" style="width:200px; height:200px; background:var(--magic-star); top:40%; right:10%;"></div>
 
     <div class="header">
         <div class="header-top">
-            <button id="left-btn" onclick="handleHeaderLeft()">Edit</button>
+            <button id="left-btn" onclick="handleHeaderLeft()" class="magic-btn-glow">Edit</button>
             <h2 id="view-title">Artists</h2>
-            <button id="right-btn" onclick="handleHeaderRight()"><i class="fa-solid fa-plus"></i></button>
+            <button id="right-btn" onclick="handleHeaderRight()" class="magic-btn-glow"><i class="fa-solid fa-plus"></i></button>
         </div>
     </div>
     
@@ -153,15 +176,16 @@
 
     <div class="mini-player" id="mini" onclick="openFull()">
         <img id="m-img" src="">
-        <div id="m-title" style="flex:1; font-weight:700; font-size:15px; color:var(--text-main); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; letter-spacing:0.02em;"></div>
+        <div id="m-title" style="flex:1; font-weight:800; font-size:15px; color:var(--text-main); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; letter-spacing:0.04em;"></div>
         <div style="display:flex; align-items:center; gap:5px;">
-             <i id="m-pp" class="fa-solid fa-play" style="font-size:24px; color:var(--text-main); padding:15px;" onclick="event.stopPropagation(); togglePlay();"></i>
+             <i id="m-pp" class="fa-solid fa-play magic-btn-glow" style="font-size:24px; color:var(--text-bright); padding:15px;" onclick="event.stopPropagation(); togglePlay();"></i>
         </div>
     </div>
 
     <div class="full-player" id="full">
+        <div class="full-player-glass"></div>
         <div id="bg-blur-overlay"><div class="bg-sphere"></div></div>
-        <div onclick="closeFull()" style="padding:30px; text-align:center;"><div style="width:45px; height:6px; border-radius:10px; background:rgba(0,0,0,0.1); margin:0 auto;"></div></div>
+        <div onclick="closeFull()" style="padding:30px; text-align:center;"><div style="width:45px; height:6px; border-radius:10px; background:var(--magic-pink); opacity:0.5; margin:0 auto;"></div></div>
         
         <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 40px;">
             <div id="f-artwork-container">
@@ -171,35 +195,35 @@
             
             <div style="width:100%; margin-top:60px; display:flex; justify-content:space-between; align-items:flex-end;">
                 <div style="flex:1; overflow:hidden; padding-right:20px;">
-                    <div id="f-title" style="font-size:26px; font-weight:800; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-                    <div id="f-artist" style="font-size:18px; color:var(--sub-text); margin-top:8px; font-weight:600;"></div>
+                    <div id="f-title" style="font-size:28px; font-weight:900; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:0.04em;"></div>
+                    <div id="f-artist" style="font-size:18px; color:var(--text-bright); margin-top:8px; font-weight:700;"></div>
                 </div>
-                <div style="display:flex; gap:8px;">
-                    <button id="f-lyric-btn" onclick="toggleLyrics()" style="background:rgba(0,0,0,0.03); border:none; color:var(--text-main); border-radius:12px; font-size:18px; width:44px; height:44px;"><i class="fa-solid fa-quote-right"></i></button>
-                    <button onclick="toggleQueue()" style="background:rgba(0,0,0,0.03); border:none; color:var(--text-main); border-radius:12px; font-size:18px; width:44px; height:44px;"><i class="fa-solid fa-list-ul"></i></button>
+                <div style="display:flex; gap:10px;">
+                    <button id="f-lyric-btn" onclick="toggleLyrics()" style="background:rgba(255,255,255,0.6); border:none; color:var(--text-bright); border-radius:14px; font-size:18px; width:48px; height:48px; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><i class="fa-solid fa-quote-right"></i></button>
+                    <button onclick="toggleQueue()" style="background:rgba(255,255,255,0.6); border:none; color:var(--text-bright); border-radius:14px; font-size:18px; width:48px; height:48px; box-shadow:0 4px 10px rgba(0,0,0,0.05);"><i class="fa-solid fa-list-ul"></i></button>
                 </div>
             </div>
             
             <input type="range" class="seeker" id="seeker" value="0" step="0.1" oninput="audio.currentTime=this.value">
-            <div style="width:100%; display:flex; justify-content:space-between; color:var(--sub-text); font-size:12px; font-weight:700; letter-spacing:0.05em;">
+            <div style="width:100%; display:flex; justify-content:space-between; color:var(--text-bright); font-size:12px; font-weight:800; letter-spacing:0.08em;">
                 <span id="cur-time">0:00</span><span id="dur-time">0:00</span>
             </div>
 
             <div style="display:flex; width:100%; justify-content:space-between; align-items:center; margin-top:55px;">
-                <button onclick="toggleShuffle()" id="btn-shuffle" style="background:none; border:none; font-size:20px; color:var(--sub-text); opacity:0.4;"><i class="fa-solid fa-shuffle"></i></button>
+                <button onclick="toggleShuffle()" id="btn-shuffle" style="background:none; border:none; font-size:22px; color:var(--text-bright); opacity:0.4;"><i class="fa-solid fa-shuffle"></i></button>
                 <div style="display:flex; align-items:center; gap:48px;">
-                    <i class="fa-solid fa-backward-step" style="font-size:28px; color:var(--text-main);" onclick="prev()"></i>
-                    <i id="f-pp" class="fa-solid fa-play" style="font-size:58px; color:var(--text-main);" onclick="togglePlay()"></i>
-                    <i class="fa-solid fa-forward-step" style="font-size:28px; color:var(--text-main);" onclick="next()"></i>
+                    <i class="fa-solid fa-backward-step" style="font-size:30px; color:var(--text-main);" onclick="prev()"></i>
+                    <i id="f-pp" class="fa-solid fa-play magic-btn-glow" style="font-size:64px; color:var(--text-bright); filter: drop-shadow(0 0 15px rgba(255,126,185,0.4));" onclick="togglePlay()"></i>
+                    <i class="fa-solid fa-forward-step" style="font-size:30px; color:var(--text-main);" onclick="next()"></i>
                 </div>
-                <button onclick="toggleRepeat()" id="btn-repeat" style="background:none; border:none; font-size:20px; color:var(--sub-text); opacity:0.4; position:relative;"><i class="fa-solid fa-repeat"></i><span id="repeat-badge" style="display:none; position:absolute; top:-8px; right:-10px; background:var(--text-main); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; text-align:center; line-height:18px; font-weight:800;">1</span></button>
+                <button onclick="toggleRepeat()" id="btn-repeat" style="background:none; border:none; font-size:22px; color:var(--text-bright); opacity:0.4; position:relative;"><i class="fa-solid fa-repeat"></i><span id="repeat-badge" style="display:none; position:absolute; top:-8px; right:-10px; background:var(--text-bright); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; text-align:center; line-height:18px; font-weight:900; border:2px solid #fff;">1</span></button>
             </div>
         </div>
 
         <div class="queue-panel" id="queue-panel">
-            <div style="padding:25px 30px; border-bottom:1.5px solid #f5f5f7; display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0; font-size:19px; font-weight:800;">Up Next</h3>
-                <button onclick="toggleQueue()" style="background:#f0f0f5; border:none; font-size:14px; color:var(--text-main); font-weight:700; padding:8px 18px; border-radius:15px;">Close</button>
+            <div style="padding:25px 30px; border-bottom:2px solid var(--key-color); display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:19px; font-weight:900; color:var(--text-main);">Next Magic</h3>
+                <button onclick="toggleQueue()" style="background:var(--magic-pink); border:none; font-size:14px; color:#fff; font-weight:800; padding:10px 22px; border-radius:18px; box-shadow:0 4px 12px rgba(255,183,197,0.4);">Close</button>
             </div>
             <div id="queue-list" style="flex:1; overflow-y:auto;"></div>
         </div>
@@ -209,8 +233,8 @@
         <div class="header">
             <div class="header-top">
                 <button onclick="closeEdit()">Cancel</button>
-                <h2 style="font-size:17px;">Track Details</h2>
-                <button onclick="saveEdit()" style="color:var(--text-main); font-weight:800;">Save</button>
+                <h2 style="font-size:17px; color:var(--text-main);">Magic Details</h2>
+                <button onclick="saveEdit()" style="color:var(--text-bright); font-weight:900;">Save</button>
             </div>
         </div>
         <div class="modal-body">
@@ -233,32 +257,32 @@
         <div class="header">
             <div class="header-top">
                 <button onclick="closePlEdit()">Cancel</button>
-                <h2 style="font-size:17px;">Playlist Settings</h2>
-                <button onclick="savePlEdit()" style="color:var(--text-main); font-weight:800;">Done</button>
+                <h2 style="font-size:17px; color:var(--text-main);">Stage Settings</h2>
+                <button onclick="savePlEdit()" style="color:var(--text-bright); font-weight:900;">Done</button>
             </div>
         </div>
         <div class="modal-body" style="text-align:center; padding-top:40px;">
             <div style="position:relative; display:inline-block; margin-bottom:40px;">
-                <img id="pl-edit-img" style="width:220px; height:220px; border-radius:40px; object-fit:cover; background:#f9f9fb; border:6px solid #fff; box-shadow:0 30px 60px rgba(0,0,0,0.08); cursor:pointer;" onclick="document.getElementById('pl-img-input').click()">
-                <div style="position:absolute; bottom:12px; right:12px; background:#fff; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 15px rgba(0,0,0,0.1); pointer-events:none;">
-                    <i class="fa-solid fa-camera" style="font-size:18px; color:var(--sub-text);"></i>
+                <img id="pl-edit-img" style="width:220px; height:220px; border-radius:45px; object-fit:cover; background:#fef4f7; border:8px solid #fff; box-shadow:0 30px 60px rgba(255,182,197,0.2); cursor:pointer;" onclick="document.getElementById('pl-img-input').click()">
+                <div style="position:absolute; bottom:15px; right:15px; background:var(--magic-pink); width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 15px rgba(255,183,197,0.4); pointer-events:none; border:3px solid #fff;">
+                    <i class="fa-solid fa-wand-sparkles" style="font-size:18px; color:#fff;"></i>
                 </div>
             </div>
             <input type="file" id="pl-img-input" style="display:none" onchange="previewPlImg(event)">
             
             <div style="text-align:left;">
-                <span class="field-label">Playlist Name</span>
+                <span class="field-label">Stage Name</span>
                 <input type="text" id="pl-edit-name" class="edit-input">
-                <span class="field-label">Hashtag / Tag</span>
+                <span class="field-label">Magic Tag</span>
                 <input type="text" id="pl-edit-tag" class="edit-input" placeholder="#Favorite">
             </div>
         </div>
     </div>
 
     <div class="tab-bar">
-        <button class="tab-item active" id="tab-artist" onclick="switchTab('artists')"><i class="fa-solid fa-user-astronaut"></i><span>Artists</span></button>
-        <button class="tab-item" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-layer-group"></i><span>Library</span></button>
-        <button class="tab-item" id="tab-play" onclick="switchTab('playlist')"><i class="fa-solid fa-heart-pulse"></i><span>Playlists</span></button>
+        <button class="tab-item active magic-btn-glow" id="tab-artist" onclick="switchTab('artists')"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Artists</span></button>
+        <button class="tab-item magic-btn-glow" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-gem"></i><span>Library</span></button>
+        <button class="tab-item magic-btn-glow" id="tab-play" onclick="switchTab('playlist')"><i class="fa-solid fa-heart"></i><span>Stage</span></button>
     </div>
 
     <input type="file" id="audio-upload" multiple style="display:none">
@@ -338,8 +362,8 @@
                         const icon = artistMeta[a] ? `<img src="${artistMeta[a]}" class="artist-icon">` : `<div class="artist-icon"><i class="fa-solid fa-user"></i></div>`;
                         return `<div class="list-item" onclick="isEditing ? selectArtistIcon('${a}') : openArtist('${a}')">
                                 <div class="artist-icon-container">${icon}</div>
-                                <div style="font-weight:700; font-size:17px; letter-spacing:0.02em;">${a}</div>
-                                <i class="fa-solid fa-chevron-right" style="margin-left:auto; font-size:12px; opacity:0.3;"></i>
+                                <div style="font-weight:800; font-size:17px; color:var(--text-main);">${a}</div>
+                                <i class="fa-solid fa-star" style="margin-left:auto; font-size:12px; color:var(--magic-pink); opacity:0.5;"></i>
                             </div>`;
                     }).join('');
                 } else {
@@ -358,7 +382,7 @@
 
             } else if (currentView === 'playlist') {
                 if (currentPlaylistId === null) {
-                    title.innerText = "Playlists"; display.className = "grid";
+                    title.innerText = "Stage"; display.className = "grid";
                     let list = playlists.filter(p => p.name.toLowerCase().includes(search) || (p.tag && p.tag.toLowerCase().includes(search)));
                     list = sortList(list, sort);
                     display.innerHTML = list.map(p => {
@@ -367,7 +391,7 @@
                             <div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-xmark"></i></div>
                             <div style="position:relative;">
                                 <img src="${p.cover || (firstSong?firstSong.cover:'')}" class="card-img">
-                                <div style="position:absolute; inset:0; border-radius:32px; background:linear-gradient(to top, rgba(0,0,0,0.1), transparent);"></div>
+                                <div style="position:absolute; inset:0; border-radius:32px; background:linear-gradient(to top, rgba(255,182,197,0.2), transparent);"></div>
                             </div>
                             <div class="card-info">
                                 <div class="card-title">${p.name}</div>
@@ -382,17 +406,17 @@
                     let plSongs = pl.songIds.map(id => tracks.find(t => t.id === id)).filter(t => t);
                     display.innerHTML = plSongs.map(t => `
                         <div class="swipe-container" id="swipe-${t.id}">
-                            <div class="swipe-delete-btn" onclick="removeTrackFromPlaylist(${t.id})">Remove</div>
+                            <div class="swipe-delete-btn" onclick="removeTrackFromPlaylist(${t.id})" style="background:var(--key-color); color:var(--text-bright);">Remove</div>
                             <div class="list-item" onclick="playSong(${t.id},'pl')"
                                  ontouchstart="handleTouchStart(event, ${t.id})" ontouchmove="handleTouchMove(event, ${t.id})" ontouchend="handleTouchEnd(event, ${t.id})">
                                 <img src="${t.cover||''}">
                                 <div>
-                                    <div style="font-weight:700; font-size:15px;">${t.name}</div>
-                                    <div style="font-size:12px; color:var(--sub-text); margin-top:4px; font-weight:600;">${t.artist} ${t.year?`· ${t.year}`:''}</div>
+                                    <div style="font-weight:800; font-size:15px; color:var(--text-main);">${t.name}</div>
+                                    <div style="font-size:12px; color:var(--sub-text); margin-top:4px; font-weight:700;">${t.artist} ${t.year?`· ${t.year}`:''}</div>
                                 </div>
                             </div>
                         </div>`).join('') + 
-                        `<div style="padding:60px 20px; text-align:center;"><button onclick="openBulkAddModal()" style="background:#fff; color:var(--text-main); border:none; padding:18px 45px; border-radius:35px; font-weight:800; font-size:13px; box-shadow: 0 15px 35px rgba(0,0,0,0.06);">+ Add More Tracks</button></div>`;
+                        `<div style="padding:60px 20px; text-align:center;"><button onclick="openBulkAddModal()" style="background:linear-gradient(135deg, #fff, var(--key-color)); color:var(--text-bright); border:none; padding:18px 45px; border-radius:35px; font-weight:900; font-size:13px; box-shadow: 0 15px 35px rgba(255,182,197,0.3); border:2px solid #fff;">+ Add More Magic</button></div>`;
                 }
             }
             document.getElementById('left-btn').innerText = (currentArtist || currentPlaylistId) ? "Back" : (isEditing ? "Done" : "Edit");
@@ -490,7 +514,7 @@
             else if(currentPlaylistId) openBulkAddModal();
             else if(currentView==='library') document.getElementById('audio-upload').click(); 
             else if(currentView==='playlist') {
-                const n = prompt("New Playlist Name:");
+                const n = prompt("New Stage Name:");
                 if(n) db.transaction("playlists","readwrite").objectStore("playlists").add({ name: n, songIds: [], tag: "", cover: null }).onsuccess = loadAll;
             } 
         }
@@ -514,27 +538,27 @@
             let html = "";
             const nextTracks = playingTracks.slice(currentTrackIdx + 1);
             if (nextTracks.length > 0) {
-                html += `<div style="padding:20px 30px; font-size:11px; font-weight:800; color:var(--sub-text); letter-spacing:0.12em;">NEXT UP</div>`;
-                html += nextTracks.map((t, i) => `<div class="list-item" onclick="jumpToQueue(${currentTrackIdx + 1 + i})"><img src="${t.cover||''}" style="width:44px; height:44px;"><div><div style="font-weight:700; font-size:15px;">${t.name}</div><div style="font-size:12px; color:var(--sub-text);">${t.artist}</div></div></div>`).join('');
+                html += `<div style="padding:20px 30px; font-size:11px; font-weight:900; color:var(--text-bright); letter-spacing:0.15em;">NEXT STAGE</div>`;
+                html += nextTracks.map((t, i) => `<div class="list-item" onclick="jumpToQueue(${currentTrackIdx + 1 + i})"><img src="${t.cover||''}" style="width:48px; height:48px;"><div><div style="font-weight:800; font-size:15px; color:var(--text-main);">${t.name}</div><div style="font-size:12px; color:var(--sub-text);">${t.artist}</div></div></div>`).join('');
             }
             if (historyTracks.length > 0) {
-                html += `<div style="padding:20px 30px; font-size:11px; font-weight:800; color:var(--sub-text); letter-spacing:0.12em;">RECENTLY PLAYED</div>`;
-                html += historyTracks.map(t => `<div class="list-item" onclick="loadTrackById(${t.id})"><img src="${t.cover||''}" style="width:44px; height:44px; opacity:0.5;"><div><div style="font-weight:700; font-size:15px; color:#999;">${t.name}</div><div style="font-size:12px; color:#ccc;">${t.artist}</div></div></div>`).join('');
+                html += `<div style="padding:20px 30px; font-size:11px; font-weight:900; color:var(--sub-text); letter-spacing:0.15em;">PAST ECHOES</div>`;
+                html += historyTracks.map(t => `<div class="list-item" onclick="loadTrackById(${t.id})"><img src="${t.cover||''}" style="width:48px; height:48px; opacity:0.4;"><div><div style="font-weight:700; font-size:15px; color:#aaa;">${t.name}</div><div style="font-size:12px; color:#ccc;">${t.artist}</div></div></div>`).join('');
             }
-            list.innerHTML = html || `<div style="padding:100px; text-align:center; color:#ccc; font-weight:700;">No more tracks</div>`;
+            list.innerHTML = html || `<div style="padding:100px; text-align:center; color:var(--key-color); font-weight:800;">Silent night...</div>`;
         }
 
         function openBulkAddModal() {
             const pl = playlists.find(p => p.id === currentPlaylistId);
             const div = document.createElement('div'); div.id="bulk-modal"; div.className="modal active";
-            let html = `<div class="header"><div class="header-top"><button onclick="this.closest('.modal').remove()">Cancel</button><h2>Select Songs</h2><button onclick="saveBulkAdd()" style="font-weight:800;">Done</button></div></div>`;
-            html += `<div class="search-container"><input type="text" placeholder="Filter songs..." oninput="filterBulk(this.value)"></div>`;
-            html += `<div id="bulk-list" style="flex:1; overflow-y:auto; padding-bottom:100px;">`;
+            let html = `<div class="header"><div class="header-top"><button onclick="this.closest('.modal').remove()">Cancel</button><h2 style="color:var(--text-main);">Collect Magic</h2><button onclick="saveBulkAdd()" style="font-weight:900; color:var(--text-bright);">Done</button></div></div>`;
+            html += `<div class="search-container"><input type="text" placeholder="Filter magic..." oninput="filterBulk(this.value)"></div>`;
+            html += `<div id="bulk-list" style="flex:1; overflow-y:auto; padding-bottom:100px; background:linear-gradient(to bottom, #fff, #fff9fb);">`;
             html += tracks.map(t => `
                 <label class="check-item" data-search="${t.name.toLowerCase()} ${t.artist.toLowerCase()}">
                     <input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}>
-                    <img src="${t.cover||''}" style="width:50px; height:50px; border-radius:14px; margin-right:18px;">
-                    <div><b style="color:var(--text-main); font-size:15px;">${t.name}</b><br><span style="font-size:12px; color:var(--sub-text);">${t.artist}</span></div>
+                    <img src="${t.cover||''}" style="width:54px; height:54px; border-radius:16px; margin-right:18px; border:2px solid #fff; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                    <div><b style="color:var(--text-main); font-size:15px; font-weight:800;">${t.name}</b><br><span style="font-size:12px; color:var(--sub-text); font-weight:700;">${t.artist}</span></div>
                 </label>`).join('');
             html += `</div>`;
             div.innerHTML = html; document.body.appendChild(div);
@@ -579,8 +603,8 @@
                 r.readAsDataURL(f);
             }
         }
-        function deleteSong(id) { if(confirm("Remove this track?")) db.transaction("songs","readwrite").objectStore("songs").delete(id).onsuccess=loadAll; }
-        function deletePlaylist(id) { if(confirm("Delete this playlist?")) db.transaction("playlists","readwrite").objectStore("playlists").delete(id).onsuccess=loadAll; }
+        function deleteSong(id) { if(confirm("Discard this magic?")) db.transaction("songs","readwrite").objectStore("songs").delete(id).onsuccess=loadAll; }
+        function deletePlaylist(id) { if(confirm("Delete this stage?")) db.transaction("playlists","readwrite").objectStore("playlists").delete(id).onsuccess=loadAll; }
         function removeTrackFromPlaylist(sid) { const pl = playlists.find(p => p.id === currentPlaylistId); pl.songIds = pl.songIds.filter(id => id !== sid); db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = loadAll; }
 
         audio.onended = () => { if(repeatMode === 2) { audio.currentTime = 0; audio.play(); } else { next(); } };
