@@ -40,7 +40,7 @@
         .player-text { flex: 1; overflow: hidden; }
         .player-title { font-weight: bold; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
         .player-artist { color: #aaa; font-size: 12px; }
-        .controls { display: flex; gap: 20px; font-size: 24px; margin-right: 5px; }
+        .controls { display: flex; gap: 20px; font-size: 24px; margin-right: 5px; align-items: center; }
     </style>
 </head>
 <body>
@@ -57,11 +57,12 @@
             <span class="player-title" id="player-title">未選択</span>
             <span class="player-artist" id="player-artist">-</span>
         </div>
-<div class="controls">
-    <span id="shuffle-btn" style="cursor:pointer; font-size: 18px; opacity: 0.5;">🔀</span>
-    <span id="play-btn" style="cursor:pointer;">▶️</span>
-    <span id="repeat-btn" style="cursor:pointer; font-size: 18px; opacity: 0.5;">🔁</span>
-</div>
+        <div class="controls">
+            <span id="shuffle-btn" style="cursor:pointer; font-size: 18px; opacity: 0.5;">🔀</span>
+            <span id="play-btn" style="cursor:pointer;">▶️</span>
+            <span id="repeat-btn" style="cursor:pointer; font-size: 18px; opacity: 0.5;">🔁</span>
+        </div>
+    </div>
 
     <script>
         const canvas = document.getElementById('color-canvas');
@@ -69,6 +70,8 @@
         const dropZone = document.getElementById('drop-zone');
         const trackList = document.getElementById('track-list');
         const playBtn = document.getElementById('play-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
         const playerTitle = document.getElementById('player-title');
         const playerArtist = document.getElementById('player-artist');
         const playerArt = document.getElementById('player-art');
@@ -76,8 +79,12 @@
 
         let audio = new Audio();
         let isPlaying = false;
+        let playlist = []; 
+        let currentIndex = -1; 
+        let isShuffle = false;
+        let isRepeat = false;
 
-        // 1. ファイル追加処理
+        // 1. ファイル追加 & メタデータ解析
         dropZone.onclick = () => {
             const input = document.createElement('input');
             input.type = 'file'; input.accept = 'audio/*'; input.multiple = true;
@@ -89,23 +96,27 @@
             for (const file of Array.from(files)) {
                 const metadata = await musicMetadata.parseBlob(file).catch(() => null);
                 const common = metadata?.common;
+                
                 let coverUrl = "https://via.placeholder.com/150/333/fff?text=No+Image";
                 if (common?.picture?.[0]) {
                     const pic = common.picture[0];
                     coverUrl = URL.createObjectURL(new Blob([pic.data], { type: pic.format }));
                 }
+
                 const track = {
                     url: URL.createObjectURL(file),
                     title: common?.title || file.name,
                     artist: common?.artist || "不明なアーティスト",
                     cover: coverUrl
                 };
-                addTrackToUI(track);
+                
+                playlist.push(track);
+                addTrackToUI(track, playlist.length - 1);
             }
         }
 
-        // 2. UI表示処理
-        function addTrackToUI(track) {
+        // 2. UI表示
+        function addTrackToUI(track, index) {
             const div = document.createElement('div');
             div.className = 'track-item';
             div.innerHTML = `
@@ -115,12 +126,16 @@
                     <span class="track-meta">${track.artist}</span>
                 </div>
             `;
-            div.onclick = () => playTrack(track);
+            div.onclick = () => {
+                currentIndex = index;
+                playTrack(track);
+            };
             trackList.appendChild(div);
         }
 
         // 3. 再生 & 動的背景色
         function playTrack(track) {
+            if(!track) return;
             audio.src = track.url;
             audio.play();
             isPlaying = true;
@@ -155,17 +170,44 @@
             `;
         }
 
-        // 4. 再生コントロール
+        // 4. 再生コントロール & シャッフル・リピート
         playBtn.onclick = () => {
             if (isPlaying) { audio.pause(); playBtn.innerText = '▶️'; }
-            else { audio.play(); playBtn.innerText = '⏸'; }
+            else { if(audio.src) audio.play(); playBtn.innerText = '⏸'; }
             isPlaying = !isPlaying;
         };
 
+        shuffleBtn.onclick = () => {
+            isShuffle = !isShuffle;
+            shuffleBtn.style.opacity = isShuffle ? "1" : "0.5";
+        };
+
+        repeatBtn.onclick = () => {
+            isRepeat = !isRepeat;
+            repeatBtn.style.opacity = isRepeat ? "1" : "0.5";
+        };
+
+        // 5. 自動次曲再生
         audio.onended = () => {
-            console.log("曲が終了しました。");
-            playBtn.innerText = '▶️';
-            isPlaying = false;
+            if (isRepeat) {
+                playTrack(playlist[currentIndex]);
+                return;
+            }
+
+            let nextIndex;
+            if (isShuffle) {
+                nextIndex = Math.floor(Math.random() * playlist.length);
+            } else {
+                nextIndex = currentIndex + 1;
+            }
+
+            if (nextIndex < playlist.length) {
+                currentIndex = nextIndex;
+                playTrack(playlist[currentIndex]);
+            } else {
+                isPlaying = false;
+                playBtn.innerText = '▶️';
+            }
         };
     </script>
 </body>
