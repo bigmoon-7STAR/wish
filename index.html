@@ -13,7 +13,6 @@
             --am-text: #ffffff;
             --am-sub-text: #888888;
         }
-
         body {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
@@ -21,103 +20,52 @@
             color: var(--am-text);
             height: 100vh;
             overflow: hidden;
-            -webkit-font-smoothing: antialiased;
         }
-
         #bg-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            transition: background 2s ease;
-            overflow: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            transition: background 2s ease; overflow: hidden;
         }
-
         .aurora {
-            position: absolute;
-            width: 150%; height: 150%;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
-            animation: moveAurora 20s infinite linear alternate;
+            position: absolute; width: 150%; height: 150%; border-radius: 50%;
+            filter: blur(80px); opacity: 0.3; animation: moveAurora 20s infinite linear alternate;
         }
-
         .aurora-1 { top: -20%; left: -20%; background: rgba(255, 255, 255, 0.2); }
         .aurora-2 { bottom: -20%; right: -20%; background: var(--am-pink); }
-
         @keyframes moveAurora {
             0% { transform: translate(0, 0) rotate(0deg); }
             100% { transform: translate(-10%, -10%) rotate(10deg); }
         }
-
-        .container {
-            padding: 20px;
-            padding-top: 130px;
-            height: calc(100vh - 120px);
-            overflow-y: auto;
-            scroll-behavior: smooth;
-        }
-
         .header-fixed {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            z-index: 10;
-            box-sizing: border-box;
+            position: fixed; top: 0; left: 0; width: 100%; padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 10; box-sizing: border-box;
         }
-
-        h1 { font-size: 32px; font-weight: 800; margin: 0; margin-bottom: 15px; }
-
         #search-bar {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            font-size: 17px;
-            outline: none;
-            box-sizing: border-box;
+            width: 100%; padding: 12px 15px; border-radius: 10px; border: none;
+            background: rgba(255,255,255,0.1); color: white; font-size: 17px; outline: none;
         }
-
+        .container {
+            padding: 20px; padding-top: 130px; height: calc(100vh - 120px);
+            overflow-y: auto; box-sizing: border-box;
+        }
         #drop-zone {
-            display: inline-block;
-            padding: 10px 20px;
-            color: var(--am-pink);
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 20px;
-            background: rgba(250, 36, 60, 0.1);
-            margin-bottom: 25px;
+            display: inline-block; padding: 10px 20px; color: var(--am-pink);
+            font-weight: 600; cursor: pointer; border-radius: 20px;
+            background: rgba(250, 36, 60, 0.1); margin-bottom: 25px;
         }
-
-        .track-item {
-            display: flex; align-items: center; padding: 10px 0; cursor: pointer;
-        }
-
-        .track-item img {
-            width: 48px; height: 48px; border-radius: 6px; margin-right: 15px;
-            object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .track-info-text { flex: 1; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .track-item { display: flex; align-items: center; padding: 10px 0; cursor: pointer; }
+        .track-item img { width: 48px; height: 48px; border-radius: 6px; margin-right: 15px; object-fit: cover; }
+        .track-info-text { flex: 1; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
         .track-name { font-size: 17px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .track-meta { font-size: 14px; color: var(--am-sub-text); display: block; }
-
         .mini-player {
-            position: fixed; bottom: 25px; left: 15px; right: 15px;
-            height: 64px; background: var(--am-card);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 12px; display: flex; align-items: center; padding: 0 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 0.5px solid rgba(255,255,255,0.08); z-index: 100;
+            position: fixed; bottom: 25px; left: 15px; right: 15px; height: 64px;
+            background: var(--am-card); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-radius: 12px; display: flex; align-items: center; padding: 0 10px; z-index: 100;
         }
-
         .player-art { width: 44px; height: 44px; border-radius: 6px; margin-right: 12px; }
         .player-text { flex: 1; overflow: hidden; }
-        .player-title { font-weight: 600; font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-artist { color: var(--am-sub-text); font-size: 12px; }
-
+        .player-title { font-weight: 600; font-size: 15px; display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
         .controls { display: flex; gap: 18px; font-size: 26px; align-items: center; }
         .control-btn { cursor: pointer; }
         .am-icon { font-size: 16px; opacity: 0.4; }
@@ -130,23 +78,20 @@
         <div class="aurora aurora-1"></div>
         <div class="aurora aurora-2" id="aurora-sub"></div>
     </div>
-
     <div class="header-fixed">
-        <h1>ライブラリ</h1>
-        <input type="text" id="search-bar" placeholder="曲名、アーティストで検索...">
+        <h1 style="margin:0 0 10px 0; font-size: 32px;">ライブラリ</h1>
+        <input type="text" id="search-bar" placeholder="曲を検索...">
     </div>
-
     <div class="container">
-        <div id="drop-zone">＋ 曲を追加 (M4aなど)</div>
+        <div id="drop-zone">＋ 曲を追加 (M4a/MP3)</div>
         <div id="track-list"></div>
     </div>
-
     <div class="mini-player">
         <canvas id="color-canvas"></canvas>
         <img src="https://via.placeholder.com/44/333/555?text=..." class="player-art" id="player-art">
         <div class="player-text">
             <span class="player-title" id="player-title">未選択</span>
-            <span class="player-artist" id="player-artist">-</span>
+            <span id="player-artist" style="font-size:12px; color:var(--am-sub-text);">-</span>
         </div>
         <div class="controls">
             <span id="shuffle-btn" class="control-btn am-icon">🔀</span>
@@ -172,11 +117,11 @@
         let audio = new Audio();
         let isPlaying = false;
         let playlist = []; 
-        let currentIndex = -1; 
+        let currentIndex = -1;
         let isShuffle = false;
         let isRepeat = false;
 
-        // 1. ファイル追加処理
+        // ファイル追加
         dropZone.addEventListener('click', () => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -190,96 +135,77 @@
 
         async function handleFiles(files) {
             for (const file of Array.from(files)) {
-                let common = null;
+                let title = file.name;
+                let artist = "不明なアーティスト";
                 let coverUrl = "https://via.placeholder.com/150/333/fff?text=No+Image";
 
+                // 解析を試みるが、失敗しても次に進む
                 try {
-                    if (typeof musicMetadata !== 'undefined') {
+                    if (window.musicMetadata) {
                         const metadata = await musicMetadata.parseBlob(file);
-                        common = metadata.common;
-                        if (common?.picture?.[0]) {
-                            const pic = common.picture[0];
+                        title = metadata.common.title || file.name;
+                        artist = metadata.common.artist || "不明なアーティスト";
+                        if (metadata.common.picture?.[0]) {
+                            const pic = metadata.common.picture[0];
                             coverUrl = URL.createObjectURL(new Blob([pic.data], { type: pic.format }));
                         }
                     }
-                } catch (err) {
-                    console.warn("メタデータ解析失敗:", file.name);
-                }
+                } catch (e) { console.error("解析スキップ:", e); }
 
-                const track = {
+                playlist.push({
                     url: URL.createObjectURL(file),
-                    title: common?.title || file.name,
-                    artist: common?.artist || "不明なアーティスト",
+                    title: title,
+                    artist: artist,
                     cover: coverUrl
-                };
-                playlist.push(track);
+                });
             }
             renderPlaylist(playlist);
         }
 
-        // 2. 描画処理
-        function renderPlaylist(tracksToRender) {
+        function renderPlaylist(tracks) {
             trackList.innerHTML = '';
-            tracksToRender.forEach((track) => {
+            tracks.forEach((track, index) => {
                 const div = document.createElement('div');
                 div.className = 'track-item';
-                div.innerHTML = `
-                    <img src="${track.cover}">
-                    <div class="track-info-text">
-                        <span class="track-name">${track.title}</span>
-                        <span class="track-meta">${track.artist}</span>
-                    </div>
-                `;
-                div.onclick = () => {
-                    currentIndex = playlist.indexOf(track);
-                    playTrack(track);
-                };
+                div.innerHTML = `<img src="${track.cover}"><div class="track-info-text"><span class="track-name">${track.title}</span><span class="track-meta">${track.artist}</span></div>`;
+                div.onclick = () => { currentIndex = index; playTrack(track); };
                 trackList.appendChild(div);
             });
         }
 
-        // 3. 再生処理
         function playTrack(track) {
             if(!track) return;
             audio.src = track.url;
-            audio.play();
-            isPlaying = true;
-            playBtn.innerText = '⏸';
+            audio.play().then(() => {
+                isPlaying = true;
+                playBtn.innerText = '⏸';
+            }).catch(e => console.error("再生失敗:", e));
+
             playerTitle.innerText = track.title;
             playerArtist.innerText = track.artist;
             playerArt.src = track.cover;
 
+            // 背景色の抽出
             const img = new Image();
-            img.crossOrigin = "Anonymous";
             img.src = track.cover;
             img.onload = () => {
                 canvas.width = 10; canvas.height = 10;
                 ctx.drawImage(img, 0, 0, 10, 10);
-                const d1 = ctx.getImageData(5, 5, 1, 1).data;
-                const d2 = ctx.getImageData(1, 1, 1, 1).data;
-                const c1 = `rgb(${d1[0]}, ${d1[1]}, ${d1[2]})`;
-                const c2 = `rgb(${d2[0]}, ${d2[1]}, ${d2[2]})`;
-                document.querySelector('.aurora-1').style.background = `radial-gradient(circle at center, ${c1} 0%, transparent 80%)`;
-                auroraSub.style.background = c2;
+                const d = ctx.getImageData(5, 5, 1, 1).data;
+                const color = `rgb(${d[0]}, ${d[1]}, ${d[2]})`;
+                document.querySelector('.aurora-1').style.background = `radial-gradient(circle at center, ${color} 0%, transparent 80%)`;
+                auroraSub.style.background = color;
             };
         }
 
-        // 4. ボタン・検索・自動再生
         playBtn.onclick = () => {
             if (isPlaying) { audio.pause(); playBtn.innerText = '▶️'; }
             else { if(audio.src) audio.play(); playBtn.innerText = '⏸'; }
             isPlaying = !isPlaying;
         };
 
-        shuffleBtn.onclick = () => {
-            isShuffle = !isShuffle;
-            shuffleBtn.classList.toggle('active', isShuffle);
-        };
-
-        repeatBtn.onclick = () => {
-            isRepeat = !isRepeat;
-            repeatBtn.classList.toggle('active', isRepeat);
-        };
+        shuffleBtn.onclick = () => { isShuffle = !isShuffle; shuffleBtn.classList.toggle('active', isShuffle); };
+        repeatBtn.onclick = () => { isRepeat = !isRepeat; repeatBtn.classList.toggle('active', isRepeat); };
 
         searchBar.oninput = (e) => {
             const term = e.target.value.toLowerCase();
