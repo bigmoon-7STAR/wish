@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Music Studio ✧ Pure Wish</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='50%' style='dominant-baseline:central;text-anchor:middle;font-size:90px;fill:%23a6cbe3;'>✧</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     <style>
@@ -84,7 +85,8 @@
         .swipe-container { position: relative; overflow: hidden; background: transparent; }
         /* スワイプするまで隠すための修正 (背景色を設定して透過を防ぐ) */
         .swipe-container .list-item { background: #ffffff; z-index: 2; position: relative; }
-        .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 85px; background: #fff1f1; color: #ff8e8e; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; z-index: 1; }
+        /* 変更: スワイプ削除ボタンの色を馴染むように変更 */
+        .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 85px; background: var(--accent-blue); color: #5a9abf; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; z-index: 1; }
 
         /* --- Full Player --- */
         .full-player { position: fixed; inset: 0; z-index: 5000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.8s cubic-bezier(0.2, 0, 0, 1); visibility: hidden; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
@@ -124,7 +126,8 @@
         .artist-chip { display: inline-block; padding: 10px 22px; background: #fff; border: 2px solid #f0f0f5; border-radius: 28px; font-size: 12px; margin: 0 8px 12px 0; color: var(--sub-text); font-weight: 700; cursor: pointer; transition: 0.3s; }
         .artist-chip:active { background: var(--accent-blue); border-color: #fff; color: #5a9abf; }
 
-        .del-badge { position: absolute; top: -12px; left: -12px; width: 36px; height: 36px; background: #ff7e7e; color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 3px solid #fff; z-index: 10; font-size: 14px; box-shadow: 0 8px 20px rgba(255,126,126,0.3); }
+        /* 変更: 編集時の削除バッジをグラデーションに変更して馴染ませる */
+        .del-badge { position: absolute; top: -12px; left: -12px; width: 36px; height: 36px; background: var(--grad-primary); color: #fff; border-radius: 50%; display: none; align-items: center; justify-content: center; border: 3px solid #fff; z-index: 10; font-size: 14px; box-shadow: 0 8px 20px rgba(166,203,227,0.3); }
         .editing .del-badge { display: flex; }
         
         .check-item { display: flex; align-items: center; padding: 20px 30px; border-bottom: 1.5px solid #f8f8fa; cursor: pointer; }
@@ -622,20 +625,27 @@
             }
         }
 
+        /* 修正: ファイル読み込みごとに都度トランザクションを生成するように変更（非同期エラー回避） */
         document.getElementById('audio-upload').onchange = (e) => {
             const files = e.target.files; if (files.length === 0) return;
-            const tx = db.transaction("songs", "readwrite");
-            const store = tx.objectStore("songs");
             for (let f of files) {
-                jsmediatags.read(f, { onSuccess: (tag) => {
-                    let c = null; if(tag.tags.picture){
-                        let d = tag.tags.picture.data, s = ""; for(let i=0; i<d.length; i++) s += String.fromCharCode(d[i]);
-                        c = `data:${tag.tags.picture.format};base64,${btoa(s)}`;
+                jsmediatags.read(f, { 
+                    onSuccess: (tag) => {
+                        let c = null; if(tag.tags.picture){
+                            let d = tag.tags.picture.data, s = ""; for(let i=0; i<d.length; i++) s += String.fromCharCode(d[i]);
+                            c = `data:${tag.tags.picture.format};base64,${btoa(s)}`;
+                        }
+                        const tx = db.transaction("songs", "readwrite");
+                        tx.objectStore("songs").add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "Unknown", year: tag.tags.year || "", cover: c, data: f, lyrics: "" });
+                        tx.oncomplete = () => loadAll();
+                    },
+                    onError: (err) => {
+                        const tx = db.transaction("songs", "readwrite");
+                        tx.objectStore("songs").add({ name: f.name, artist: "Unknown", year: "", cover: null, data: f, lyrics: "" });
+                        tx.oncomplete = () => loadAll();
                     }
-                    store.add({ name: tag.tags.title || f.name, artist: tag.tags.artist || "Unknown", year: tag.tags.year || "", cover: c, data: f, lyrics: "" });
-                }});
+                });
             }
-            tx.oncomplete = () => { setTimeout(loadAll, 600); };
         };
     </script>
 </body>
