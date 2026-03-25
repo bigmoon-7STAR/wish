@@ -7,7 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/music-metadata-browser/2.5.9/index.min.js"></script>
     <style>
         :root {
-            /* Apple Musicの色定義 */
             --am-pink: #fa243c;
             --am-bg: #000000;
             --am-card: rgba(30, 30, 30, 0.75);
@@ -17,7 +16,7 @@
 
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
             background-color: var(--am-bg);
             color: var(--am-text);
             height: 100vh;
@@ -25,12 +24,11 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* 🎨 Apple Music風の動的オーロラ背景（アニメーション付き） */
         #bg-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            transition: background 2s ease; /* ゆったりとした変化 */
+            transition: background 2s ease;
             overflow: hidden;
         }
 
@@ -38,29 +36,27 @@
             position: absolute;
             width: 150%; height: 150%;
             border-radius: 50%;
-            filter: blur(80px); /* 強いぼかし */
-            opacity: 0.3; /* ほのかに光らせる */
+            filter: blur(80px);
+            opacity: 0.3;
             animation: moveAurora 20s infinite linear alternate;
         }
 
         .aurora-1 { top: -20%; left: -20%; background: rgba(255, 255, 255, 0.2); }
-        .aurora-2 { bottom: -20%; right: -20%; background: var(--am-pink); } /* デフォルト色 */
+        .aurora-2 { bottom: -20%; right: -20%; background: var(--am-pink); }
 
         @keyframes moveAurora {
             0% { transform: translate(0, 0) rotate(0deg); }
             100% { transform: translate(-10%, -10%) rotate(10deg); }
         }
 
-        /* メインコンテナ */
         .container {
             padding: 20px;
-            padding-top: 130px; /* 検索バーとヘッダーのスペース */
+            padding-top: 130px;
             height: calc(100vh - 120px);
             overflow-y: auto;
             scroll-behavior: smooth;
         }
 
-        /* 🔍 固定検索バー（すりガラス） */
         .header-fixed {
             position: fixed;
             top: 0; left: 0; width: 100%;
@@ -71,13 +67,7 @@
             box-sizing: border-box;
         }
 
-        h1 {
-            font-size: 32px;
-            font-weight: 800;
-            margin: 0;
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
-        }
+        h1 { font-size: 32px; font-weight: 800; margin: 0; margin-bottom: 15px; }
 
         #search-bar {
             width: 100%;
@@ -91,7 +81,6 @@
             box-sizing: border-box;
         }
 
-        /* ➕ シンプルな追加ボタン */
         #drop-zone {
             display: inline-block;
             padding: 10px 20px;
@@ -101,123 +90,38 @@
             border-radius: 20px;
             background: rgba(250, 36, 60, 0.1);
             margin-bottom: 25px;
-            transition: background 0.3s;
         }
-        #drop-zone:hover { background: rgba(250, 36, 60, 0.2); }
 
-        /* 🎶 曲リストアイテム（Apple Music風） */
         .track-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            cursor: pointer;
-            transition: background 0.2s;
+            display: flex; align-items: center; padding: 10px 0; cursor: pointer;
         }
-        .track-item:active { background: rgba(255, 255, 255, 0.05); } /* タップ時の反応 */
 
         .track-item img {
-            width: 48px;
-            height: 48px;
-            border-radius: 6px;
-            margin-right: 15px;
-            object-fit: cover;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            width: 48px; height: 48px; border-radius: 6px; margin-right: 15px;
+            object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .track-info-text {
-            flex: 1;
-            overflow: hidden;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 10px;
-        }
+        .track-info-text { flex: 1; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .track-name { font-size: 17px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-meta { font-size: 14px; color: var(--am-sub-text); display: block; }
 
-        .track-name {
-            font-size: 17px;
-            font-weight: 500;
-            color: var(--am-text);
-            display: block;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .track-meta {
-            font-size: 14px;
-            color: var(--am-sub-text);
-            display: block;
-            margin-top: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        /* 📱 ミニプレイヤー（フローティング・すりガラス） */
         .mini-player {
-            position: fixed;
-            bottom: 25px; /* 少し浮かせる */
-            left: 15px; right: 15px;
-            height: 64px;
-            background: var(--am-card);
+            position: fixed; bottom: 25px; left: 15px; right: 15px;
+            height: 64px; background: var(--am-card);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            padding: 0 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            border: 0.5px solid rgba(255,255,255,0.08);
-            z-index: 100;
+            border-radius: 12px; display: flex; align-items: center; padding: 0 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 0.5px solid rgba(255,255,255,0.08); z-index: 100;
         }
 
-        .player-art {
-            width: 44px;
-            height: 44px;
-            border-radius: 6px;
-            margin-right: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
+        .player-art { width: 44px; height: 44px; border-radius: 6px; margin-right: 12px; }
+        .player-text { flex: 1; overflow: hidden; }
+        .player-title { font-weight: 600; font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .player-artist { color: var(--am-sub-text); font-size: 12px; }
 
-        .player-text {
-            flex: 1;
-            overflow: hidden;
-            margin-right: 10px;
-        }
-
-        .player-title {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--am-text);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            display: block;
-        }
-
-        .player-artist {
-            color: var(--am-sub-text);
-            font-size: 12px;
-            display: block;
-            margin-top: 1px;
-        }
-
-        /* コントロールボタンの見直し */
-        .controls {
-            display: flex;
-            gap: 18px;
-            font-size: 26px;
-            align-items: center;
-        }
-        .control-btn {
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .control-btn:active { opacity: 0.5; } /* タップ時の反応 */
-
-        /* シャッフル・リピートボタン（小型化） */
-        .am-icon {
-            font-size: 16px;
-            opacity: 0.4;
-            color: var(--am-text);
-        }
-        .am-icon.active {
-            opacity: 1;
-            color: var(--am-pink); /* ONの時はピンク */
-        }
-
-        /* 隠しCanvas (色抽出用) */
+        .controls { display: flex; gap: 18px; font-size: 26px; align-items: center; }
+        .control-btn { cursor: pointer; }
+        .am-icon { font-size: 16px; opacity: 0.4; }
+        .am-icon.active { opacity: 1; color: var(--am-pink); }
         #color-canvas { display: none; }
     </style>
 </head>
@@ -233,9 +137,8 @@
     </div>
 
     <div class="container">
-        <div id="drop-zone">＋ M4aファイルを追加</div>
-        <div id="track-list">
-            </div>
+        <div id="drop-zone">＋ 曲を追加 (M4aなど)</div>
+        <div id="track-list"></div>
     </div>
 
     <div class="mini-player">
@@ -253,173 +156,144 @@
     </div>
 
     <script>
+        // --- 要素の取得 (重複なし) ---
         const canvas = document.getElementById('color-canvas');
         const ctx = canvas.getContext('2d');
         const dropZone = document.getElementById('drop-zone');
         const trackList = document.getElementById('track-list');
-        // --- 必要な要素の取得 ---
-const canvas = document.getElementById('color-canvas');
-const ctx = canvas.getContext('2d');
-const dropZone = document.getElementById('drop-zone');
-const trackList = document.getElementById('track-list');
-const searchBar = document.getElementById('search-bar');
-const playBtn = document.getElementById('play-btn');
-const shuffleBtn = document.getElementById('shuffle-btn');
-const repeatBtn = document.getElementById('repeat-btn');
-const playerTitle = document.getElementById('player-title');
-const playerArtist = document.getElementById('player-artist');
-const playerArt = document.getElementById('player-art');
-const auroraSub = document.getElementById('aurora-sub');
+        const searchBar = document.getElementById('search-bar');
+        const playBtn = document.getElementById('play-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
+        const playerTitle = document.getElementById('player-title');
+        const playerArtist = document.getElementById('player-artist');
+        const playerArt = document.getElementById('player-art');
+        const auroraSub = document.getElementById('aurora-sub');
 
-let audio = new Audio();
-let isPlaying = false;
-let playlist = []; 
-let currentIndex = -1; 
-let isShuffle = false;
-let isRepeat = false;
+        let audio = new Audio();
+        let isPlaying = false;
+        let playlist = []; 
+        let currentIndex = -1; 
+        let isShuffle = false;
+        let isRepeat = false;
 
-// --- 1. ファイル追加処理 (iPadでも確実に動くように修正) ---
-// ボタンのクリックイベントを1つに統合
-dropZone.addEventListener('click', () => {
-    console.log("追加ボタンがクリックされました"); // 診断用
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'audio/*'; // すべての音声形式を許可
-    input.multiple = true;
-    
-    input.onchange = (e) => {
-        const files = e.target.files;
-        if (files.length > 0) {
-            handleFiles(files);
-        }
-    };
-    input.click();
-});
+        // --- 1. ファイル追加 (iPad対応) ---
+        dropZone.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'audio/*';
+            input.multiple = true;
+            input.onchange = (e) => {
+                if (e.target.files.length > 0) handleFiles(e.target.files);
+            };
+            input.click();
+        });
 
-async function handleFiles(files) {
-    for (const file of Array.from(files)) {
-        console.log("解析中:", file.name);
-        
-        // メタデータ解析 (ライブラリが読み込めていない場合に備えてエラーハンドリング)
-        let common = null;
-        try {
-            if (typeof musicMetadata !== 'undefined') {
-                const metadata = await musicMetadata.parseBlob(file);
-                common = metadata.common;
+        async function handleFiles(files) {
+            for (const file of Array.from(files)) {
+                let common = null;
+                try {
+                    if (typeof musicMetadata !== 'undefined') {
+                        const metadata = await musicMetadata.parseBlob(file);
+                        common = metadata.common;
+                    }
+                } catch (err) { console.error(err); }
+                
+                let coverUrl = "https://via.placeholder.com/150/333/fff?text=No+Image";
+                if (common?.picture?.[0]) {
+                    const pic = common.picture[0];
+                    coverUrl = URL.createObjectURL(new Blob([pic.data], { type: pic.format }));
+                }
+
+                const track = {
+                    url: URL.createObjectURL(file),
+                    title: common?.title || file.name,
+                    artist: common?.artist || "不明なアーティスト",
+                    cover: coverUrl
+                };
+                
+                playlist.push(track);
+                renderPlaylist(playlist);
             }
-        } catch (err) {
-            console.error("メタデータ解析失敗:", err);
-        }
-        
-        // ジャケット写真
-        let coverUrl = "https://via.placeholder.com/150/333/fff?text=No+Image";
-        if (common?.picture?.[0]) {
-            const pic = common.picture[0];
-            coverUrl = URL.createObjectURL(new Blob([pic.data], { type: pic.format }));
         }
 
-        const track = {
-            url: URL.createObjectURL(file),
-            title: common?.title || file.name,
-            artist: common?.artist || "不明なアーティスト",
-            cover: coverUrl
+        // --- 2. 描画 ---
+        function renderPlaylist(tracksToRender) {
+            trackList.innerHTML = '';
+            tracksToRender.forEach((track) => {
+                const div = document.createElement('div');
+                div.className = 'track-item';
+                div.innerHTML = `
+                    <img src="${track.cover}">
+                    <div class="track-info-text">
+                        <span class="track-name">${track.title}</span>
+                        <span class="track-meta">${track.artist}</span>
+                    </div>
+                `;
+                div.onclick = () => {
+                    currentIndex = playlist.indexOf(track);
+                    playTrack(track);
+                };
+                trackList.appendChild(div);
+            });
+        }
+
+        // --- 3. 再生 & 色抽出 ---
+        function playTrack(track) {
+            if(!track) return;
+            audio.src = track.url;
+            audio.play();
+            isPlaying = true;
+            playBtn.innerText = '⏸';
+            playerTitle.innerText = track.title;
+            playerArtist.innerText = track.artist;
+            playerArt.src = track.cover;
+
+            const img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = track.cover;
+            img.onload = () => {
+                canvas.width = 10; canvas.height = 10;
+                ctx.drawImage(img, 0, 0, 10, 10);
+                const d1 = ctx.getImageData(5, 5, 1, 1).data;
+                const d2 = ctx.getImageData(1, 1, 1, 1).data;
+                const c1 = `rgb(${d1[0]}, ${d1[1]}, ${d1[2]})`;
+                const c2 = `rgb(${d2[0]}, ${d2[1]}, ${d2[2]})`;
+                document.querySelector('.aurora-1').style.background = `radial-gradient(circle at center, ${c1} 0%, transparent 80%)`;
+                auroraSub.style.background = c2;
+            };
+        }
+
+        // --- 4. ボタン操作 ---
+        playBtn.onclick = () => {
+            if (isPlaying) { audio.pause(); playBtn.innerText = '▶️'; }
+            else { if(audio.src) audio.play(); playBtn.innerText = '⏸'; }
+            isPlaying = !isPlaying;
         };
-        
-        playlist.push(track);
-        renderPlaylist(playlist);
-    }
-}
 
-// --- 2. プレイリスト描画 ---
-function renderPlaylist(tracksToRender) {
-    trackList.innerHTML = '';
-    tracksToRender.forEach((track, index) => {
-        const div = document.createElement('div');
-        div.className = 'track-item';
-        div.innerHTML = `
-            <img src="${track.cover}">
-            <div class="track-info-text">
-                <span class="track-name">${track.title}</span>
-                <span class="track-meta">${track.artist}</span>
-            </div>
-        `;
-        div.onclick = () => {
-            // 全体プレイリスト内での位置を探す
-            currentIndex = playlist.indexOf(track);
-            playTrack(track);
+        shuffleBtn.onclick = () => {
+            isShuffle = !isShuffle;
+            shuffleBtn.classList.toggle('active', isShuffle);
         };
-        trackList.appendChild(div);
-    });
-}
 
-// --- 3. 再生 & 背景色更新 ---
-function playTrack(track) {
-    if(!track) return;
-    audio.src = track.url;
-    audio.play();
-    isPlaying = true;
-    playBtn.innerText = '⏸';
-    playerTitle.innerText = track.title;
-    playerArtist.innerText = track.artist;
-    playerArt.src = track.cover;
+        repeatBtn.onclick = () => {
+            isRepeat = !isRepeat;
+            repeatBtn.classList.toggle('active', isRepeat);
+        };
 
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = track.cover;
-    img.onload = () => {
-        // 色抽出
-        canvas.width = 10; canvas.height = 10;
-        ctx.drawImage(img, 0, 0, 10, 10);
-        const d1 = ctx.getImageData(5, 5, 1, 1).data;
-        const d2 = ctx.getImageData(1, 1, 1, 1).data;
-        
-        const c1 = `rgb(${d1[0]}, ${d1[1]}, ${d1[2]})`;
-        const c2 = `rgb(${d2[0]}, ${d2[1]}, ${d2[2]})`;
-        
-        document.querySelector('.aurora-1').style.background = `radial-gradient(circle at center, ${c1} 0%, transparent 80%)`;
-        auroraSub.style.background = c2;
-    };
-}
+        searchBar.oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = playlist.filter(t => t.title.toLowerCase().includes(term) || t.artist.toLowerCase().includes(term));
+            renderPlaylist(filtered);
+        };
 
-// --- 4. コントロール系 ---
-playBtn.onclick = () => {
-    if (isPlaying) { audio.pause(); playBtn.innerText = '▶️'; }
-    else { if(audio.src) audio.play(); playBtn.innerText = '⏸'; }
-    isPlaying = !isPlaying;
-};
-
-shuffleBtn.onclick = () => {
-    isShuffle = !isShuffle;
-    shuffleBtn.classList.toggle('active', isShuffle);
-};
-
-repeatBtn.onclick = () => {
-    isRepeat = !isRepeat;
-    repeatBtn.classList.toggle('active', isRepeat);
-};
-
-// --- 5. 検索 & 自動再生 ---
-searchBar.oninput = (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filtered = playlist.filter(t => 
-        t.title.toLowerCase().includes(searchTerm) || 
-        t.artist.toLowerCase().includes(searchTerm)
-    );
-    renderPlaylist(filtered);
-};
-
-audio.onended = () => {
-    if (isRepeat) { playTrack(playlist[currentIndex]); return; }
-    let next = isShuffle ? Math.floor(Math.random() * playlist.length) : currentIndex + 1;
-    if (next < playlist.length) {
-        currentIndex = next;
-        playTrack(playlist[currentIndex]);
-    } else {
-        currentIndex = 0;
-        playTrack(playlist[currentIndex]);
-    }
-};
-
+        audio.onended = () => {
+            if (isRepeat) { playTrack(playlist[currentIndex]); return; }
+            let next = isShuffle ? Math.floor(Math.random() * playlist.length) : currentIndex + 1;
+            if (next >= playlist.length) next = 0;
+            currentIndex = next;
+            playTrack(playlist[currentIndex]);
+        };
     </script>
 </body>
 </html>
