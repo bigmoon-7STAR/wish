@@ -17,15 +17,15 @@
             --text-main: #4a4a6a;
             --text-dark: #2d2d44;
             --sub-text: #8e94b3;
-            --glass: rgba(255, 255, 255, 0.82);
+            --glass: rgba(255, 255, 255, 0.4);
             --star-clip: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             --card-shadow: 0 12px 30px rgba(180, 190, 220, 0.2);
             --grad-primary: linear-gradient(135deg, #a6cbe3 0%, #fbe0e6 100%);
-            --bg-color: #ffffff;
-            --card-bg: #ffffff;
-            --modal-bg: #ffffff;
-            --border-color: rgba(255,255,255,0.9);
-            --tab-bg: rgba(255,255,255,0.92);
+            --bg-color: transparent;
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --modal-bg: transparent;
+            --border-color: rgba(255,255,255,0.4);
+            --tab-bg: rgba(255,255,255,0.4);
             --input-bg: #fbfbfc;
             --seeker-bg: rgba(166,203,227,0.25);
             --list-hover: rgba(255,255,255,0.5);
@@ -35,33 +35,34 @@
             --icon-active: #6a89cc;
             --del-color: #ff8a80;
             --del-bg: #ffebee;
+            --lyric-fade-time: 0.5s;
         }
 
         [data-theme="dark"] {
-            --key-color: #5a0000;
-            --accent-blue: #3a0000;
-            --accent-green: #2a0000;
-            --accent-purple: #4a001a;
-            --text-main: #ffcccc;
+            --key-color: #003040;
+            --accent-blue: #001f3f;
+            --accent-green: #002b20;
+            --accent-purple: #1a0033;
+            --text-main: #cceeff;
             --text-dark: #ffffff;
-            --sub-text: #dd8888;
-            --glass: rgba(30, 0, 0, 0.82);
-            --card-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-            --grad-primary: linear-gradient(135deg, #600000 0%, #300000 100%);
-            --bg-color: #120000;
-            --card-bg: #1e0000;
-            --modal-bg: #1a0000;
-            --border-color: #3a0000;
-            --tab-bg: rgba(20,0,0,0.95);
-            --input-bg: #2a0000;
-            --seeker-bg: rgba(100,0,0,0.3);
-            --list-hover: rgba(255,0,0,0.1);
-            --star-grad: red;
-            --player-bg: rgba(20, 0, 0, 0.6);
-            --icon-color: #ff4444;
-            --icon-active: #ff0000;
-            --del-color: #ffaaaa;
-            --del-bg: #4a0000;
+            --sub-text: #88bbcc;
+            --glass: rgba(0, 15, 30, 0.4);
+            --card-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+            --grad-primary: linear-gradient(135deg, #004060 0%, #002040 100%);
+            --bg-color: transparent;
+            --card-bg: rgba(0, 21, 40, 0.6);
+            --modal-bg: transparent;
+            --border-color: rgba(255,255,255,0.1);
+            --tab-bg: rgba(0,10,20,0.4);
+            --input-bg: #001a33;
+            --seeker-bg: rgba(0,100,150,0.3);
+            --list-hover: rgba(0,255,255,0.1);
+            --star-grad: linear-gradient(45deg, #ffff00, #9acd32, #add8e6);
+            --player-bg: rgba(0, 10, 20, 0.7);
+            --icon-color: #0088cc;
+            --icon-active: #00ccff;
+            --del-color: #004466;
+            --del-bg: #001122;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; scrollbar-width: none; -ms-overflow-style: none; }
@@ -69,14 +70,17 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Hiragino Sans", sans-serif;
-            background: var(--bg-color);
+            background: #ffffff;
             background-image: 
                 radial-gradient(circle at 10% 20%, var(--accent-blue) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, var(--accent-purple) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, var(--accent-green) 0%, transparent 40%),
-                linear-gradient(135deg, var(--bg-color) 0%, var(--bg-color) 100%);
+                radial-gradient(circle at 50% 50%, var(--accent-green) 0%, transparent 40%);
             margin: 0 auto; height: 100vh; height: -webkit-fill-available; overflow: hidden; display: flex; flex-direction: column;
             color: var(--text-main); letter-spacing: 0.01em; max-width: 390px; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.05); overscroll-behavior: none; padding-top: 70px;
+        }
+        
+        [data-theme="dark"] body {
+            background: #000a14;
         }
 
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 15s infinite alternate; }
@@ -92,7 +96,7 @@
         #right-btn { justify-content: flex-end; }
         #right-btn i { font-size: 18px; color: #fff; background: var(--grad-primary); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-        .search-container { position: relative; z-index: 90; padding: 10px 20px; background: var(--glass); backdrop-filter: blur(10px); display: flex; flex-direction: column; gap: 8px; border-bottom: 0.5px solid var(--border-color); }
+        .search-container { position: relative; z-index: 90; padding: 10px 20px; background: var(--glass); backdrop-filter: blur(40px); display: flex; flex-direction: column; gap: 8px; border-bottom: 0.5px solid var(--border-color); }
         .search-bar-row { display: flex; gap: 10px; align-items: center; width: 100%; }
         #search-input, .bulk-search-input { flex: 1; padding: 10px 18px; border-radius: 20px; border: 2px solid var(--border-color); background: var(--card-bg); font-size: 13px; outline: none; box-shadow: 0 4px 12px rgba(0,0,0,0.03); color: var(--text-main); }
         .sort-select { background: var(--card-bg); border: 1.5px solid var(--border-color); border-radius: 12px; font-size: 11px; color: var(--text-main); padding: 6px 10px; outline: none; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
@@ -107,25 +111,25 @@
         #content { flex: 1; overflow-y: auto; padding-bottom: 160px; -webkit-overflow-scrolling: touch; }
         .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding: 20px; }
         
-        .card { position: relative; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card { position: relative; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 28px; }
         .card:active { transform: scale(0.96); }
         .card-img { width: 100%; aspect-ratio: 1/1; border-radius: 28px; object-fit: cover; box-shadow: var(--card-shadow); border: 4px solid var(--border-color); display: block; background: var(--card-bg); }
-        .card-info { padding: 8px 2px; }
+        .card-info { padding: 8px 10px; }
         .card-title { font-size: 13px; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-sub { font-size: 10px; color: var(--sub-text); margin-top: 3px; display: flex; align-items: center; justify-content: space-between; }
         .card-year { font-size: 9px; color: var(--icon-color); font-weight: 700; background: rgba(166,203,227,0.1); padding: 1px 6px; border-radius: 10px; }
         .card-tag { display: inline-block; font-size: 9px; background: linear-gradient(135deg, var(--accent-blue), var(--card-bg)); color: var(--icon-active); padding: 3px 10px; border-radius: 20px; margin-top: 5px; font-weight: 800; border: 1px solid rgba(166,203,227,0.3); }
 
-        .list-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: transparent; }
+        .list-item { display: flex; align-items: center; padding: 8px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 12px; margin-bottom: 5px; }
         .list-item:active { background: var(--list-hover); }
-        .list-item img:not(.artist-icon) { width: 54px; height: 54px; border-radius: 16px; margin-right: 16px; object-fit: cover; border: 3px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .list-item img:not(.artist-icon) { width: 44px; height: 44px; border-radius: 12px; margin-right: 12px; object-fit: cover; border: 2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-        .artist-icon-container { width: 68px; height: 68px; margin-right: 18px; flex-shrink: 0; filter: drop-shadow(0 8px 12px rgba(180,180,210,0.3)); position: relative; }
+        .artist-icon-container { width: 58px; height: 58px; margin-right: 15px; flex-shrink: 0; filter: drop-shadow(0 8px 12px rgba(180,180,210,0.3)); position: relative; }
         .artist-icon { width: 100%; height: 100%; object-fit: cover; background: var(--grad-primary); display: flex; align-items: center; justify-content: center; color: #fff; clip-path: var(--star-clip); }
 
-        .swipe-container { position: relative; overflow: hidden; background: var(--bg-color); }
+        .swipe-container { position: relative; overflow: hidden; background: transparent; padding: 0 10px; }
         .swipe-container .list-item, .swipe-container .artist-list-item { z-index: 2; position: relative; }
-        .swipe-delete-btn { position: absolute; right: 0; top: 0; bottom: 0; width: 85px; background: var(--del-bg); color: var(--del-color); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; z-index: 1; opacity: 0; transition: opacity 0.2s; }
+        .swipe-delete-btn { position: absolute; right: 10px; top: 0; bottom: 5px; width: 85px; background: var(--del-bg); color: var(--del-color); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; z-index: 1; opacity: 0; transition: opacity 0.2s; border-radius: 12px; }
 
         .reorder-btns { display: flex; flex-direction: column; gap: 8px; margin-left: auto; z-index: 5; padding-left: 10px; }
         .reorder-btns i { color: var(--icon-color); padding: 6px; font-size: 16px; opacity: 0.7; }
@@ -148,7 +152,9 @@
         [data-theme="dark"] #f-lyrics-view { background: rgba(0,0,0,0.4); text-shadow: 0 0 10px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); }
         #f-lyrics-view.active { display: flex; }
         
-        .fullscreen-lyrics { position: fixed !important; inset: 0 !important; z-index: 9999 !important; border-radius: 0 !important; background: var(--player-bg) !important; backdrop-filter: blur(80px) !important; max-width: 100% !important; padding: 80px 20px !important; -webkit-backdrop-filter: blur(80px) !important; height: 100vh !important; width: 100vw !important; }
+        #lyrics-content-scroll div { transition: color var(--lyric-fade-time) ease; }
+        
+        .fullscreen-lyrics { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; border-radius: 0 !important; background: var(--player-bg) !important; backdrop-filter: blur(80px) !important; max-width: 100% !important; padding: 80px 20px !important; -webkit-backdrop-filter: blur(80px) !important; height: 100vh !important; width: 100vw !important; margin: 0 !important; }
         [data-theme="dark"] .fullscreen-lyrics { background: transparent !important; }
         [data-theme="dark"] .fullscreen-lyrics::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.7); backdrop-filter: blur(60px); z-index:-1; }
 
@@ -164,7 +170,7 @@
         .tab-item i { font-size: 24px; margin-top: 6px; }
         .tab-item span { margin-top: 2px; }
 
-        .modal { position: fixed; inset: 0; background: var(--modal-bg); z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
+        .modal { position: fixed; inset: 0; background: var(--bg-color); z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
         @keyframes modalSlide { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .modal .header { position: relative !important; min-height: 70px; height: 70px; padding-top: calc(5px + env(safe-area-inset-top)); }
         .modal-body { padding: 30px; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
@@ -182,7 +188,7 @@
         .check-item { display: flex; align-items: center; padding: 16px 25px; border-bottom: 1.5px solid var(--border-color); cursor: pointer; }
         .check-item input[type="checkbox"] { width: 22px; height: 22px; margin-right: 18px; accent-color: var(--icon-color); }
 
-        .queue-panel { position: absolute; inset: 0; background: var(--glass); backdrop-filter: blur(50px); z-index: 6000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1); display: flex; flex-direction: column; max-width: 390px; margin: 0 auto; }
+        .queue-panel { position: absolute; inset: 0; background: var(--bg-color); backdrop-filter: blur(50px); z-index: 6000; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1); display: flex; flex-direction: column; max-width: 390px; margin: 0 auto; }
         .queue-panel.open { transform: translateY(0); }
 
         .marquee-wrap { width: 100%; overflow: hidden; white-space: nowrap; position: relative; }
@@ -194,13 +200,12 @@
         @media (max-width: 390px) { body { max-width: 100%; width: 100%; box-shadow: none; } .header, .tab-bar, .full-player, .modal, .queue-panel { max-width: 100%; } }
 
         .star-icon { color: var(--icon-color); }
-        .star-icon.active { background: var(--star-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
-        [data-theme="dark"] .star-icon.active { -webkit-text-fill-color: red; color: red; }
+        .star-icon.active { background: var(--star-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; color: transparent; }
+        [data-theme="dark"] .star-icon.active { background: var(--star-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; color: transparent; }
 
-        .artist-list-item { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: var(--card-bg); }
+        .artist-list-item { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 12px; margin-bottom: 5px; }
         .color-preset-btn { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer; margin-right: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* Drag and Drop visually */
         .dragging { opacity: 0.5; background: var(--list-hover); }
     </style>
 </head>
@@ -343,13 +348,13 @@
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('settings-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2>Settings</h2><div></div></div></div>
+        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('settings-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2>設定</h2><div></div></div></div>
         <div class="modal-body">
             <span class="field-label">Theme Mode</span>
             <select id="theme-select" class="edit-input" onchange="applyTheme(this.value)">
                 <option value="system">端末の設定に追従</option>
-                <option value="light">ライトモード</option>
-                <option value="dark">ダークモード</option>
+                <option value="light">明るい</option>
+                <option value="dark">暗い</option>
             </select>
             
             <span class="field-label">Sleep Timer (Minutes)</span>
@@ -365,6 +370,20 @@
                 <div class="color-preset-btn" style="background:linear-gradient(135deg, #ffb6c1, #ff69b4);" onclick="applyPreset('#ffb6c1', '#ff69b4', '#ffe4e1', '#fff0f5', 2)"></div>
                 <div class="color-preset-btn" style="background:linear-gradient(135deg, #98fb98, #3cb371);" onclick="applyPreset('#98fb98', '#3cb371', '#f0fff0', '#e0ffff', 3)"></div>
                 <div class="color-preset-btn" style="background:linear-gradient(135deg, #dda0dd, #8a2be2);" onclick="applyPreset('#dda0dd', '#8a2be2', '#f8f8ff', '#e6e6fa', 4)"></div>
+            </div>
+            
+            <span class="field-label" style="margin-top:20px;">独自の色</span>
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <input type="color" id="custom-c1" value="#a6cbe3" style="width:30px; height:30px; border:none;">
+                <input type="color" id="custom-c2" value="#fbe0e6" style="width:30px; height:30px; border:none;">
+                <input type="color" id="custom-c3" value="#ebf5e6" style="width:30px; height:30px; border:none;">
+                <input type="color" id="custom-c4" value="#eee5f8" style="width:30px; height:30px; border:none;">
+                <button onclick="saveCustomPreset()" style="background:var(--icon-color); color:#fff; border:none; border-radius:10px; padding:0 10px;">適用</button>
+            </div>
+            
+            <span class="field-label" style="margin-top:20px;">文字が浮かぶ秒数</span>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <input type="number" id="lyric-time-input" class="edit-input" value="0.5" step="0.1" style="margin-bottom:0;" onchange="saveLyricFadeTime(this.value)">
             </div>
         </div>
     </div>
@@ -408,7 +427,23 @@
         let activeArtistFilter = null; 
         let currentSyncIndex = -1;
 
-        // Theme and UI Colors
+        let savedFade = localStorage.getItem('lyricFadeTime') || '0.5';
+        document.documentElement.style.setProperty('--lyric-fade-time', savedFade + 's');
+        document.getElementById('lyric-time-input').value = savedFade;
+
+        function saveLyricFadeTime(val) {
+            document.documentElement.style.setProperty('--lyric-fade-time', val + 's');
+            localStorage.setItem('lyricFadeTime', val);
+        }
+
+        function saveCustomPreset() {
+            let c1 = document.getElementById('custom-c1').value;
+            let c2 = document.getElementById('custom-c2').value;
+            let c3 = document.getElementById('custom-c3').value;
+            let c4 = document.getElementById('custom-c4').value;
+            applyPreset(c1, c2, c3, c4, 'custom');
+        }
+
         function applyTheme(mode) {
             if(mode === 'system') {
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }
@@ -435,7 +470,6 @@
         function applyPreset(c1, c2, c3, c4, index) {
             let isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             if (isDark) {
-                // ダークモード時は暗めの色調に補正したまま固定か、選ばれた色をそのまま適用するか
                 document.documentElement.style.setProperty('--grad-primary', `linear-gradient(135deg, ${c1} 0%, ${c2} 100%)`);
                 document.documentElement.style.setProperty('--accent-blue', c1);
                 document.documentElement.style.setProperty('--key-color', c2);
@@ -612,7 +646,7 @@
                 if (!currentArtist) {
                     title.innerText = "Artists"; display.className = "";
                     let allArts = new Set();
-                    Object.keys(artistMeta).forEach(k => allArts.add(k)); // allow custom added artists
+                    Object.keys(artistMeta).forEach(k => allArts.add(k));
                     tracks.forEach(t => { if(t.artist) t.artist.split(/[,、/]/).forEach(a => { if(a.trim()) allArts.add(a.trim()); }) });
                     let artists = [...allArts];
                     
@@ -622,7 +656,6 @@
                         artists = artists.filter(a => searchTerms.every(term => a.toLowerCase().includes(term)));
                     }
 
-                    // お気に入りを上にする
                     artists.sort((a, b) => {
                         let favA = artistMeta[a] && artistMeta[a].favorite ? 1 : 0;
                         let favB = artistMeta[b] && artistMeta[b].favorite ? 1 : 0;
@@ -1145,7 +1178,6 @@
             } 
         }
 
-        // Artist Setup and Lyric Paint functions
         function openArtistSetup(a) {
             const meta = artistMeta[a] || { name: a, favorite: false, members: [], syncColor: '' };
             if(!meta.members) meta.members = [];
@@ -1182,7 +1214,6 @@
         function addArtistMember() { currentMembersEdit.push({name:'', color:'var(--icon-color)', linked: null}); renderArtistSetup(document.getElementById('sync-color-input').value); }
         function removeArtistMember(i) { currentMembersEdit.splice(i, 1); renderArtistSetup(document.getElementById('sync-color-input').value); }
         
-        // Drag and drop for members
         let draggedMemIndex = -1;
         function handleDragStart(e, i) {
             draggedMemIndex = i;
@@ -1209,7 +1240,10 @@
             let artists = [...allArts];
             
             const body = document.getElementById('artist-sync-body');
-            body.innerHTML = artists.map(a => `<div class="artist-chip" onclick="linkArtistMember('${a}')">${a}</div>`).join('') + `<div class="artist-chip" onclick="linkArtistMember('')" style="color:var(--del-color);">Unlink</div>`;
+            body.innerHTML = artists.map(a => {
+                let imgHtml = artistMeta[a] && artistMeta[a].icon ? `<img src="${artistMeta[a].icon}" style="width:20px;height:20px;border-radius:50%;margin-right:5px;vertical-align:middle;object-fit:cover;">` : `<div style="display:inline-block;width:20px;height:20px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--icon-color);"></div>`;
+                return `<div class="artist-chip" onclick="linkArtistMember('${a}')">${imgHtml}${a}</div>`;
+            }).join('') + `<div class="artist-chip" onclick="linkArtistMember('')" style="color:var(--del-color);">Unlink</div>`;
             document.getElementById('artist-sync-modal').style.display = 'flex';
         }
         function linkArtistMember(a) {
