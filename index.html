@@ -51,7 +51,7 @@
             --grad-primary: linear-gradient(135deg, #004060 0%, #002040 100%);
             --bg-color: transparent;
             --card-bg: rgba(0, 21, 40, 0.6);
-            --modal-bg: rgba(0, 10, 20, 0.6);
+            --modal-bg: rgba(0, 15, 30, 0.5);
             --border-color: rgba(255,255,255,0.1);
             --tab-bg: rgba(0,10,20,0.4);
             --input-bg: #001a33;
@@ -69,7 +69,7 @@
         *::-webkit-scrollbar { display: none; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Hiragino Sans", sans-serif;
             background: #ffffff;
             background-image: 
                 radial-gradient(circle at 10% 20%, var(--accent-blue) 0%, transparent 40%),
@@ -87,16 +87,17 @@
         @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 50px); } }
 
         .header { position: fixed !important; top: 0 !important; left: 0; right: 0; padding: calc(5px + env(safe-area-inset-top)) 20px 5px; background: var(--glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-bottom: 1.5px solid var(--border-color); z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.02); width: 100%; display: flex; flex-direction: column; justify-content: flex-end; min-height: 70px; height: 70px; max-width: 390px; margin: 0 auto; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1001; width: 100%; height: 100%; }
-        .header-top h2 { font-size: 17px; font-weight: 800; color: var(--icon-active); margin: 0; letter-spacing: 0.05em; text-align: center; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1001; width: 100%; height: 40px; }
+        .header-top h2 { font-size: 17px; font-weight: 800; color: var(--icon-active); margin: 0; letter-spacing: 0.05em; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; position: absolute; left: 50%; transform: translateX(-50%); width: 60%; }
         
-        .header-left, .header-right { display: flex; align-items: center; min-width: 60px; z-index: 2; gap: 5px; }
-        .header-right { justify-content: flex-end; }
+        .header-btn-wrap { display: flex; align-items: center; min-width: 60px; z-index: 1002; }
+        .header-btn-wrap.left { justify-content: flex-start; }
+        .header-btn-wrap.right { justify-content: flex-end; }
         
-        #left-btn, #right-btn, .modal-close-btn, .header-action-btn { background: none; border: none; color: var(--icon-color); font-size: 18px; cursor: pointer; padding: 10px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        #left-btn:active, #right-btn:active, .header-action-btn:active { opacity: 0.5; transform: scale(0.9); }
-        #left-btn { justify-content: flex-start; font-size: 20px; padding-left: 0; }
-        #right-btn { justify-content: flex-end; padding-right: 0; }
+        #left-btn, #right-btn, .modal-close-btn { background: none; border: none; color: var(--icon-color); font-size: 18px; cursor: pointer; padding: 10px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        #left-btn:active { opacity: 0.5; transform: scale(0.9); }
+        #left-btn { justify-content: flex-start; font-size: 20px; }
+        #right-btn { justify-content: flex-end; }
         #right-btn i { font-size: 18px; color: #fff; background: var(--grad-primary); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
         .search-container { position: relative; z-index: 90; padding: 10px 20px; background: var(--glass); backdrop-filter: blur(40px); display: flex; flex-direction: column; gap: 8px; border-bottom: 0.5px solid var(--border-color); }
@@ -108,7 +109,7 @@
         .tag-chip { flex-shrink: 0; padding: 6px 14px; background: var(--card-bg); border: 1.5px solid var(--accent-blue); border-radius: 15px; font-size: 11px; font-weight: 800; color: var(--icon-active); cursor: pointer; }
 
         .bulk-artist-icon-chip { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; animation: fadeIn 0.3s ease; }
-        .bulk-artist-icon-chip img, .bulk-artist-icon-chip .placeholder { width: 42px; height: 42px; clip-path: var(--star-clip); object-fit: cover; background: var(--grad-primary); border: 2px solid var(--border-color); transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #fff; }
+        .bulk-artist-icon-chip img, .bulk-artist-icon-chip .placeholder { width: 42px; height: 42px; clip-path: var(--star-clip); object-fit: cover; background: var(--grad-primary); border: 2px solid var(--border-color); transition: 0.3s; }
         .bulk-artist-icon-chip span { font-size: 9px; font-weight: 800; color: var(--icon-color); max-width: 55px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         #content { flex: 1; overflow-y: auto; padding-bottom: 160px; -webkit-overflow-scrolling: touch; }
@@ -151,13 +152,11 @@
         #f-artwork-container { width: 82vw; max-width: 340px; aspect-ratio: 1/1; position: relative; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); z-index: 10; }
         #f-img { width: 100%; height: 100%; border-radius: 42px; object-fit: cover; box-shadow: 0 40px 80px rgba(150,150,180,0.25); border: 8px solid var(--border-color); }
         
-        #f-lyrics-view { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 42px; padding: 50px 30px; overflow-y: auto; display: none; flex-direction: column; align-items: center; text-align: center; font-size: 19px; line-height: 2.4; color: var(--text-dark); text-shadow: 0 0 15px rgba(255,255,255,0.8); font-weight: 800; z-index: 20; border: 1px solid rgba(255,255,255,0.4); touch-action: pan-y; transition: all 0.4s ease; scroll-behavior: smooth; }
+        #f-lyrics-view { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 42px; padding: 50px 30px; overflow-y: auto; display: none; flex-direction: column; align-items: center; text-align: center; font-size: 19px; line-height: 2.4; color: var(--text-dark); text-shadow: 0 0 15px rgba(255,255,255,0.8); font-weight: 800; z-index: 20; border: 1px solid rgba(255,255,255,0.4); touch-action: pan-y; transition: all 0.4s ease; }
         [data-theme="dark"] #f-lyrics-view { background: rgba(0,0,0,0.4); text-shadow: 0 0 10px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); }
         #f-lyrics-view.active { display: flex; }
         
-        #lyrics-content-scroll div { transition: color var(--lyric-fade-time) ease, transform 0.3s ease; }
-        .lyric-line.active-lyric { transform: scale(1.1); color: var(--icon-active) !important; text-shadow: 0 0 10px rgba(255,255,255,1); }
-        [data-theme="dark"] .lyric-line.active-lyric { text-shadow: 0 0 10px rgba(0,200,255,0.8); }
+        #lyrics-content-scroll div { transition: color var(--lyric-fade-time) ease; }
         
         .fullscreen-lyrics { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; border-radius: 0 !important; background: var(--player-bg) !important; backdrop-filter: blur(80px) !important; max-width: 100% !important; padding: 80px 20px !important; -webkit-backdrop-filter: blur(80px) !important; height: 100vh !important; width: 100vw !important; margin: 0 !important; }
         [data-theme="dark"] .fullscreen-lyrics { background: transparent !important; }
@@ -177,7 +176,8 @@
 
         .modal { position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
         @keyframes modalSlide { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal .header { position: relative !important; min-height: 70px; height: 70px; padding: calc(5px + env(safe-area-inset-top)) 20px 5px !important; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; border-bottom: 1.5px solid var(--border-color); }
+        
+        .modal .header { position: relative !important; min-height: 70px; height: 70px; padding: calc(5px + env(safe-area-inset-top)) 20px 5px !important; }
         .modal-body { padding: 30px; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
         
         .edit-input { width: 100%; padding: 18px; border: 2.5px solid var(--border-color); border-radius: 20px; margin-bottom: 22px; outline: none; font-size: 15px; background: var(--input-bg); color: var(--text-main); font-weight: 600; }
@@ -212,9 +212,7 @@
         .color-preset-btn { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer; margin-right: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
         .dragging { opacity: 0.5; background: var(--list-hover); }
-        
-        .child-artist { margin-left: 30px; border-left: 2px solid var(--icon-color); }
-        .lyric-time-input { width: 60px; padding: 5px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-main); font-size: 11px; text-align: center; }
+        .artist-child { margin-left: 30px; border-left: 2px solid var(--icon-color); padding-left: 10px; background: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
@@ -223,13 +221,13 @@
 
     <div class="header">
         <div class="header-top">
-            <div class="header-left">
+            <div class="header-btn-wrap left">
                 <button id="left-btn" onclick="handleHeaderLeft()"><i class="fa-solid fa-sliders"></i></button>
             </div>
             <h2 id="view-title">Library</h2>
-            <div class="header-right">
-                <button class="header-action-btn" id="settings-header-btn" style="display:none;" onclick="openSettings()"><i class="fa-solid fa-gear"></i></button>
-                <button class="header-action-btn" id="artist-setup-header-btn" style="display:none;" onclick="openArtistSetup(currentArtist)"><i class="fa-solid fa-users-gear"></i></button>
+            <div class="header-btn-wrap right">
+                <button id="settings-header-btn" style="display:none; background:none; border:none; color:var(--icon-color); font-size:18px; padding:10px; cursor:pointer;" onclick="openSettings()"><i class="fa-solid fa-gear"></i></button>
+                <button id="artist-setup-header-btn" style="display:none; background:none; border:none; color:var(--icon-color); font-size:18px; padding:10px; cursor:pointer;" onclick="openArtistSetup(currentArtist)"><i class="fa-solid fa-users-gear"></i></button>
                 <button id="right-btn" onclick="handleHeaderRight()"><i class="fa-solid fa-plus"></i></button>
             </div>
         </div>
@@ -237,7 +235,7 @@
     
     <div class="search-container">
         <div class="search-bar-row">
-            <input type="text" id="search-input" placeholder="Search..." oninput="handleSearchInput()">
+            <input type="text" id="search-input" placeholder="Search track, artist, tag..." oninput="handleSearchInput()">
             <select id="sort-type" class="sort-select" onchange="handleSortChange()">
                 <option value="added">Newest</option>
                 <option value="name_asc">A-Z</option>
@@ -311,7 +309,7 @@
     </div>
 
     <div id="edit-modal" class="modal">
-        <div class="header"><div class="header-top"><div class="header-left"><button class="modal-close-btn" onclick="closeEdit()"><i class="fa-solid fa-xmark"></i></button></div><h2>Track Info</h2><div class="header-right"><button class="header-action-btn" onclick="saveEdit()" style="font-weight:900;">Save</button></div></div></div>
+        <div class="header"><div class="header-top"><div class="header-btn-wrap left"><button class="modal-close-btn" onclick="closeEdit()"><i class="fa-solid fa-xmark"></i></button></div><h2>Track Info</h2><div class="header-btn-wrap right"><button class="modal-close-btn" onclick="saveEdit()" style="color:var(--icon-color); font-weight:900;">Save</button></div></div></div>
         <div class="modal-body">
             <span class="field-label">Title</span><input type="text" id="edit-name" class="edit-input">
             <span class="field-label">Artist</span>
@@ -329,7 +327,7 @@
     </div>
 
     <div id="pl-edit-modal" class="modal">
-        <div class="header"><div class="header-top"><div class="header-left"><button class="modal-close-btn" onclick="closePlEdit()"><i class="fa-solid fa-xmark"></i></button></div><h2>Playlist</h2><div class="header-right"><button class="header-action-btn" onclick="savePlEdit()" style="font-weight:900;">Done</button></div></div></div>
+        <div class="header"><div class="header-top"><div class="header-btn-wrap left"><button class="modal-close-btn" onclick="closePlEdit()"><i class="fa-solid fa-xmark"></i></button></div><h2>Playlist</h2><div class="header-btn-wrap right"><button class="modal-close-btn" onclick="savePlEdit()" style="color:var(--icon-color); font-weight:900;">Done</button></div></div></div>
         <div class="modal-body" style="text-align:center;">
             <div style="position:relative; display:inline-block; margin-bottom:10px;">
                 <img id="pl-edit-img" style="width:200px; height:200px; border-radius:35px; object-fit:cover; border:5px solid var(--border-color); box-shadow:0 15px 40px rgba(0,0,0,0.08); cursor:pointer;" onclick="document.getElementById('pl-img-input').click()">
@@ -355,21 +353,21 @@
     </div>
 
     <div id="artist-setup-modal" class="modal">
-        <div class="header"><div class="header-top"><div class="header-left"><button class="modal-close-btn" onclick="document.getElementById('artist-setup-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Artist Setup</h2><div class="header-right"><button class="header-action-btn" onclick="saveArtistSetup()" style="font-weight:900;">Save</button></div></div></div>
+        <div class="header"><div class="header-top"><div class="header-btn-wrap left"><button class="modal-close-btn" onclick="document.getElementById('artist-setup-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Artist Setup</h2><div class="header-btn-wrap right"><button class="modal-close-btn" onclick="saveArtistSetup()" style="color:var(--icon-color); font-weight:900;">Save</button></div></div></div>
         <div class="modal-body" id="artist-setup-body"></div>
     </div>
 
     <div id="artist-sync-modal" class="modal" style="z-index: 8500;">
-        <div class="header"><div class="header-top"><div class="header-left"><button class="modal-close-btn" onclick="document.getElementById('artist-sync-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Link Artist</h2><div class="header-right"></div></div></div>
+        <div class="header"><div class="header-top"><div class="header-btn-wrap left"><button class="modal-close-btn" onclick="document.getElementById('artist-sync-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Link Artist</h2><div class="header-btn-wrap right"></div></div></div>
         <div class="modal-body" id="artist-sync-body" style="padding:10px;"></div>
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="header"><div class="header-top"><div class="header-left"><button class="modal-close-btn" onclick="document.getElementById('settings-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Settings</h2><div class="header-right"></div></div></div>
+        <div class="header"><div class="header-top"><div class="header-btn-wrap left"><button class="modal-close-btn" onclick="document.getElementById('settings-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Settings</h2><div class="header-btn-wrap right"></div></div></div>
         <div class="modal-body">
             <span class="field-label">Theme Mode</span>
             <select id="theme-select" class="edit-input" onchange="applyTheme(this.value)">
-                <option value="system">System</option>
+                <option value="system">System Default</option>
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
             </select>
@@ -384,20 +382,24 @@
             </div>
             <div id="timer-display" style="margin-top:10px; font-size:12px; color:var(--sub-text); font-weight:bold;"></div>
 
-            <div style="display:none;"></div>
-            <div style="display:none;"></div>
-            <div style="display:none;"></div>
+            <div style="display:none;">
+                <span class="field-label" style="margin-top:20px;">UI/UX Color Preset</span>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;" id="preset-container">
+                    <div class="color-preset-btn" style="background:linear-gradient(135deg, #a6cbe3, #fbe0e6);" onclick="applyPreset('#a6cbe3', '#fbe0e6', '#ebf5e6', '#eee5f8', 1)"></div>
+                </div>
+                <span class="field-label" style="margin-top:20px;">Custom Color</span>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <input type="color" id="custom-c1" value="#a6cbe3" style="width:30px; height:30px; border:none;">
+                    <button onclick="saveCustomPreset()" style="background:var(--icon-color); color:#fff; border:none; border-radius:10px; padding:0 10px;">Apply</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="lyric-paint-modal" class="modal" style="z-index: 8000;">
-        <div class="header"><div class="header-top"><div class="header-left"><button class="modal-close-btn" onclick="document.getElementById('lyric-paint-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Lyric Sync</h2><div class="header-right"><button class="header-action-btn" onclick="saveLyricSync()" style="font-weight:900;">Save</button></div></div></div>
+        <div class="header"><div class="header-top"><div class="header-btn-wrap left"><button class="modal-close-btn" onclick="document.getElementById('lyric-paint-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button></div><h2>Paint Lyrics</h2><div class="header-btn-wrap right"><button class="modal-close-btn" onclick="saveLyricPaint()" style="color:var(--icon-color); font-weight:900;">Save</button></div></div></div>
         <div class="modal-body" style="padding:10px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 10px; margin-bottom:10px;">
-                <span class="field-label" style="margin:0;">Fade Time (s)</span>
-                <input type="number" id="lyric-time-input" class="edit-input" value="0.5" step="0.1" style="width:80px; margin-bottom:0; padding:5px 10px; font-size:14px; text-align:center;" onchange="saveLyricFadeTime(this.value)">
-            </div>
-            <div id="paint-palette" style="display:none; gap:10px; overflow-x:auto; margin-bottom:15px; padding:10px; border-bottom:1px solid var(--border-color);"></div>
+            <div id="paint-palette" style="display:flex; gap:10px; overflow-x:auto; margin-bottom:15px; padding:10px; border-bottom:1px solid var(--border-color);"></div>
             <div id="paint-lyrics-container" style="display:flex; flex-direction:column; gap:8px; padding-bottom:40px;"></div>
         </div>
     </div>
@@ -420,6 +422,7 @@
         let currentTrackArtists = [];
         let editingArtistSetupName = null;
         let currentMembersEdit = [];
+        let currentPaintColor = '';
         let currentLyricColors = [];
         let currentLyricTimes = [];
         
@@ -436,14 +439,16 @@
 
         let savedFade = localStorage.getItem('lyricFadeTime') || '0.5';
         document.documentElement.style.setProperty('--lyric-fade-time', savedFade + 's');
-        document.getElementById('lyric-time-input').value = savedFade;
 
         function saveLyricFadeTime(val) {
             document.documentElement.style.setProperty('--lyric-fade-time', val + 's');
             localStorage.setItem('lyricFadeTime', val);
         }
 
-        function saveCustomPreset() { let temp = 0; temp++; }
+        function saveCustomPreset() {
+            let c1 = document.getElementById('custom-c1').value;
+            applyPreset(c1, c1, c1, c1, 'custom');
+        }
 
         function applyTheme(mode) {
             if(mode === 'system') {
@@ -456,6 +461,7 @@
             }
             localStorage.setItem('themeMode', mode);
             updatePlayerBlurBg();
+            loadPreset();
         }
         function initTheme() {
             let mode = localStorage.getItem('themeMode') || 'system';
@@ -467,16 +473,18 @@
         }
         initTheme();
 
-        function applyPreset() { let temp = 0; temp++; }
-        function loadPreset() { let temp = 0; temp++; }
+        function applyPreset(c1, c2, c3, c4, index) {
+        }
+        function loadPreset() {
+        }
 
         function loadHomeIcon() {
             let saved = localStorage.getItem('homeIcon');
             let link = document.getElementById('apple-touch-icon');
-            if(saved && link) {
-                link.href = saved;
-            } else if (link) {
-                link.href = 'IMG_8755.jpeg';
+            if(saved) {
+                if(link) link.href = saved;
+            } else {
+                if(link) link.href = 'IMG_8755.jpeg';
             }
         }
         loadHomeIcon();
@@ -484,7 +492,11 @@
             const f = e.target.files[0];
             if(f) {
                 const r = new FileReader();
-                r.onload = ev => { localStorage.setItem('homeIcon', ev.target.result); loadHomeIcon(); }
+                r.onload = ev => { 
+                    localStorage.setItem('homeIcon', ev.target.result); 
+                    loadHomeIcon(); 
+                    document.getElementById('home-icon-input').value = "";
+                }
                 r.readAsDataURL(f);
             }
         }
@@ -571,10 +583,12 @@
             let allArts = new Set();
             Object.keys(artistMeta).forEach(k => allArts.add(k));
             tracks.forEach(t => { if(t.artist) t.artist.split(/[,、/]/).forEach(a => { if(a.trim()) allArts.add(a.trim()); }) });
-            return [...allArts].sort((a,b) => a.localeCompare(b));
+            return [...allArts].sort((a,b) => a.localeCompare(b, 'ja'));
         }
 
-        function getArtistStarColor(artistName, isFav) { return ''; }
+        function getArtistStarColor(artistName, isFav) {
+            return '';
+        }
 
         function render() {
             const display = document.getElementById('main-display');
@@ -590,8 +604,8 @@
             
             tagSuggest.style.display = 'none';
             artistFilter.style.display = 'none';
-            if (artistSetupBtn) artistSetupBtn.style.display = currentArtist ? 'inline-flex' : 'none';
-            if (settingsBtn) settingsBtn.style.display = (currentView === 'artists' && !currentArtist) ? 'inline-flex' : 'none';
+            if (artistSetupBtn) artistSetupBtn.style.display = currentArtist ? 'inline-block' : 'none';
+            if (settingsBtn) settingsBtn.style.display = (currentView === 'artists' && !currentArtist) ? 'inline-block' : 'none';
             
             rightBtn.style.display = (currentView === 'artists' && !currentArtist && !isEditing) ? 'none' : 'flex';
 
@@ -617,9 +631,9 @@
 
             const search = currentSearch.toLowerCase();
             let searchTerms = search.split(/[\s,、]+/).filter(x => x);
-            let isFavSearch = (search === "fav" || search === "★");
+            let isFavSearch = (search === "favorite" || search === "★");
 
-            if (search === "fav") {
+            if (search === "favorite") {
                 tagSuggest.style.display = 'flex';
                 tagSuggest.innerHTML = `<div class="tag-chip" onclick="applyTagFilter('★')">★</div>`;
             }
@@ -642,65 +656,60 @@
             } else if (currentView === 'artists') {
                 if (!currentArtist) {
                     title.innerText = "Artists"; display.className = "";
-                    let artists = getAllArtists();
-                    
-                    let parentToChildren = {};
-                    Object.keys(artistMeta).forEach(p => {
-                        if(artistMeta[p].members) {
-                            artistMeta[p].members.forEach(m => {
-                                if(m.linked) {
-                                    if(!parentToChildren[p]) parentToChildren[p] = [];
-                                    parentToChildren[p].push(m.linked);
+                    let allRawArtists = getAllArtists();
+                    let renderedSet = new Set();
+                    let finalDisplayItems = [];
+
+                    allRawArtists.forEach(a => {
+                        if(renderedSet.has(a)) return;
+                        if (!isFavSearch && searchTerms.length > 0 && !searchTerms.every(term => a.toLowerCase().includes(term))) return;
+                        if (isFavSearch && !(artistMeta[a] && artistMeta[a].favorite)) return;
+                        
+                        let children = [];
+                        if (artistMeta[a] && artistMeta[a].members) {
+                            artistMeta[a].members.forEach(m => {
+                                if (m.linked && allRawArtists.includes(m.linked)) {
+                                    children.push(m.linked);
                                 }
                             });
                         }
-                    });
-                    
-                    let childArts = new Set();
-                    Object.values(parentToChildren).forEach(arr => arr.forEach(c => childArts.add(c)));
-                    
-                    if (isFavSearch) {
-                        artists = artists.filter(a => artistMeta[a] && artistMeta[a].favorite);
-                    } else {
-                        artists = artists.filter(a => searchTerms.every(term => a.toLowerCase().includes(term)));
-                    }
-
-                    artists.sort((a, b) => a.localeCompare(b));
-                    
-                    let renderArts = [];
-                    artists.forEach(a => {
-                        if(!childArts.has(a) || searchTerms.length > 0) {
-                            renderArts.push({name: a, level: 0});
-                            if(parentToChildren[a] && searchTerms.length === 0) {
-                                parentToChildren[a].forEach(c => renderArts.push({name: c, level: 1}));
+                        
+                        finalDisplayItems.push({name: a, type: 'parent'});
+                        renderedSet.add(a);
+                        
+                        children.forEach(c => {
+                            if(!renderedSet.has(c)) {
+                                finalDisplayItems.push({name: c, type: 'child'});
+                                renderedSet.add(c);
                             }
-                        }
+                        });
                     });
-                    
-                    if (search.length > 0 && artists.length > 0 && !isFavSearch) {
+
+                    if (search.length > 0 && finalDisplayItems.length > 0 && !isFavSearch) {
                         artistFilter.style.display = 'flex';
-                        artistFilter.innerHTML = artists.map(a => {
+                        artistFilter.innerHTML = finalDisplayItems.map(item => {
+                            const a = item.name;
                             const firstSong = tracks.find(t => t.artist.split(/[,、/]/).map(x=>x.trim()).includes(a));
                             const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img src="${artistMeta[a].icon}">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}">` : `<div class="placeholder"><i class="fa-solid fa-user" style="margin-top:10px;"></i></div>`);
                             return `<div class="bulk-artist-icon-chip" onclick="openArtist('${a}')">${icon}<span>${a}</span></div>`;
                         }).join('');
                     }
 
-                    display.innerHTML = renderArts.map(artObj => {
-                        let a = artObj.name;
-                        let lvl = artObj.level;
+                    display.innerHTML = finalDisplayItems.map(item => {
+                        const a = item.name;
+                        const type = item.type;
                         const firstSong = tracks.find(t => t.artist.split(/[,、/]/).map(x=>x.trim()).includes(a));
                         const isFav = artistMeta[a] && artistMeta[a].favorite;
                         const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img src="${artistMeta[a].icon}" class="artist-icon">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}" class="artist-icon">` : `<div class="artist-icon"><i class="fa-solid fa-user" style="font-size:24px;"></i></div>`);
                         let starClass = isFav ? 'star-icon active' : 'star-icon';
-                        let cls = lvl > 0 ? 'artist-list-item child-artist' : 'artist-list-item';
+                        let extraClass = type === 'child' ? 'artist-child' : '';
                         
                         return `
                         <div class="swipe-container" id="swipe-art-${CSS.escape(a)}">
                             <div class="swipe-delete-btn" onclick="deleteCustomArtist('${a}')">Delete</div>
-                            <div class="${cls}" onclick="isEditing ? selectArtistIcon('${a}') : openArtist('${a}')" ontouchstart="handleTouchStart(event, 'art-${a}')" ontouchmove="handleTouchMove(event, 'art-${a}')" ontouchend="handleTouchEnd(event, 'art-${a}')">
-                                <div class="artist-icon-container">${icon}</div>
-                                <div style="font-weight:800; font-size:16px; flex:1;">${a}</div>
+                            <div class="artist-list-item ${extraClass}" onclick="isEditing ? selectArtistIcon('${a}') : openArtist('${a}')" ontouchstart="handleTouchStart(event, 'art-${a}')" ontouchmove="handleTouchMove(event, 'art-${a}')" ontouchend="handleTouchEnd(event, 'art-${a}')">
+                                <div class="artist-icon-container" style="${type==='child'?'width:44px;height:44px;':''}">${icon}</div>
+                                <div style="font-weight:800; font-size:${type==='child'?'14px':'16px'}; flex:1;">${a}</div>
                                 <button onclick="event.stopPropagation(); toggleFavArtist('${a}')" style="background:none; border:none; font-size:20px; padding:10px; margin-right:10px;" class="${starClass}"><i class="fa-${isFav?'solid':'regular'} fa-star"></i></button>
                                 <i class="fa-solid fa-chevron-right" style="font-size:12px; color:var(--icon-color);"></i>
                             </div>
@@ -780,8 +789,8 @@
                     }
                     if (activeArtistFilter) filtered = filtered.filter(t => t.artist.split(/[,、/]/).map(x=>x.trim()).includes(activeArtistFilter));
 
-                    if (currentSort === 'name_asc') filtered.sort((a,b) => a.name.localeCompare(b.name));
-                    else if (currentSort === 'name_desc') filtered.sort((a,b) => b.name.localeCompare(a.name));
+                    if (currentSort === 'name_asc') filtered.sort((a,b) => a.name.localeCompare(b.name,'ja'));
+                    else if (currentSort === 'name_desc') filtered.sort((a,b) => b.name.localeCompare(a.name,'ja'));
                     else if (currentSort === 'year') filtered.sort((a,b) => (b.year||'').toString().localeCompare((a.year||'').toString()));
 
                     display.innerHTML = filtered.map((t, idx) => `
@@ -814,8 +823,8 @@
         }
 
         function renderCards(list, container, sort) {
-            if (sort === 'name_asc') list.sort((a,b) => a.name.localeCompare(b.name));
-            else if (sort === 'name_desc') list.sort((a,b) => b.name.localeCompare(a.name));
+            if (sort === 'name_asc') list.sort((a,b) => a.name.localeCompare(b.name,'ja'));
+            else if (sort === 'name_desc') list.sort((a,b) => b.name.localeCompare(a.name,'ja'));
             else if (sort === 'year') list.sort((a,b) => (b.year||'').toString().localeCompare((a.year||'').toString()));
             
             container.innerHTML = list.map(t => `
@@ -925,13 +934,13 @@
                 
                 let track = playingTracks[currentTrackIdx];
                 let text = track?.lyrics || "No lyrics available.";
-                let times = track?.lyricTimes || [];
+                let colors = track?.lyricColors || [];
                 let lines = text.split('\n');
                 
                 const fsToggleBtn = `<button id="fs-lyric-btn" onclick="event.stopPropagation(); toggleFullscreenLyrics()" style="position:absolute; top:25px; right:25px; background:rgba(0,0,0,0.1); border:none; color:var(--icon-color); padding:12px; border-radius:12px; z-index:50;"><i class="fa-solid fa-expand"></i></button>`;
-                const paintBtn = `<button onclick="event.stopPropagation(); openLyricSync()" style="position:absolute; top:25px; left:25px; background:rgba(0,0,0,0.1); border:none; color:var(--icon-color); padding:12px; border-radius:12px; z-index:50;"><i class="fa-solid fa-clock"></i></button>`;
+                const paintBtn = `<button onclick="event.stopPropagation(); openLyricPaint()" style="position:absolute; top:25px; left:25px; background:rgba(0,0,0,0.1); border:none; color:var(--icon-color); padding:12px; border-radius:12px; z-index:50;"><i class="fa-solid fa-palette"></i></button>`;
                 
-                view.innerHTML = fsToggleBtn + paintBtn + `<div id="lyrics-content-scroll" style="width:100%; height:100%; overflow-y:auto; padding-top:40px; padding-bottom: 50vh;">` + lines.map((l, i) => `<div id="lyric-line-${i}" class="lyric-line" style="width:100%; word-wrap:break-word; padding: 5px 0;" data-time="${times[i]||0}">${l}</div>`).join('') + `</div>`;
+                view.innerHTML = fsToggleBtn + paintBtn + `<div id="lyrics-content-scroll" style="width:100%; height:100%; overflow-y:auto; padding-top:40px;">` + lines.map((l, i) => `<div style="color:${colors[i] || 'inherit'}; width:100%; word-wrap:break-word;">${l}</div>`).join('') + `</div>`;
                 
                 if(view.classList.contains('fullscreen-lyrics')) {
                     document.getElementById('fs-lyric-btn').innerHTML = '<i class="fa-solid fa-compress"></i>';
@@ -971,7 +980,7 @@
             const pl = playlists.find(p => p.id === currentPlaylistId);
             const div = document.createElement('div'); div.id="bulk-modal"; div.className="modal"; div.style.display = "flex";
             div.innerHTML = `
-                <div class="header"><div class="header-top"><div class="header-left"><button class="modal-close-btn" onclick="this.closest('.modal').remove()"><i class="fa-solid fa-xmark"></i></button></div><h2>Select Songs</h2><div class="header-right"><button class="header-action-btn" onclick="saveBulkAdd()" style="font-weight:900;">Done</button></div></div></div>
+                <div class="header"><div class="header-top"><div class="header-btn-wrap left"><button class="modal-close-btn" onclick="this.closest('.modal').remove()"><i class="fa-solid fa-xmark"></i></button></div><h2>Select Songs</h2><div class="header-btn-wrap right"><button class="modal-close-btn" onclick="saveBulkAdd()" style="font-weight:900; color:var(--icon-color);">Done</button></div></div></div>
                 <div class="search-container"><div class="search-bar-row"><input type="text" id="bulk-search-box" class="bulk-search-input" placeholder="Search track or artist..." oninput="filterBulk(this.value)"></div><div id="bulk-artist-suggestions"></div></div>
                 <div id="bulk-list" style="flex:1; overflow-y:auto; padding-bottom:50px;">
                     ${tracks.map(t => `
@@ -1027,8 +1036,11 @@
             else if(currentView==='artists') { const n = prompt("Artist Name:"); if(n) db.transaction("artistMeta","readwrite").objectStore("artistMeta").put({ name: n, icon: null, favorite: false, members: [], syncColor: '' }).onsuccess = loadAll; }
         }
         function togglePlay() { 
-            let p = audio.paused ? audio.play() : audio.pause();
-            if (p !== undefined) p.catch(e => console.error(e));
+            if(!audio.src && playingTracks.length > 0 && currentTrackIdx !== -1) {
+                loadTrack(playingTracks[currentTrackIdx]);
+            } else {
+                audio.paused ? audio.play() : audio.pause(); 
+            }
         }
 
         function next() { 
@@ -1079,8 +1091,9 @@
             document.getElementById('f-img').style.opacity = "1";
             updateFavBtn(t.favorite);
             updatePlayerBlurBg();
-            let p = audio.play();
-            if (p !== undefined) { p.catch(() => { }); }
+            
+            audio.load();
+            audio.play().catch(e => console.log("Auto-play prevented"));
         }
         function checkMarquee(elId, text) {
             const el = document.getElementById(elId);
@@ -1088,8 +1101,6 @@
             else el.innerText = text;
         }
         function formatTime(s) { let m=Math.floor(s/60), sec=Math.floor(s%60); return `${m}:${sec<10?'0':''}${sec}`; }
-        
-        let activeLyricIndex = -1;
         audio.ontimeupdate = () => { 
             if(!isNaN(audio.duration)){ 
                 const s = document.getElementById('seeker'); 
@@ -1099,30 +1110,6 @@
                 document.getElementById('dur-time').innerText = formatTime(audio.duration); 
                 const percent = (audio.currentTime / audio.duration) * 100;
                 s.style.background = `linear-gradient(to right, var(--accent-blue) 0%, var(--key-color) ${percent}%, var(--seeker-bg) ${percent}%, var(--seeker-bg) 100%)`;
-                
-                const view = document.getElementById('f-lyrics-view');
-                if(view && view.classList.contains('active')) {
-                    const lines = document.querySelectorAll('.lyric-line');
-                    let currentIdx = -1;
-                    for(let i=0; i<lines.length; i++) {
-                        let t = parseFloat(lines[i].getAttribute('data-time'));
-                        if (audio.currentTime >= t) { currentIdx = i; } else { break; }
-                    }
-                    if (currentIdx !== activeLyricIndex && currentIdx !== -1) {
-                        if (activeLyricIndex !== -1 && lines[activeLyricIndex]) {
-                            lines[activeLyricIndex].classList.remove('active-lyric');
-                        }
-                        lines[currentIdx].classList.add('active-lyric');
-                        activeLyricIndex = currentIdx;
-                        
-                        const scrollContainer = document.getElementById('lyrics-content-scroll');
-                        const target = lines[currentIdx];
-                        scrollContainer.scrollTo({
-                            top: target.offsetTop - scrollContainer.offsetTop - (scrollContainer.clientHeight/2) + (target.clientHeight/2),
-                            behavior: 'smooth'
-                        });
-                    }
-                }
             } 
         };
         audio.onplay = () => { document.getElementById('m-pp').className = 'fa-solid fa-pause'; document.getElementById('f-pp').className = 'fa-solid fa-pause'; };
@@ -1364,33 +1351,55 @@
             }
         }
 
-        function openLyricSync() {
+        function openLyricPaint() {
             const t = playingTracks[currentTrackIdx];
             if(!t) return;
             
-            const lines = (t.lyrics || '').split('\n');
-            currentLyricTimes = t.lyricTimes ? [...t.lyricTimes] : new Array(lines.length).fill(0);
+            let allMembers = [];
+            t.artist.split(/[,、/]/).forEach(a => {
+                let trimA = a.trim();
+                if(artistMeta[trimA] && artistMeta[trimA].members) {
+                    allMembers = allMembers.concat(artistMeta[trimA].members);
+                }
+            });
+            allMembers.push({name: 'Reset', color: ''});
+
+            currentPaintColor = allMembers[0] ? allMembers[0].color : '';
+            currentLyricColors = t.lyricColors ? [...t.lyricColors] : [];
+            currentLyricTimes = t.lyricTimes ? [...t.lyricTimes] : [];
             
-            renderLyricSync();
+            const pal = document.getElementById('paint-palette');
+            pal.innerHTML = allMembers.map(m => `
+                <div onclick="currentPaintColor='${m.color}'" style="display:flex; flex-direction:column; align-items:center; cursor:pointer; min-width:45px;">
+                    <div style="width:30px; height:30px; border-radius:50%; background:${m.color || '#ccc'}; border:2px solid ${m.color?m.color:'var(--border-color)'}; box-shadow:0 2px 5px rgba(0,0,0,0.2);"></div>
+                    <span style="font-size:10px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%; text-align:center;">${m.name}</span>
+                </div>
+            `).join('');
+
+            renderPaintLyrics();
             document.getElementById('lyric-paint-modal').style.display = 'flex';
         }
-        function renderLyricSync() {
+        function renderPaintLyrics() {
             const t = playingTracks[currentTrackIdx];
             const lines = (t.lyrics || '').split('\n');
             const container = document.getElementById('paint-lyrics-container');
             container.innerHTML = lines.map((l, i) => `
-                <div style="display:flex; align-items:center; gap: 10px; padding:10px; border-radius:12px; background:var(--input-bg);">
-                    <input type="number" step="0.1" class="lyric-time-input" value="${currentLyricTimes[i] || 0}" onchange="currentLyricTimes[${i}]=this.value">
-                    <div style="flex:1; color:var(--text-main); font-weight:800; font-size:14px; text-align:left;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div onclick="applyLyricColor(${i})" style="flex:1; padding:15px; border-radius:12px; background:var(--input-bg); color:${currentLyricColors[i] || 'var(--text-main)'}; border-left:6px solid ${currentLyricColors[i] || 'transparent'}; cursor:pointer; font-weight:800; text-align:center;">
                         ${l || '<span style="color:#ccc; font-size:12px;">(empty line)</span>'}
                     </div>
-                    <button onclick="currentLyricTimes[${i}]=audio.currentTime.toFixed(1); renderLyricSync();" style="background:var(--accent-blue); color:var(--icon-active); border:none; border-radius:8px; padding:5px 10px; font-weight:bold; font-size:10px;">Sync</button>
+                    <input type="number" step="0.1" placeholder="Sec" value="${currentLyricTimes[i] || ''}" onchange="currentLyricTimes[${i}]=this.value" class="edit-input" style="width:70px; margin-bottom:0; padding:10px; text-align:center;">
                 </div>
             `).join('');
         }
-        function saveLyricSync() {
+        function applyLyricColor(i) {
+            currentLyricColors[i] = currentPaintColor;
+            renderPaintLyrics();
+        }
+        function saveLyricPaint() {
             const t = playingTracks[currentTrackIdx];
-            t.lyricTimes = currentLyricTimes.map(n => parseFloat(n) || 0);
+            t.lyricColors = currentLyricColors;
+            t.lyricTimes = currentLyricTimes;
             db.transaction("songs", "readwrite").objectStore("songs").put(t).onsuccess = () => {
                 document.getElementById('lyric-paint-modal').style.display = 'none';
                 loadAll();
