@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Music Studio ✧ Pure Wish</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='50%' style='dominant-baseline:central;text-anchor:middle;font-size:90px;fill:%23a6cbe3;'>✧</text></svg>">
+    <link rel="apple-touch-icon" href="IMG_8755.jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     <style>
@@ -49,12 +50,17 @@
             position: relative;
             box-shadow: 0 0 30px rgba(0,0,0,0.05);
             overscroll-behavior: none; 
+            padding-top: 70px;
         }
 
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 15s infinite alternate; }
         @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 50px); } }
 
         .header { 
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             padding: calc(5px + env(safe-area-inset-top)) 20px 5px; 
             background: var(--glass); 
             backdrop-filter: blur(40px); 
@@ -62,13 +68,14 @@
             border-bottom: 1.5px solid rgba(255,255,255,0.9); 
             z-index: 1000;
             box-shadow: 0 2px 15px rgba(0,0,0,0.02); 
-            position: relative; 
             width: 100%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
             min-height: 70px; 
             height: 70px;
+            max-width: 390px;
+            margin: 0 auto;
         }
         .header-top { 
             display: flex; 
@@ -174,12 +181,12 @@
         
         .tab-bar { 
             position: fixed; 
-            bottom: -15px; 
+            bottom: 0; 
             width: 100%; 
             height: calc(75px + env(safe-area-inset-bottom)); 
             background: rgba(255,255,255,0.92); backdrop-filter: blur(40px); display: flex; justify-content: space-around; 
             padding-top: 15px; 
-            padding-bottom: env(safe-area-inset-bottom);
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
             border-top: 1px solid rgba(255,255,255,0.8); z-index: 3000; max-width: 390px; margin: 0 auto; left: 0; right: 0; 
         }
         .tab-item { border:none; background:none; color: #bcc1d8; font-weight: 800; font-size: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; width: 33%; transition: 0.3s; }
@@ -190,7 +197,7 @@
         .modal { position: fixed; inset: 0; background: #ffffff; z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
         @keyframes modalSlide { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .modal .header { min-height: 70px; height: 70px; padding-top: calc(5px + env(safe-area-inset-top)); }
+        .modal .header { position: relative; min-height: 70px; height: 70px; padding-top: calc(5px + env(safe-area-inset-top)); }
 
         .modal-body { padding: 30px; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
         .edit-input { width: 100%; padding: 18px; border: 2.5px solid #f2f2f7; border-radius: 20px; margin-bottom: 22px; outline: none; font-size: 15px; background: #fbfbfc; color: var(--text-main); font-weight: 600; }
@@ -228,7 +235,7 @@
     <div class="header">
         <div class="header-top">
             <button id="left-btn" onclick="handleHeaderLeft()"><i class="fa-solid fa-sliders"></i></button>
-            <h2 id="view-title">Artists</h2>
+            <h2 id="view-title">Library</h2>
             <button id="right-btn" onclick="handleHeaderRight()"><i class="fa-solid fa-plus"></i></button>
         </div>
     </div>
@@ -262,7 +269,7 @@
         <div id="bg-blur-overlay"><div class="bg-sphere"></div></div>
         <div id="swipe-handle" style="padding:25px; text-align:center; cursor:pointer;"><div style="width:40px; height:5px; border-radius:10px; background:rgba(166,203,227,0.4); margin:0 auto;"></div></div>
         
-        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 35px; padding-bottom: 40px;">
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 35px; padding-bottom: 20px;">
             <div id="f-artwork-container">
                 <img id="f-img">
                 <div id="f-lyrics-view" onclick="toggleLyrics()"></div>
@@ -271,12 +278,10 @@
             <div style="width:100%; margin-top:45px; display:flex; justify-content:space-between; align-items:flex-end;">
                 <div style="flex:1; overflow:hidden; padding-right:15px;">
                     <div id="f-title" style="font-size:24px; font-weight:900; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-                    <div id="f-artist" style="font-size:16px; color:#a6cbe3; margin-top:6px; font-weight:700;"></div>
+                    <div id="f-artist" onclick="goToArtistFromPlayer()" style="font-size:16px; color:#a6cbe3; margin-top:6px; font-weight:700; cursor:pointer; text-decoration:underline;"></div>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button id="f-fav-btn" onclick="toggleFavoriteCurrentSong()" style="background:none; border:none; color:#a6cbe3; font-size:24px; padding:10px; opacity:0.6;"><i class="fa-regular fa-heart"></i></button>
-                    <button id="f-lyric-btn" onclick="toggleLyrics()" style="background:rgba(166,203,227,0.1); border:none; color:#a6cbe3; border-radius:14px; font-size:17px; width:44px; height:44px;"><i class="fa-solid fa-quote-right"></i></button>
-                    <button onclick="toggleQueue()" style="background:rgba(166,203,227,0.1); border:none; color:#a6cbe3; border-radius:14px; font-size:17px; width:44px; height:44px;"><i class="fa-solid fa-list-ul"></i></button>
+                    <button id="f-fav-btn" onclick="toggleFavoriteCurrentSong()" style="background:none; border:none; color:#a6cbe3; font-size:24px; padding:10px; opacity:0.6;"><i class="fa-regular fa-star"></i></button>
                 </div>
             </div>
             
@@ -293,6 +298,11 @@
                     <i class="fa-solid fa-forward-step" style="font-size:26px; color:var(--text-main);" onclick="next()"></i>
                 </div>
                 <button onclick="toggleRepeat()" id="btn-repeat" style="background:none; border:none; font-size:18px; color:#a6cbe3; opacity:0.4; position:relative;"><i class="fa-solid fa-repeat"></i><span id="repeat-badge" style="display:none; position:absolute; top:-8px; right:-10px; background:#6a89cc; color:#fff; border-radius:50%; width:16px; height:16px; font-size:9px; text-align:center; line-height:16px; font-weight:900;">1</span></button>
+            </div>
+
+            <div style="display:flex; width:100%; justify-content:space-around; align-items:center; margin-top:25px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.2);">
+                <button id="f-lyric-btn" onclick="toggleLyrics()" style="background:rgba(166,203,227,0.1); border:none; color:#a6cbe3; border-radius:14px; font-size:17px; width:44px; height:44px;"><i class="fa-solid fa-quote-right"></i></button>
+                <button onclick="toggleQueue()" style="background:rgba(166,203,227,0.1); border:none; color:#a6cbe3; border-radius:14px; font-size:17px; width:44px; height:44px;"><i class="fa-solid fa-list-ul"></i></button>
             </div>
         </div>
 
@@ -327,9 +337,12 @@
             <div style="text-align:left;">
                 <span class="field-label">Playlist Name</span><input type="text" id="pl-edit-name" class="edit-input">
                 <span class="field-label">Tag</span>
-                <div style="display:flex; align-items:center; margin-bottom:22px;">
-                    <input type="text" id="pl-edit-tag" class="edit-input" oninput="updateTagSuggest(this.value)" style="margin-bottom:0;">
-                    <button onclick="document.getElementById('pl-edit-tag').value=''" style="margin-left:10px; padding:15px; background:#ffebee; color:#ff8a80; border:none; border-radius:15px; font-weight:800; font-size:12px; white-space:nowrap;">消去</button>
+                <div style="display:flex; flex-direction:column; margin-bottom:22px;">
+                    <div style="display:flex; align-items:center; margin-bottom:10px;">
+                        <input type="text" id="pl-edit-tag" class="edit-input" placeholder="Add Tag..." style="margin-bottom:0;" oninput="updateTagSuggest(this.value)">
+                        <button onclick="addPlTag()" style="margin-left:10px; padding:15px; background:transparent; color:#a6cbe3; border:2px solid #e1f1fa; border-radius:15px; font-weight:800; font-size:14px; white-space:nowrap;"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div id="pl-active-tags" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
                 </div>
                 <div id="tag-quick-select"></div>
             </div>
@@ -337,8 +350,8 @@
     </div>
 
     <div class="tab-bar">
-        <button class="tab-item active" id="tab-artist" onclick="switchTab('artists')"><i class="fa-solid fa-user-astronaut"></i><span>Artist</span></button>
-        <button class="tab-item" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-layer-group"></i><span>Library</span></button>
+        <button class="tab-item" id="tab-artist" onclick="switchTab('artists')"><i class="fa-solid fa-user-astronaut"></i><span>Artist</span></button>
+        <button class="tab-item active" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-layer-group"></i><span>Library</span></button>
         <button class="tab-item" id="tab-play" onclick="switchTab('playlist')"><i class="fa-solid fa-heart-pulse"></i><span>Playlist</span></button>
     </div>
 
@@ -347,9 +360,10 @@
     <audio id="audio-element"></audio>
 
     <script>
-        let db, tracks = [], playlists = [], artistMeta = {}, isEditing = false, currentView = 'artists', currentArtist = null, currentPlaylistId = null;
+        let db, tracks = [], playlists = [], artistMeta = {}, isEditing = false, currentView = 'library', currentArtist = null, currentPlaylistId = null;
         let playingTracks = [], currentTrackIdx = -1, isShuffle = false, repeatMode = 0; 
         let editingId = null, editingPlId = null, tempPlImg = null, editingArtistName = null;
+        let currentPlTags = [];
         const audio = document.getElementById('audio-element');
 
         let sortStates = { artists: 'added', library: 'added', playlist: 'added', playlistDetail: 'custom' };
@@ -427,6 +441,12 @@
             }
 
             const search = currentSearch.toLowerCase();
+            let isFavSearch = (search === "お気に入り" || search === "★");
+
+            if (search === "お気に入り") {
+                tagSuggest.style.display = 'flex';
+                tagSuggest.innerHTML = `<div class="tag-chip" onclick="applyTagFilter('★')">★</div>`;
+            }
 
             document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
             const activeTabId = currentView === 'playlist' ? 'tab-play' : currentView === 'artists' ? 'tab-artist' : 'tab-lib';
@@ -436,7 +456,7 @@
             if (currentView === 'library') {
                 title.innerText = "Library"; display.className = "grid";
                 let list = tracks;
-                if (search === "お気に入り") {
+                if (isFavSearch) {
                     list = list.filter(t => t.favorite);
                 } else {
                     list = list.filter(t => t.name.toLowerCase().includes(search) || t.artist.toLowerCase().includes(search));
@@ -448,13 +468,13 @@
                     title.innerText = "Artists"; display.className = "";
                     let artists = [...new Set(tracks.map(t => t.artist))];
                     
-                    if (search === "お気に入り") {
+                    if (isFavSearch) {
                         artists = artists.filter(a => artistMeta[a] && artistMeta[a].favorite);
                     } else {
                         artists = artists.filter(a => a.toLowerCase().includes(search));
                     }
                     
-                    if (search.length > 0 && artists.length > 0 && search !== "お気に入り") {
+                    if (search.length > 0 && artists.length > 0 && !isFavSearch) {
                         artistFilter.style.display = 'flex';
                         artistFilter.innerHTML = artists.map(a => {
                             const firstSong = tracks.find(t => t.artist === a);
@@ -470,14 +490,14 @@
                         return `<div class="list-item" onclick="isEditing ? selectArtistIcon('${a}') : openArtist('${a}')">
                                 <div class="artist-icon-container">${icon}</div>
                                 <div style="font-weight:800; font-size:16px; flex:1;">${a}</div>
-                                <button onclick="event.stopPropagation(); toggleFavArtist('${a}')" style="background:none; border:none; font-size:20px; padding:10px; margin-right:10px; color:${isFav?'#ff8a80':'#a6cbe3'};"><i class="fa-${isFav?'solid':'regular'} fa-heart"></i></button>
+                                <button onclick="event.stopPropagation(); toggleFavArtist('${a}')" style="background:none; border:none; font-size:20px; padding:10px; margin-right:10px; color:${isFav?'#ff8a80':'#a6cbe3'};"><i class="fa-${isFav?'solid':'regular'} fa-star"></i></button>
                                 <i class="fa-solid fa-chevron-right" style="font-size:12px; color:#a6cbe3;"></i>
                             </div>`;
                     }).join('');
                 } else {
                     title.innerText = currentArtist; display.className = "grid";
                     let list = tracks.filter(t => t.artist === currentArtist);
-                    if (search === "お気に入り") {
+                    if (isFavSearch) {
                         list = list.filter(t => t.favorite);
                     } else {
                         list = list.filter(t => t.name.toLowerCase().includes(search));
@@ -522,7 +542,7 @@
                     let plSongs = pl.songIds.map(id => tracks.find(t => t.id === id)).filter(t => t);
                     
                     const artistsInPl = [...new Set(plSongs.map(s => s.artist))];
-                    if (artistsInPl.length > 0 && search.length > 0 && search !== "お気に入り") {
+                    if (artistsInPl.length > 0 && search.length > 0 && !isFavSearch) {
                         const matchedArts = artistsInPl.filter(a => a.toLowerCase().includes(search));
                         if (matchedArts.length > 0) {
                             artistFilter.style.display = 'flex';
@@ -535,7 +555,7 @@
                     }
 
                     let filtered = plSongs;
-                    if (search === "お気に入り") {
+                    if (isFavSearch) {
                         filtered = filtered.filter(t => t.favorite);
                     } else {
                         filtered = filtered.filter(t => t.name.toLowerCase().includes(search) || t.artist.toLowerCase().includes(search));
@@ -547,7 +567,7 @@
                             <div class="swipe-delete-btn" onclick="removeTrackFromPlaylist(${t.id})">Remove</div>
                             <div class="list-item" onclick="playSong(${t.id},'pl')" ontouchstart="handleTouchStart(event, ${t.id})" ontouchmove="handleTouchMove(event, ${t.id})" ontouchend="handleTouchEnd(event, ${t.id})">
                                 <img src="${t.cover||''}">
-                                <div style="flex:1;"><div style="font-weight:800; font-size:14px;">${t.name}</div><div style="font-size:11px; color:#a6cbe3; margin-top:3px; font-weight:700;">${t.artist}</div></div>
+                                <div style="flex:1;"><div style="font-weight:800; font-size:14px; display:flex; align-items:center; gap:5px;">${t.name} ${t.favorite ? '<i class="fa-solid fa-star" style="color:#ffd700; font-size:12px;"></i>' : ''}</div><div style="font-size:11px; color:#a6cbe3; margin-top:3px; font-weight:700;">${t.artist}</div></div>
                                 ${currentSort==='custom'? `<div class="reorder-btns" onclick="event.stopPropagation()"><i class="fa-solid fa-chevron-up" onclick="moveTrack(${idx}, -1)"></i><i class="fa-solid fa-chevron-down" onclick="moveTrack(${idx}, 1)"></i></div>` : ''}
                             </div>
                         </div>`).join('') + `<div style="padding:40px; text-align:center;"><button onclick="openBulkAddModal()" style="background:#fff; color:#6a89cc; border:2px solid #e1f1fa; padding:15px 30px; border-radius:30px; font-weight:900; font-size:12px;">+ Add Tracks</button></div>`;
@@ -571,6 +591,7 @@
                 <div class="card ${isEditing?'editing':''}" onclick="isEditing?openEdit(${t.id}):playSong(${t.id},'lib')">
                     <div class="del-badge" onclick="event.stopPropagation(); deleteSong(${t.id})"><i class="fa-solid fa-trash-can"></i></div>
                     <img src="${t.cover||''}" class="card-img">
+                    ${t.favorite ? '<i class="fa-solid fa-star" style="position:absolute; top:8px; right:8px; color:#ffd700; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
                     <div class="card-info">
                         <div class="card-title">${t.name}</div>
                         <div class="card-sub">${t.artist} ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
@@ -623,7 +644,7 @@
             if(btn) {
                 btn.style.color = isFav ? "#ff8a80" : "#a6cbe3";
                 btn.style.opacity = isFav ? "1" : "0.6";
-                btn.innerHTML = isFav ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+                btn.innerHTML = isFav ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>';
             }
         }
 
@@ -631,25 +652,22 @@
         let startY = 0, currentY = 0;
         
         fPlayer.addEventListener('touchstart', (e) => {
-            if (document.getElementById('f-lyrics-view').classList.contains('active')) {
-                const lyricsEl = document.getElementById('f-lyrics-view');
-                if (lyricsEl.scrollTop > 0) return; 
-            }
+            if (e.target.closest('#f-lyrics-view')) { startY = 0; return; }
             startY = e.touches[0].clientY;
             fPlayer.style.transition = 'none';
         }, { passive: true });
 
         fPlayer.addEventListener('touchmove', (e) => {
-            const lyricsActive = document.getElementById('f-lyrics-view').classList.contains('active');
+            if (e.target.closest('#f-lyrics-view')) return;
             currentY = e.touches[0].clientY;
             let diff = currentY - startY;
             if (diff > 0) {
-                if (lyricsActive && document.getElementById('f-lyrics-view').scrollTop > 0) return;
                 fPlayer.style.transform = `translateY(${diff}px)`;
             }
         }, { passive: true });
 
         fPlayer.addEventListener('touchend', (e) => {
+            if (e.target.closest('#f-lyrics-view')) return;
             let diff = currentY - startY;
             fPlayer.style.transition = 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
             if (diff > 120) closeFull();
@@ -663,6 +681,13 @@
             document.getElementById('f-img').style.opacity = isActive ? "0.08" : "1";
             document.getElementById('f-artwork-container').style.transform = isActive ? "scale(1.05)" : "scale(1)";
             if(isActive) view.innerText = playingTracks[currentTrackIdx]?.lyrics || "No lyrics available.";
+        }
+
+        function goToArtistFromPlayer() {
+            if (currentTrackIdx === -1) return;
+            closeFull();
+            switchTab('artists');
+            openArtist(playingTracks[currentTrackIdx].artist);
         }
 
         function openBulkAddModal() {
@@ -777,9 +802,43 @@
         function deletePlaylist(id) { if(confirm("Delete this playlist?")) db.transaction("playlists","readwrite").objectStore("playlists").delete(id).onsuccess=loadAll; }
         function removeTrackFromPlaylist(sid) { const pl = playlists.find(p => p.id === currentPlaylistId); pl.songIds = pl.songIds.filter(id => id !== sid); db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = loadAll; }
         function saveBulkAdd() { const pl = playlists.find(p => p.id === currentPlaylistId); const newIds = Array.from(document.querySelectorAll('#bulk-list input:checked')).map(i => parseInt(i.value)); pl.songIds = newIds; db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = () => { loadAll(); document.getElementById('bulk-modal').remove(); }; }
-        function openPlEdit(id) { editingPlId = id; const pl = playlists.find(p => p.id === id); document.getElementById('pl-edit-name').value = pl.name; document.getElementById('pl-edit-tag').value = pl.tag || ""; tempPlImg = pl.cover; document.getElementById('pl-edit-img').src = tempPlImg || ""; updateTagSuggest(pl.tag || ""); document.getElementById('pl-edit-modal').style.display = 'flex'; }
+        
+        function renderPlTags() {
+            document.getElementById('pl-active-tags').innerHTML = currentPlTags.map(t => `<div class="card-tag" style="display:inline-flex; align-items:center; gap:6px;">${t} <i class="fa-solid fa-xmark" onclick="removePlTag('${t}')" style="cursor:pointer; font-size:12px; opacity:0.7;"></i></div>`).join('');
+        }
+        function addPlTag() {
+            const el = document.getElementById('pl-edit-tag');
+            const val = el.value.trim();
+            if(val && !currentPlTags.includes(val)) { 
+                currentPlTags.push(val); 
+                el.value = ''; 
+                renderPlTags(); 
+            }
+        }
+        function removePlTag(t) {
+            currentPlTags = currentPlTags.filter(x => x !== t);
+            renderPlTags();
+        }
+
+        function openPlEdit(id) { 
+            editingPlId = id; const pl = playlists.find(p => p.id === id); 
+            document.getElementById('pl-edit-name').value = pl.name; 
+            currentPlTags = pl.tag ? pl.tag.split(/[,、]/).map(t=>t.trim()).filter(t=>t) : [];
+            document.getElementById('pl-edit-tag').value = '';
+            renderPlTags();
+            tempPlImg = pl.cover; document.getElementById('pl-edit-img').src = tempPlImg || ""; 
+            updateTagSuggest(""); 
+            document.getElementById('pl-edit-modal').style.display = 'flex'; 
+        }
         function closePlEdit() { document.getElementById('pl-edit-modal').style.display = 'none'; }
-        function savePlEdit() { const pl = playlists.find(p => p.id === editingPlId); pl.name = document.getElementById('pl-edit-name').value; pl.tag = document.getElementById('pl-edit-tag').value; pl.cover = tempPlImg; db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = () => { closePlEdit(); loadAll(); }; }
+        function savePlEdit() { 
+            const pl = playlists.find(p => p.id === editingPlId); 
+            pl.name = document.getElementById('pl-edit-name').value; 
+            pl.tag = currentPlTags.join(',');
+            pl.cover = tempPlImg; 
+            db.transaction("playlists","readwrite").objectStore("playlists").put(pl).onsuccess = () => { closePlEdit(); loadAll(); }; 
+        }
+        
         function previewPlImg(e) { const f = e.target.files[0]; if(f){ const r = new FileReader(); r.onload = (ev) => { tempPlImg = ev.target.result; document.getElementById('pl-edit-img').src = tempPlImg; }; r.readAsDataURL(f); } }
         function updateArtistSuggest(v) { const container = document.getElementById('artist-quick-select'); const artists = [...new Set(tracks.map(t => t.artist))]; container.innerHTML = artists.map(a => `<div class="artist-chip" onclick="document.getElementById('edit-artist').value='${a}'">${a}</div>`).join(''); }
         function updateTagSuggest(v) { 
@@ -790,7 +849,7 @@
                     const tr = tg.trim(); if(tr && !allTags.includes(tr)) allTags.push(tr);
                 });
             });
-            container.innerHTML = allTags.map(t => `<div class="artist-chip" onclick="document.getElementById('pl-edit-tag').value='${t}'">${t}</div>`).join(''); 
+            container.innerHTML = allTags.map(t => `<div class="artist-chip" onclick="document.getElementById('pl-edit-tag').value='${t}'; addPlTag();">${t}</div>`).join(''); 
         }
         function selectArtistIcon(name) { editingArtistName = name; document.getElementById('artist-icon-upload').click(); }
         function saveArtistIcon(e) { 
