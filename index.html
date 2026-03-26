@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Music Studio ✧ Pure Wish</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='50%' y='50%' style='dominant-baseline:central;text-anchor:middle;font-size:90px;fill:%23a6cbe3;'>✧</text></svg>">
-    <link id="apple-touch-icon" rel="apple-touch-icon" href="">
+    <link id="apple-touch-icon" rel="apple-touch-icon" href="IMG_8755.jpeg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
     <style>
@@ -17,18 +17,19 @@
             --text-main: #4a4a6a;
             --text-dark: #2d2d44;
             --sub-text: #8e94b3;
-            --glass: rgba(255, 255, 255, 0.45);
+            --glass: rgba(255, 255, 255, 0.4);
             --star-clip: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             --card-shadow: 0 12px 30px rgba(180, 190, 220, 0.2);
             --grad-primary: linear-gradient(135deg, #a6cbe3 0%, #fbe0e6 100%);
             --bg-color: transparent;
-            --card-bg: rgba(255, 255, 255, 0.65);
-            --border-color: rgba(255, 255, 255, 0.5);
-            --tab-bg: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --modal-bg: rgba(255, 255, 255, 0.45);
+            --border-color: rgba(255,255,255,0.4);
+            --tab-bg: rgba(255,255,255,0.4);
             --input-bg: #fbfbfc;
-            --seeker-bg: rgba(166, 203, 227, 0.25);
-            --list-hover: rgba(255, 255, 255, 0.5);
-            --star-grad: linear-gradient(45deg, #ffff00, #ffb300, #ff8c00);
+            --seeker-bg: rgba(166,203,227,0.25);
+            --list-hover: rgba(255,255,255,0.5);
+            --star-grad: linear-gradient(45deg, #ffff00, #9acd32, #add8e6);
             --player-bg: rgba(255, 255, 255, 0.45);
             --icon-color: #a6cbe3;
             --icon-active: #6a89cc;
@@ -45,16 +46,19 @@
             --text-main: #cceeff;
             --text-dark: #ffffff;
             --sub-text: #88bbcc;
-            --glass: rgba(0, 15, 30, 0.45);
+            --glass: rgba(0, 15, 30, 0.4);
             --card-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
             --grad-primary: linear-gradient(135deg, #004060 0%, #002040 100%);
-            --card-bg: rgba(0, 21, 40, 0.65);
-            --border-color: rgba(255, 255, 255, 0.15);
-            --tab-bg: rgba(0, 10, 20, 0.5);
+            --bg-color: transparent;
+            --card-bg: rgba(0, 21, 40, 0.6);
+            --modal-bg: rgba(0, 15, 30, 0.55);
+            --border-color: rgba(255,255,255,0.1);
+            --tab-bg: rgba(0,10,20,0.4);
             --input-bg: #001a33;
-            --seeker-bg: rgba(0, 100, 150, 0.3);
-            --list-hover: rgba(0, 255, 255, 0.1);
-            --player-bg: rgba(0, 10, 20, 0.7);
+            --seeker-bg: rgba(0,100,150,0.3);
+            --list-hover: rgba(0,255,255,0.1);
+            --star-grad: linear-gradient(45deg, #ffff00, #9acd32, #add8e6);
+            --player-bg: rgba(0, 10, 20, 0.55);
             --icon-color: #0088cc;
             --icon-active: #00ccff;
             --del-color: #004466;
@@ -72,33 +76,25 @@
                 radial-gradient(circle at 90% 80%, var(--accent-purple) 0%, transparent 40%),
                 radial-gradient(circle at 50% 50%, var(--accent-green) 0%, transparent 40%);
             margin: 0 auto; height: 100vh; height: -webkit-fill-available; overflow: hidden; display: flex; flex-direction: column;
-            color: var(--text-main); letter-spacing: 0.01em; max-width: 390px; position: relative; overscroll-behavior: none; padding-top: 70px;
+            color: var(--text-main); letter-spacing: 0.01em; max-width: 390px; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.05); overscroll-behavior: none; padding-top: 70px;
         }
-        [data-theme="dark"] body { background: #000a14; }
+        
+        [data-theme="dark"] body {
+            background: #000a14;
+        }
 
         .bg-orb { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.5; animation: float 15s infinite alternate; }
         @keyframes float { from { transform: translate(0,0); } to { transform: translate(30px, 50px); } }
 
-        .header, .modal .header { 
-            position: fixed !important; top: 0 !important; left: 0; right: 0; 
-            padding: calc(10px + env(safe-area-inset-top)) 20px 10px !important; 
-            background: var(--glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); 
-            border-bottom: 1.5px solid var(--border-color); z-index: 1000; 
-            box-shadow: 0 2px 15px rgba(0,0,0,0.02); width: 100%; display: flex; 
-            flex-direction: column; justify-content: flex-end; 
-            min-height: 70px; height: 70px; max-width: 390px; margin: 0 auto; 
-        }
-        .header-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1001; width: 100%; height: 100%; }
-        .header-top h2 { font-size: 17px; font-weight: 800; color: var(--icon-active); margin: 0; letter-spacing: 0.05em; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; height: 100%; }
+        .header { position: fixed !important; top: 0 !important; left: 0; right: 0; padding: calc(5px + env(safe-area-inset-top)) 20px 5px; background: var(--glass); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-bottom: 1.5px solid var(--border-color); z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.02); width: 100%; display: flex; flex-direction: column; justify-content: flex-end; min-height: 70px; height: 70px; max-width: 390px; margin: 0 auto; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1001; width: 100%; height: 40px; }
+        .header-top h2 { font-size: 17px; font-weight: 800; color: var(--icon-active); margin: 0; letter-spacing: 0.05em; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; }
         
-        #left-btn, #right-btn, .modal-close-btn { 
-            background: none; border: none; color: var(--icon-color); font-size: 18px; cursor: pointer; 
-            padding: 0; min-width: 50px; height: 100%; display: flex; align-items: center; justify-content: center; transition: 0.2s; 
-        }
+        #left-btn, #right-btn, .modal-close-btn { background: none; border: none; color: var(--icon-color); font-size: 18px; cursor: pointer; padding: 10px; min-width: 50px; display: flex; align-items: center; justify-content: center; transition: 0.2s; height: 40px; }
+        #left-btn:active { opacity: 0.5; transform: scale(0.9); }
         #left-btn { justify-content: flex-start; font-size: 20px; }
         #right-btn { justify-content: flex-end; }
-        .modal-close-btn { justify-content: flex-start; }
-        .header-top button { padding: 0; margin: 0; display: flex; align-items: center; }
+        #right-btn i { font-size: 18px; color: #fff; background: var(--grad-primary); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
         .search-container { position: relative; z-index: 90; padding: 10px 20px; background: var(--glass); backdrop-filter: blur(40px); display: flex; flex-direction: column; gap: 8px; border-bottom: 0.5px solid var(--border-color); }
         .search-bar-row { display: flex; gap: 10px; align-items: center; width: 100%; }
@@ -115,7 +111,7 @@
         #content { flex: 1; overflow-y: auto; padding-bottom: 160px; -webkit-overflow-scrolling: touch; }
         .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding: 20px; }
         
-        .card { position: relative; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 28px; }
+        .card { position: relative; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 28px; }
         .card:active { transform: scale(0.96); }
         .card-img { width: 100%; aspect-ratio: 1/1; border-radius: 28px; object-fit: cover; box-shadow: var(--card-shadow); border: 4px solid var(--border-color); display: block; background: var(--card-bg); }
         .card-info { padding: 8px 10px; }
@@ -124,7 +120,7 @@
         .card-year { font-size: 9px; color: var(--icon-color); font-weight: 700; background: rgba(166,203,227,0.1); padding: 1px 6px; border-radius: 10px; }
         .card-tag { display: inline-block; font-size: 9px; background: linear-gradient(135deg, var(--accent-blue), var(--card-bg)); color: var(--icon-active); padding: 3px 10px; border-radius: 20px; margin-top: 5px; font-weight: 800; border: 1px solid rgba(166,203,227,0.3); }
 
-        .list-item { display: flex; align-items: center; padding: 8px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 12px; margin-bottom: 5px; }
+        .list-item { display: flex; align-items: center; padding: 8px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 12px; margin-bottom: 5px; }
         .list-item:active { background: var(--list-hover); }
         .list-item img:not(.artist-icon) { width: 44px; height: 44px; border-radius: 12px; margin-right: 12px; object-fit: cover; border: 2px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
@@ -152,34 +148,36 @@
         #f-artwork-container { width: 82vw; max-width: 340px; aspect-ratio: 1/1; position: relative; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); z-index: 10; }
         #f-img { width: 100%; height: 100%; border-radius: 42px; object-fit: cover; box-shadow: 0 40px 80px rgba(150,150,180,0.25); border: 8px solid var(--border-color); }
         
-        #f-lyrics-view { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 42px; padding: 50px 30px; overflow-y: auto; display: none; flex-direction: column; align-items: center; text-align: center; font-size: 19px; line-height: 2.4; color: var(--text-dark); text-shadow: 0 0 15px rgba(255,255,255,0.8); font-weight: 800; z-index: 20; border: 1px solid rgba(255,255,255,0.4); touch-action: pan-y; transition: all 0.4s ease; scroll-behavior: smooth; }
-        [data-theme="dark"] #f-lyrics-view { background: rgba(0,0,0,0.5); text-shadow: 0 0 10px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); }
+        #f-lyrics-view { position: absolute; inset: 0; background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 42px; padding: 50px 30px; overflow-y: auto; display: none; flex-direction: column; align-items: center; text-align: center; font-size: 19px; line-height: 2.4; color: var(--text-dark); text-shadow: 0 0 15px rgba(255,255,255,0.8); font-weight: 800; z-index: 20; border: 1px solid rgba(255,255,255,0.4); touch-action: pan-y; transition: all 0.4s ease; }
+        [data-theme="dark"] #f-lyrics-view { background: rgba(0,0,0,0.4); text-shadow: 0 0 10px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); }
         #f-lyrics-view.active { display: flex; }
         
-        #lyrics-content-scroll div { transition: all var(--lyric-fade-time) ease; filter: blur(2px); opacity: 0.5; transform: scale(0.95); }
-        #lyrics-content-scroll div.lyric-active { filter: blur(0px); opacity: 1; transform: scale(1.05); color: var(--icon-active); font-size: 22px; }
+        #lyrics-content-scroll div { transition: color var(--lyric-fade-time) ease, transform 0.3s ease, opacity 0.3s ease; opacity: 0.5; transform: scale(0.95); }
+        #lyrics-content-scroll div.active-line { opacity: 1; transform: scale(1.05); font-weight: 900; }
         
         .fullscreen-lyrics { position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important; border-radius: 0 !important; background: var(--player-bg) !important; backdrop-filter: blur(80px) !important; max-width: 100% !important; padding: 80px 20px !important; -webkit-backdrop-filter: blur(80px) !important; height: 100vh !important; width: 100vw !important; margin: 0 !important; }
         [data-theme="dark"] .fullscreen-lyrics { background: transparent !important; }
-        [data-theme="dark"] .fullscreen-lyrics::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.8); backdrop-filter: blur(60px); z-index:-1; }
+        [data-theme="dark"] .fullscreen-lyrics::before { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.7); backdrop-filter: blur(60px); z-index:-1; }
 
         .seeker { -webkit-appearance: none; width: 100%; height: 6px; background: var(--seeker-bg); border-radius: 10px; outline: none; margin: 40px 0 10px; }
         .seeker::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: #fff; border: 3px solid var(--icon-color); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
 
-        .mini-player { position: fixed; bottom: calc(85px + env(safe-area-inset-bottom)); height: 64px; background: var(--glass); backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px); border-radius: 24px; display: none; align-items: center; padding: 0 16px; box-shadow: 0 10px 30px rgba(180,190,220,0.2); z-index: 2000; border: 2px solid var(--border-color); max-width: 360px; margin: 0 auto; left: 0; right: 0; width: 92%; }
+        .mini-player { position: fixed; bottom: calc(85px + env(safe-area-inset-bottom)); height: 64px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 24px; display: none; align-items: center; padding: 0 16px; box-shadow: 0 10px 30px rgba(180,190,220,0.2); z-index: 2000; border: 2px solid var(--border-color); max-width: 360px; margin: 0 auto; left: 0; right: 0; width: 92%; }
         #m-img { width: 48px; height: 48px; border-radius: 14px; margin-right: 14px; object-fit: cover; border: 2px solid var(--border-color); }
         
         .tab-bar { position: fixed !important; bottom: 0 !important; width: 100%; height: calc(80px + env(safe-area-inset-bottom)); background: var(--tab-bg); backdrop-filter: blur(40px); display: flex; justify-content: space-around; padding-top: 10px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border-color); z-index: 3000; max-width: 390px; margin: 0 auto; left: 0; right: 0; }
         .tab-item { border:none; background:none; color: var(--sub-text); font-weight: 800; font-size: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; width: 33%; transition: 0.3s; }
         .tab-item.active { color: var(--icon-color); transform: scale(1.1); }
         .tab-item i { font-size: 24px; margin-top: 6px; }
+        .tab-item span { margin-top: 2px; }
 
-        .modal { position: fixed; inset: 0; background: var(--player-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
-        [data-theme="dark"] .modal { background: rgba(0, 10, 20, 0.75); }
+        .modal { position: fixed; inset: 0; background: var(--modal-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); z-index: 7000; display: none; flex-direction: column; animation: modalSlide 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); max-width: 390px; margin: 0 auto; left: 0; right: 0; }
         @keyframes modalSlide { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-body { padding: 30px; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-top: 90px; }
         
-        .edit-input { width: 100%; padding: 18px; border: 2.5px solid var(--border-color); border-radius: 20px; margin-bottom: 22px; outline: none; font-size: 15px; background: var(--input-bg); color: var(--text-main); font-weight: 600; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+        .modal .header { position: relative !important; min-height: 70px; height: 70px; padding: calc(5px + env(safe-area-inset-top)) 20px 5px !important; box-shadow: none; border-bottom: 1.5px solid var(--border-color); background: transparent; backdrop-filter: none; }
+        .modal-body { padding: 30px; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; }
+        
+        .edit-input { width: 100%; padding: 18px; border: 2.5px solid var(--border-color); border-radius: 20px; margin-bottom: 22px; outline: none; font-size: 15px; background: var(--input-bg); color: var(--text-main); font-weight: 600; }
         .edit-input:focus { border-color: var(--icon-color); background: var(--card-bg); }
         .field-label { font-size: 10px; color: var(--icon-color); font-weight: 900; letter-spacing: 0.12em; display: block; margin-bottom: 10px; margin-left: 5px; text-transform: uppercase; }
 
@@ -207,12 +205,11 @@
         .star-icon.active { background: var(--star-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; color: transparent; }
         [data-theme="dark"] .star-icon.active { background: var(--star-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; color: transparent; }
 
-        .artist-list-item { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 12px; margin-bottom: 5px; }
+        .artist-list-item { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: 0.3s; position: relative; background: var(--glass); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 12px; margin-bottom: 5px; }
+        .color-preset-btn { width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--border-color); cursor: pointer; margin-right: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
         .dragging { opacity: 0.5; background: var(--list-hover); }
-        
-        .handle { cursor: grab; padding: 10px; }
-        .handle:active { cursor: grabbing; }
+        .time-input { width: 60px; padding: 6px; border-radius: 10px; border: 2px solid var(--border-color); font-size: 12px; background: var(--card-bg); text-align: center; color: var(--text-main); }
     </style>
 </head>
 <body>
@@ -223,9 +220,9 @@
         <div class="header-top">
             <button id="left-btn" onclick="handleHeaderLeft()"><i class="fa-solid fa-sliders"></i></button>
             <h2 id="view-title">Library</h2>
-            <div style="display:flex; align-items:center; min-width:50px; justify-content:flex-end; height:100%;">
-                <button id="settings-header-btn" style="display:none; background:none; border:none; color:var(--icon-color); font-size:18px; padding:0 10px; cursor:pointer;" onclick="openSettings()"><i class="fa-solid fa-gear"></i></button>
-                <button id="artist-setup-header-btn" style="display:none; background:none; border:none; color:var(--icon-color); font-size:18px; padding:0 10px; cursor:pointer;" onclick="openArtistSetup(currentArtist)"><i class="fa-solid fa-users-gear"></i></button>
+            <div style="display:flex; align-items:center; min-width:50px; justify-content:flex-end;">
+                <button id="settings-header-btn" style="display:none; background:none; border:none; color:var(--icon-color); font-size:18px; padding:10px; cursor:pointer;" onclick="openSettings()"><i class="fa-solid fa-gear"></i></button>
+                <button id="artist-setup-header-btn" style="display:none; background:none; border:none; color:var(--icon-color); font-size:18px; padding:10px; cursor:pointer;" onclick="openArtistSetup(currentArtist)"><i class="fa-solid fa-users-gear"></i></button>
                 <button id="right-btn" onclick="handleHeaderRight()"><i class="fa-solid fa-plus"></i></button>
             </div>
         </div>
@@ -307,7 +304,7 @@
     </div>
 
     <div id="edit-modal" class="modal">
-        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="closeEdit()"><i class="fa-solid fa-xmark"></i></button><h2>Track Info</h2><button onclick="saveEdit()" style="color:var(--icon-color); font-weight:900; background:none; border:none; padding:0; display:flex; align-items:center; height:100%;">Save</button></div></div>
+        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="closeEdit()"><i class="fa-solid fa-xmark"></i></button><h2 style="display:flex; align-items:center; justify-content:center;">Track Info</h2><button onclick="saveEdit()" style="color:var(--icon-color); font-weight:900; background:none; border:none; cursor:pointer; height:40px; padding:10px;">Save</button></div></div>
         <div class="modal-body">
             <span class="field-label">Title</span><input type="text" id="edit-name" class="edit-input">
             <span class="field-label">Artist</span>
@@ -320,12 +317,12 @@
             </div>
             <div id="artist-quick-select" style="margin-bottom: 20px;"></div>
             <span class="field-label">Year</span><input type="text" id="edit-year" class="edit-input">
-            <span class="field-label">Lyrics (Use [mm:ss.xx] for sync)</span><textarea id="edit-lyrics" class="edit-input" style="height:200px; resize:none;" placeholder="[00:12.34]Lyric line..."></textarea>
+            <span class="field-label">Lyrics</span><textarea id="edit-lyrics" class="edit-input" style="height:200px; resize:none;"></textarea>
         </div>
     </div>
 
     <div id="pl-edit-modal" class="modal">
-        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="closePlEdit()"><i class="fa-solid fa-xmark"></i></button><h2>Playlist</h2><button onclick="savePlEdit()" style="color:var(--icon-color); font-weight:900; background:none; border:none; padding:0; display:flex; align-items:center; height:100%;">Done</button></div></div>
+        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="closePlEdit()"><i class="fa-solid fa-xmark"></i></button><h2 style="display:flex; align-items:center; justify-content:center;">Playlist</h2><button onclick="savePlEdit()" style="color:var(--icon-color); font-weight:900; background:none; border:none; cursor:pointer; height:40px; padding:10px;">Done</button></div></div>
         <div class="modal-body" style="text-align:center;">
             <div style="position:relative; display:inline-block; margin-bottom:10px;">
                 <img id="pl-edit-img" style="width:200px; height:200px; border-radius:35px; object-fit:cover; border:5px solid var(--border-color); box-shadow:0 15px 40px rgba(0,0,0,0.08); cursor:pointer;" onclick="document.getElementById('pl-img-input').click()">
@@ -351,17 +348,17 @@
     </div>
 
     <div id="artist-setup-modal" class="modal">
-        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('artist-setup-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2>Artist Setup</h2><button onclick="saveArtistSetup()" style="color:var(--icon-color); font-weight:900; background:none; border:none; padding:0; display:flex; align-items:center; height:100%;">Save</button></div></div>
+        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('artist-setup-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2 style="display:flex; align-items:center; justify-content:center;">Artist Setup</h2><button onclick="saveArtistSetup()" style="color:var(--icon-color); font-weight:900; background:none; border:none; cursor:pointer; height:40px; padding:10px;">Save</button></div></div>
         <div class="modal-body" id="artist-setup-body"></div>
     </div>
 
     <div id="artist-sync-modal" class="modal" style="z-index: 8500;">
-        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('artist-sync-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2>Link Artist</h2><div></div></div></div>
-        <div class="modal-body" id="artist-sync-body" style="padding:10px; padding-top:90px;"></div>
+        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('artist-sync-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2 style="display:flex; align-items:center; justify-content:center;">Link Artist</h2><div style="min-width:50px;"></div></div></div>
+        <div class="modal-body" id="artist-sync-body" style="padding:10px;"></div>
     </div>
 
     <div id="settings-modal" class="modal">
-        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('settings-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2>Settings</h2><div></div></div></div>
+        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('settings-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2 style="display:flex; align-items:center; justify-content:center;">Settings</h2><div style="min-width:50px;"></div></div></div>
         <div class="modal-body">
             <span class="field-label">Theme Mode</span>
             <select id="theme-select" class="edit-input" onchange="applyTheme(this.value)">
@@ -379,12 +376,30 @@
                 <button id="timer-btn" onclick="startTimer()" style="background:var(--icon-color); color:#fff; border:none; border-radius:15px; font-weight:800; padding:0 20px; transition:0.3s;">Start</button>
             </div>
             <div id="timer-display" style="margin-top:10px; font-size:12px; color:var(--sub-text); font-weight:bold;"></div>
-        </div>
+
+            <div style="display:none;">
+                <span class="field-label" style="margin-top:20px;">UI/UX Color Preset</span>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;" id="preset-container">
+                    <div class="color-preset-btn" style="background:linear-gradient(135deg, #a6cbe3, #fbe0e6);" onclick="applyPreset('#a6cbe3', '#fbe0e6', '#ebf5e6', '#eee5f8', 1)"></div>
+                    <div class="color-preset-btn" style="background:linear-gradient(135deg, #ffb6c1, #ff69b4);" onclick="applyPreset('#ffb6c1', '#ff69b4', '#ffe4e1', '#fff0f5', 2)"></div>
+                    <div class="color-preset-btn" style="background:linear-gradient(135deg, #98fb98, #3cb371);" onclick="applyPreset('#98fb98', '#3cb371', '#f0fff0', '#e0ffff', 3)"></div>
+                    <div class="color-preset-btn" style="background:linear-gradient(135deg, #dda0dd, #8a2be2);" onclick="applyPreset('#dda0dd', '#8a2be2', '#f8f8ff', '#e6e6fa', 4)"></div>
+                </div>
+                <span class="field-label" style="margin-top:20px;">Custom Color</span>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <input type="color" id="custom-c1" value="#a6cbe3" style="width:30px; height:30px; border:none;">
+                    <input type="color" id="custom-c2" value="#fbe0e6" style="width:30px; height:30px; border:none;">
+                    <input type="color" id="custom-c3" value="#ebf5e6" style="width:30px; height:30px; border:none;">
+                    <input type="color" id="custom-c4" value="#eee5f8" style="width:30px; height:30px; border:none;">
+                    <button onclick="saveCustomPreset()" style="background:var(--icon-color); color:#fff; border:none; border-radius:10px; padding:0 10px;">Apply</button>
+                </div>
+            </div>
+            </div>
     </div>
 
     <div id="lyric-paint-modal" class="modal" style="z-index: 8000;">
-        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('lyric-paint-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2>Paint Lyrics</h2><button onclick="saveLyricPaint()" style="color:var(--icon-color); font-weight:900; background:none; border:none; padding:0; display:flex; align-items:center; height:100%;">Save</button></div></div>
-        <div class="modal-body" style="padding:10px; padding-top:90px;">
+        <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="document.getElementById('lyric-paint-modal').style.display='none'"><i class="fa-solid fa-xmark"></i></button><h2 style="display:flex; align-items:center; justify-content:center;">Paint Lyrics</h2><button onclick="saveLyricPaint()" style="color:var(--icon-color); font-weight:900; background:none; border:none; cursor:pointer; height:40px; padding:10px;">Save</button></div></div>
+        <div class="modal-body" style="padding:10px;">
             <div style="display:flex; align-items:center; justify-content:space-between; padding:0 10px; margin-bottom:10px;">
                 <span class="field-label" style="margin:0;">Fade Time (s)</span>
                 <input type="number" id="lyric-time-input" class="edit-input" value="0.5" step="0.1" style="width:80px; margin-bottom:0; padding:5px 10px; font-size:14px; text-align:center;" onchange="saveLyricFadeTime(this.value)">
@@ -414,7 +429,7 @@
         let currentMembersEdit = [];
         let currentPaintColor = '';
         let currentLyricColors = [];
-        let parsedLyrics = [];
+        let currentLyricTimes = [];
         
         let sleepTimerId = null;
         let sleepTimerInterval = null;
@@ -436,6 +451,14 @@
             localStorage.setItem('lyricFadeTime', val);
         }
 
+        function saveCustomPreset() {
+            let c1 = document.getElementById('custom-c1').value;
+            let c2 = document.getElementById('custom-c2').value;
+            let c3 = document.getElementById('custom-c3').value;
+            let c4 = document.getElementById('custom-c4').value;
+            applyPreset(c1, c2, c3, c4, 'custom');
+        }
+
         function applyTheme(mode) {
             if(mode === 'system') {
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); }
@@ -447,6 +470,7 @@
             }
             localStorage.setItem('themeMode', mode);
             updatePlayerBlurBg();
+            loadPreset();
         }
         function initTheme() {
             let mode = localStorage.getItem('themeMode') || 'system';
@@ -458,11 +482,26 @@
         }
         initTheme();
 
+        function applyPreset(c1, c2, c3, c4, index) {
+            
+            
+        }
+        function loadPreset() {
+            
+            
+        }
+
         function loadHomeIcon() {
             let saved = localStorage.getItem('homeIcon');
             if(saved) {
                 let link = document.getElementById('apple-touch-icon');
-                if(link) link.href = saved;
+                if(!link) {
+                    link = document.createElement('link');
+                    link.id = 'apple-touch-icon';
+                    link.rel = 'apple-touch-icon';
+                    document.head.appendChild(link);
+                }
+                link.href = saved;
             }
         }
         loadHomeIcon();
@@ -470,7 +509,7 @@
             const f = e.target.files[0];
             if(f) {
                 const r = new FileReader();
-                r.onload = ev => { localStorage.setItem('homeIcon', ev.target.result); loadHomeIcon(); }
+                r.onload = ev => { localStorage.setItem('homeIcon', ev.target.result); loadHomeIcon(); alert('Home Icon Updated. Re-add to Home Screen to apply.'); }
                 r.readAsDataURL(f);
             }
         }
@@ -560,6 +599,11 @@
             return [...allArts].sort((a,b) => a.localeCompare(b, 'ja'));
         }
 
+        function getArtistStarColor(artistName, isFav) {
+            
+            return '';
+        }
+
         function render() {
             const display = document.getElementById('main-display');
             const title = document.getElementById('view-title');
@@ -601,9 +645,9 @@
 
             const search = currentSearch.toLowerCase();
             let searchTerms = search.split(/[\s,、]+/).filter(x => x);
-            let isFavSearch = (search === "fav" || search === "★");
+            let isFavSearch = (search === "お気に入り" || search === "★");
 
-            if (search === "fav") {
+            if (search === "お気に入り") {
                 tagSuggest.style.display = 'flex';
                 tagSuggest.innerHTML = `<div class="tag-chip" onclick="applyTagFilter('★')">★</div>`;
             }
@@ -635,6 +679,9 @@
                     }
 
                     artists.sort((a, b) => {
+                        
+                        
+                        
                         return a.localeCompare(b, 'ja');
                     });
                     
@@ -850,13 +897,13 @@
         let startY = 0, currentY = 0;
         
         fPlayer.addEventListener('touchstart', (e) => {
-            if (e.target.closest('#f-lyrics-view') && !e.target.closest('#swipe-handle')) { startY = 0; return; }
+            if (e.target.closest('#f-lyrics-view') || e.target.closest('.modal')) { startY = 0; return; }
             startY = e.touches[0].clientY;
             fPlayer.style.transition = 'none';
         }, { passive: true });
 
         fPlayer.addEventListener('touchmove', (e) => {
-            if (e.target.closest('#f-lyrics-view') && !e.target.closest('#swipe-handle')) return;
+            if (e.target.closest('#f-lyrics-view') || e.target.closest('.modal')) return;
             currentY = e.touches[0].clientY;
             let diff = currentY - startY;
             if (diff > 0) {
@@ -865,33 +912,13 @@
         }, { passive: true });
 
         fPlayer.addEventListener('touchend', (e) => {
-            if (e.target.closest('#f-lyrics-view') && !e.target.closest('#swipe-handle')) return;
+            if (e.target.closest('#f-lyrics-view') || e.target.closest('.modal')) return;
             let diff = currentY - startY;
             fPlayer.style.transition = 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
             if (diff > 120) closeFull();
             else fPlayer.style.transform = 'translateY(0)';
             startY = 0; currentY = 0;
         });
-
-        function parseLyrics(text) {
-            const lines = text.split('\n');
-            const result = [];
-            const timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/;
-            lines.forEach(line => {
-                const match = timeReg.exec(line);
-                if (match) {
-                    const min = parseInt(match[1]);
-                    const sec = parseInt(match[2]);
-                    const ms = parseInt(match[3].padEnd(3, '0'));
-                    const time = min * 60 + sec + ms / 1000;
-                    const content = line.replace(timeReg, '').trim();
-                    result.push({ time, content, raw: line });
-                } else {
-                    result.push({ time: -1, content: line, raw: line });
-                }
-            });
-            return result;
-        }
 
         function toggleLyrics() {
             const view = document.getElementById('f-lyrics-view');
@@ -904,64 +931,22 @@
                 let track = playingTracks[currentTrackIdx];
                 let text = track?.lyrics || "No lyrics available.";
                 let colors = track?.lyricColors || [];
-                parsedLyrics = parseLyrics(text);
+                let times = track?.lyricTimes || [];
+                let lines = text.split('\n');
                 
                 const fsToggleBtn = `<button id="fs-lyric-btn" onclick="event.stopPropagation(); toggleFullscreenLyrics()" style="position:absolute; top:25px; right:25px; background:rgba(0,0,0,0.1); border:none; color:var(--icon-color); padding:12px; border-radius:12px; z-index:50;"><i class="fa-solid fa-expand"></i></button>`;
                 const paintBtn = `<button onclick="event.stopPropagation(); openLyricPaint()" style="position:absolute; top:25px; left:25px; background:rgba(0,0,0,0.1); border:none; color:var(--icon-color); padding:12px; border-radius:12px; z-index:50;"><i class="fa-solid fa-palette"></i></button>`;
                 
-                view.innerHTML = fsToggleBtn + paintBtn + `<div id="lyrics-content-scroll" style="width:100%; height:100%; overflow-y:auto; padding-top:40px; padding-bottom: 50vh;">` + 
-                    parsedLyrics.map((l, i) => `<div id="lyric-line-${i}" style="color:${colors[i] || 'inherit'}; width:100%; word-wrap:break-word; margin-bottom: 10px; cursor:pointer;" onclick="seekLyric(${l.time})">${l.content || '&nbsp;'}</div>`).join('') + `</div>`;
+                view.innerHTML = fsToggleBtn + paintBtn + `<div id="lyrics-content-scroll" style="width:100%; height:100%; overflow-y:auto; padding-top:40px; padding-bottom:80px;">` + lines.map((l, i) => `<div id="lyric-line-${i}" style="color:${colors[i] || 'inherit'}; width:100%; word-wrap:break-word;" data-time="${times[i]||0}">${l}</div>`).join('') + `</div>`;
                 
                 if(view.classList.contains('fullscreen-lyrics')) {
                     document.getElementById('fs-lyric-btn').innerHTML = '<i class="fa-solid fa-compress"></i>';
                 }
-                updateLyricScroll();
             } else {
                 document.getElementById('f-img').style.opacity = "1";
                 document.getElementById('f-artwork-container').style.transform = "scale(1)";
                 view.classList.remove('fullscreen-lyrics');
                 view.innerHTML = '';
-            }
-        }
-
-        function seekLyric(time) {
-            if (time >= 0) {
-                audio.currentTime = time;
-                if (audio.paused) audio.play();
-            }
-        }
-
-        function updateLyricScroll() {
-            const view = document.getElementById('f-lyrics-view');
-            if (!view.classList.contains('active')) return;
-            
-            let currentTime = audio.currentTime;
-            let activeIdx = -1;
-
-            for (let i = 0; i < parsedLyrics.length; i++) {
-                if (parsedLyrics[i].time >= 0 && currentTime >= parsedLyrics[i].time) {
-                    activeIdx = i;
-                }
-            }
-
-            for (let i = 0; i < parsedLyrics.length; i++) {
-                let el = document.getElementById(`lyric-line-${i}`);
-                if (el) {
-                    if (i === activeIdx) {
-                        el.classList.add('lyric-active');
-                    } else {
-                        el.classList.remove('lyric-active');
-                    }
-                }
-            }
-
-            if (activeIdx !== -1) {
-                let activeEl = document.getElementById(`lyric-line-${activeIdx}`);
-                let container = document.getElementById('lyrics-content-scroll');
-                if (activeEl && container) {
-                    let topPos = activeEl.offsetTop - container.offsetTop - (container.clientHeight / 2) + (activeEl.clientHeight / 2);
-                    container.scrollTo({ top: topPos, behavior: 'smooth' });
-                }
             }
         }
 
@@ -976,7 +961,6 @@
                 btn.innerHTML = '<i class="fa-solid fa-expand"></i>';
                 document.getElementById('f-artwork-container').style.position = 'relative';
             }
-            updateLyricScroll();
         }
 
         function goToArtistFromPlayer() {
@@ -993,17 +977,15 @@
             const pl = playlists.find(p => p.id === currentPlaylistId);
             const div = document.createElement('div'); div.id="bulk-modal"; div.className="modal"; div.style.display = "flex";
             div.innerHTML = `
-                <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="this.closest('.modal').remove()"><i class="fa-solid fa-xmark"></i></button><h2>Select Songs</h2><button onclick="saveBulkAdd()" style="font-weight:900; color:var(--icon-color); background:none; border:none; padding:0;">Done</button></div></div>
-                <div class="modal-body" style="padding:0; padding-top:80px;">
-                    <div class="search-container" style="position:sticky; top:0;"><div class="search-bar-row"><input type="text" id="bulk-search-box" class="bulk-search-input" placeholder="Search track or artist..." oninput="filterBulk(this.value)"></div><div id="bulk-artist-suggestions"></div></div>
-                    <div id="bulk-list" style="flex:1; overflow-y:auto; padding-bottom:50px;">
-                        ${tracks.map(t => `
-                        <label class="check-item" data-search="${t.name.toLowerCase()} ${t.artist.toLowerCase()}">
-                            <input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}>
-                            <img src="${t.cover||''}" style="width:48px; height:48px; border-radius:12px; margin-right:15px;">
-                            <div style="flex:1;"><b style="font-size:14px;">${t.name}</b><br><span style="font-size:11px; color:var(--icon-color);">${t.artist}</span></div>
-                        </label>`).join('')}
-                    </div>
+                <div class="header"><div class="header-top"><button class="modal-close-btn" onclick="this.closest('.modal').remove()"><i class="fa-solid fa-xmark"></i></button><h2 style="display:flex; align-items:center; justify-content:center;">Select Songs</h2><button onclick="saveBulkAdd()" style="font-weight:900; color:var(--icon-color); background:none; border:none; padding:10px; cursor:pointer;">Done</button></div></div>
+                <div class="search-container"><div class="search-bar-row"><input type="text" id="bulk-search-box" class="bulk-search-input" placeholder="Search track or artist..." oninput="filterBulk(this.value)"></div><div id="bulk-artist-suggestions"></div></div>
+                <div id="bulk-list" style="flex:1; overflow-y:auto; padding-bottom:50px;">
+                    ${tracks.map(t => `
+                    <label class="check-item" data-search="${t.name.toLowerCase()} ${t.artist.toLowerCase()}">
+                        <input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}>
+                        <img src="${t.cover||''}" style="width:48px; height:48px; border-radius:12px; margin-right:15px;">
+                        <div style="flex:1;"><b style="font-size:14px;">${t.name}</b><br><span style="font-size:11px; color:var(--icon-color);">${t.artist}</span></div>
+                    </label>`).join('')}
                 </div>`;
             document.body.appendChild(div);
         }
@@ -1055,11 +1037,7 @@
         function next() { 
             if (playingTracks.length === 0) return;
             if (repeatMode === 2) { loadTrack(playingTracks[currentTrackIdx]); return; }
-            if (currentTrackIdx === playingTracks.length - 1 && repeatMode === 0) { 
-                currentTrackIdx = 0;
-                loadTrack(playingTracks[currentTrackIdx], false);
-                return; 
-            }
+            if (currentTrackIdx === playingTracks.length - 1 && repeatMode === 0) { audio.pause(); audio.currentTime = 0; return; }
             currentTrackIdx = (currentTrackIdx + 1) % playingTracks.length;
             loadTrack(playingTracks[currentTrackIdx]);
         }
@@ -1077,9 +1055,12 @@
             } else {
                 original = [...tracks];
             }
+            if(original.length === 0) return;
             playingTracks = isShuffle ? [...original].sort(() => Math.random() - 0.5) : [...original];
             currentTrackIdx = playingTracks.findIndex(x => x.id === id);
+            if(currentTrackIdx === -1) currentTrackIdx = 0;
             loadTrack(playingTracks[currentTrackIdx]);
+            audio.play().catch(e => console.log('Playback required interaction first', e));
         }
         
         function updatePlayerBlurBg() {
@@ -1093,7 +1074,7 @@
             }
         }
         
-        function loadTrack(t, autoPlay = true) {
+        function loadTrack(t) {
             if(!t) return;
             if(audio.src) URL.revokeObjectURL(audio.src);
             audio.src = URL.createObjectURL(t.data);
@@ -1104,7 +1085,7 @@
             document.getElementById('f-img').style.opacity = "1";
             updateFavBtn(t.favorite);
             updatePlayerBlurBg();
-            if(autoPlay) audio.play();
+            audio.play().catch(e => console.log(e));
         }
         function checkMarquee(elId, text) {
             const el = document.getElementById(elId);
@@ -1122,7 +1103,20 @@
                 const percent = (audio.currentTime / audio.duration) * 100;
                 s.style.background = `linear-gradient(to right, var(--accent-blue) 0%, var(--key-color) ${percent}%, var(--seeker-bg) ${percent}%, var(--seeker-bg) 100%)`;
                 
-                updateLyricScroll();
+                const t = playingTracks[currentTrackIdx];
+                if(document.getElementById('f-lyrics-view').classList.contains('active') && t && t.lyricTimes) {
+                    let activeIndex = -1;
+                    for(let i = 0; i < t.lyricTimes.length; i++) {
+                        if(audio.currentTime >= parseFloat(t.lyricTimes[i] || 0)) { activeIndex = i; }
+                    }
+                    if(activeIndex !== -1) {
+                        const lines = document.querySelectorAll('#lyrics-content-scroll div');
+                        lines.forEach((line, i) => {
+                            if(i === activeIndex) { line.classList.add('active-line'); line.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                            else { line.classList.remove('active-line'); }
+                        });
+                    }
+                }
             } 
         };
         audio.onplay = () => { document.getElementById('m-pp').className = 'fa-solid fa-pause'; document.getElementById('f-pp').className = 'fa-solid fa-pause'; };
@@ -1278,7 +1272,7 @@
                             <div class="swipe-delete-btn" onclick="removeArtistMember(${i})">Delete</div>
                             <div class="list-item" ontouchstart="handleTouchStart(event, 'mem-${i}')" ontouchmove="handleTouchMove(event, 'mem-${i}')" ontouchend="handleTouchEnd(event, 'mem-${i}')" style="display:flex; gap:10px; align-items:center; background:var(--card-bg); border-radius:15px; padding: 10px 15px;">
                                 <i class="fa-solid fa-link" style="color:${m.linked?'var(--icon-active)':'#ccc'}; padding:0 5px;" onclick="openSyncModal(${i})"></i>
-                                <i class="fa-solid fa-bars handle" style="color:#ccc; padding:0 10px;"></i>
+                                <i class="fa-solid fa-bars" style="color:#ccc; padding:0 5px; cursor:grab;"></i>
                                 <input type="color" value="${m.color || '#000000'}" onchange="currentMembersEdit[${i}].color=this.value" style="width:40px; height:40px; border:none; border-radius:10px;">
                                 <input type="text" class="edit-input" style="margin-bottom:0; flex:1; padding: 10px;" value="${m.name}" oninput="currentMembersEdit[${i}].name=this.value" placeholder="Member Name">
                             </div>
@@ -1292,7 +1286,6 @@
         
         let draggedMemIndex = -1;
         function handleDragStart(e, i) {
-            if(!e.target.classList.contains('setup-mem-item')) return;
             draggedMemIndex = i;
             e.dataTransfer.effectAllowed = 'move';
             e.target.classList.add('dragging');
@@ -1314,7 +1307,8 @@
             let artists = getAllArtists();
             const body = document.getElementById('artist-sync-body');
             body.innerHTML = artists.map(a => {
-                let imgHtml = artistMeta[a] && artistMeta[a].icon ? `<img src="${artistMeta[a].icon}" style="width:20px;height:20px;border-radius:50%;margin-right:5px;vertical-align:middle;object-fit:cover;">` : `<div style="display:inline-block;width:20px;height:20px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--icon-color);"></div>`;
+                const firstSong = tracks.find(t => t.artist.split(/[,、/]/).map(x=>x.trim()).includes(a));
+                let imgHtml = artistMeta[a] && artistMeta[a].icon ? `<img src="${artistMeta[a].icon}" style="width:20px;height:20px;border-radius:50%;margin-right:5px;vertical-align:middle;object-fit:cover;">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}" style="width:20px;height:20px;border-radius:50%;margin-right:5px;vertical-align:middle;object-fit:cover;">` : `<div style="display:inline-block;width:20px;height:20px;border-radius:50%;margin-right:5px;vertical-align:middle;background:var(--icon-color);"></div>`);
                 return `<div class="artist-chip" onclick="linkArtistMember('${a}')">${imgHtml}${a}</div>`;
             }).join('') + `<div class="artist-chip" onclick="linkArtistMember('')" style="color:var(--del-color);">Unlink</div>`;
             document.getElementById('artist-sync-modal').style.display = 'flex';
@@ -1380,6 +1374,7 @@
 
             currentPaintColor = allMembers[0] ? allMembers[0].color : '';
             currentLyricColors = t.lyricColors ? [...t.lyricColors] : [];
+            currentLyricTimes = t.lyricTimes ? [...t.lyricTimes] : [];
             
             const pal = document.getElementById('paint-palette');
             pal.innerHTML = allMembers.map(m => `
@@ -1394,11 +1389,14 @@
         }
         function renderPaintLyrics() {
             const t = playingTracks[currentTrackIdx];
-            const lines = parseLyrics(t.lyrics || '').map(l => l.raw);
+            const lines = (t.lyrics || '').split('\n');
             const container = document.getElementById('paint-lyrics-container');
             container.innerHTML = lines.map((l, i) => `
-                <div onclick="applyLyricColor(${i})" style="padding:15px; border-radius:12px; background:var(--input-bg); color:${currentLyricColors[i] || 'var(--text-main)'}; border-left:6px solid ${currentLyricColors[i] || 'transparent'}; cursor:pointer; font-weight:800; text-align:center;">
-                    ${l || '<span style="color:#ccc; font-size:12px;">(empty line)</span>'}
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="number" step="0.1" placeholder="Sec" class="time-input" value="${currentLyricTimes[i] !== undefined ? currentLyricTimes[i] : ''}" onchange="currentLyricTimes[${i}]=this.value">
+                    <div onclick="applyLyricColor(${i})" style="flex:1; padding:15px; border-radius:12px; background:var(--input-bg); color:${currentLyricColors[i] || 'var(--text-main)'}; border-left:6px solid ${currentLyricColors[i] || 'transparent'}; cursor:pointer; font-weight:800; text-align:center;">
+                        ${l || '<span style="color:#ccc; font-size:12px;">(empty line)</span>'}
+                    </div>
                 </div>
             `).join('');
         }
@@ -1409,6 +1407,7 @@
         function saveLyricPaint() {
             const t = playingTracks[currentTrackIdx];
             t.lyricColors = currentLyricColors;
+            t.lyricTimes = currentLyricTimes;
             db.transaction("songs", "readwrite").objectStore("songs").put(t).onsuccess = () => {
                 document.getElementById('lyric-paint-modal').style.display = 'none';
                 loadAll();
