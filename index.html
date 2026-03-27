@@ -1470,7 +1470,7 @@
             db: {
                 initDB: function() {
                     // Do not change the following line per instructions
-                    const req = indexedDB.open("MusicStudioWishcore_V7", 2);
+                    const req = indexedDB.open("MusicStudioWishcore_V7",2);
                     req.onupgradeneeded = (e) => {
                         const d = e.target.result;
                         if(!d.objectStoreNames.contains("songs")) d.createObjectStore("songs", {keyPath:"id", autoIncrement:true});
