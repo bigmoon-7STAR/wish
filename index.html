@@ -1216,7 +1216,7 @@
             }, min * 60000);
         }
 
-        const req = indexedDB.open("MusicStudioWishcore_V7", 1);
+        const req = indexedDB.open("MusicStudioWishcore_V5", 1);
         req.onupgradeneeded = (e) => {
             let d = e.target.result;
             if(!d.objectStoreNames.contains("songs")) d.createObjectStore("songs", {keyPath:"id", autoIncrement:true});
