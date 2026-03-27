@@ -1530,7 +1530,7 @@
         }
 
         // DB OPEN REQUIRED STRICTLY EXACT LINE
-        const req = indexedDB.open("MusicStudioWishcore_V7",2);
+        const req = indexedDB.open("MusicStudioWishcore_V7", 2);
         
         req.onupgradeneeded = (e) => {
             let d = e.target.result;
