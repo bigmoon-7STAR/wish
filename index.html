@@ -1895,8 +1895,12 @@ body {
         }
         
         function openArtist(n) {
-            currentArtist = n;
+            currentArtist = n
+            currentView = 'artists,;
+            document.getElementById('search-input').value = ''; 
+            searchQueries.artistTracks = ''; 
             render();
+            window.scrollTo(0, 0);
         }
 
         function handleHeaderLeft() {
