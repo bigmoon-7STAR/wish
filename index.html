@@ -1203,6 +1203,47 @@ html body{font-family:var(--fb)}
 .hw-last b{font-size:15px;font-weight:500}
 #f-artist{letter-spacing:.14em}
 </style>
+<style id="frost-fix">
+/* プレイヤー: すりガラス（凹凸のあるテクスチャ） */
+.full-player{background:rgba(var(--bg-rgb),.38)!important;backdrop-filter:blur(38px) saturate(150%)!important;-webkit-backdrop-filter:blur(38px) saturate(150%)!important}
+.queue-panel{backdrop-filter:blur(34px) saturate(150%)!important;-webkit-backdrop-filter:blur(34px) saturate(150%)!important}
+/* 歌詞表示: 下のコントロールが押し出されないよう高さを固定 */
+#full.lyrics-on #f-lyrics-view{flex:none;height:max(200px,calc(100dvh - 430px))}
+#full.lyrics-on #lyrics-content-scroll{padding-top:70px!important}
+#lyric-close{display:none;position:absolute;top:calc(var(--sat) + 30px);left:50%;transform:translateX(-50%);z-index:60;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--gl-bd);background:var(--gl);box-shadow:var(--gl-sm);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--ink);font-family:var(--fdot,var(--fb));font-weight:700;font-size:13px;letter-spacing:.14em}
+#lyric-close i{font-size:13px}
+#full.lyrics-on #lyric-close{display:flex}
+#lyric-close:active{transform:translateX(-50%) scale(.96)}
+</style>
+<style id="blur-lyrics-dark">
+/* プレイヤー: ガウスぼかし。背面の画面そのものにも blur をかけて確実にボケさせる */
+.full-player{background:rgba(var(--bg-rgb),.32)!important;backdrop-filter:blur(30px)!important;-webkit-backdrop-filter:blur(30px)!important}
+.full-player::before{opacity:.3}
+body > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):not(canvas):not(input){transition:filter .35s ease}
+body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):not(canvas):not(input){filter:blur(18px)}
+/* 歌詞: レイアウトを動かさず、ジャケット位置に重ねて表示 */
+#full.lyrics-on #f-artwork-container{display:block!important;visibility:hidden}
+#full.lyrics-on #f-lyrics-view{display:block;position:absolute!important;left:0;right:0;top:calc(var(--sat) + 64px);width:auto!important;margin:0!important;flex:none;height:40vh;z-index:15}
+#full.lyrics-on #lyrics-content-scroll{padding-top:56px!important}
+/* ダークモード: フレームを暗く */
+[data-theme="dark"]{--gl:linear-gradient(180deg,rgba(30,30,33,.78),rgba(12,12,14,.7));--gl-flat:rgba(16,16,18,.62);--gl-bd:rgba(255,255,255,.1);--seg:rgba(255,255,255,.1);
+--gl-sh:inset 0 1px 0 rgba(255,255,255,.12),inset 0 -1px 0 rgba(0,0,0,.5),0 12px 32px rgba(0,0,0,.6);--gl-sm:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.45),0 4px 14px rgba(0,0,0,.55)}
+[data-theme="dark"] #bg-art i:nth-child(1){background:radial-gradient(circle at 40% 70%,rgba(255,255,255,.11),rgba(255,255,255,.03) 62%,transparent 78%)}
+[data-theme="dark"] #bg-art i:nth-child(2){background:radial-gradient(circle at 30% 30%,rgba(200,205,215,.13),rgba(255,255,255,.02) 65%,transparent 80%)}
+[data-theme="dark"] #bg-art i:nth-child(3){background:radial-gradient(circle,rgba(255,255,255,.13),transparent 68%)}
+</style>
+<style id="lyrics-btn-tune">
+/* 歌詞表示: ジャケットは遷移なしで即座に隠す（visibility の遅延でチラつくため）／タイトルは非表示（領域は維持） */
+#full.lyrics-on #f-artwork-container{visibility:hidden;opacity:0;transition:none!important}
+#full.lyrics-on #f-title-row{visibility:hidden}
+#full.lyrics-on #lyrics-content-scroll{padding-top:52px!important}
+/* 再生ボタン・アクティブ状態は他のフレームと同じガラス色に */
+#f-pp,#m-pp{background:var(--gl)!important;color:var(--ink)!important;border:1px solid var(--gl-bd)!important;box-shadow:var(--gl-sh)!important;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+#full.lyrics-on #f-lyric-btn{background:var(--seg)!important;color:var(--ink)!important;box-shadow:inset 0 2px 6px rgba(0,0,0,.2)!important}
+.tab-item.active{background:var(--seg);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.06)}
+.tab-item.active,.tab-item.active i,.tab-item.active span{color:var(--ink)}
+#timer-btn{background:var(--seg)!important;color:var(--ink)!important}
+</style>
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -1247,6 +1288,7 @@ html body{font-family:var(--fb)}
 </div>
 
 <div class="full-player" id="full">
+    <button id="lyric-close" onclick="toggleLyrics()" aria-label="Back to cover"><i class="fa-solid fa-compact-disc"></i><span>COVER</span></button>
     <div id="bg-blur-overlay"><div class="bg-sphere"></div></div>
     <div id="swipe-handle" style="padding:25px; text-align:center; cursor:pointer;"><div style="width:40px; height:5px; border-radius:10px; background:rgba(166,203,227,0.4); margin:0 auto;"></div></div>
     
@@ -1257,7 +1299,7 @@ html body{font-family:var(--fb)}
         </div>
         <div id="f-lyrics-view"></div>
         
-        <div style="width:100%; margin-top:45px; display:flex; justify-content:space-between; align-items:flex-end;">
+        <div id="f-title-row" style="width:100%; margin-top:45px; display:flex; justify-content:space-between; align-items:flex-end;">
             <div style="flex:1; overflow:hidden; padding-right:15px;">
                 <div id="f-title" style="font-size:24px; font-weight:900; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
                 <div id="f-artist" onclick="goToArtistFromPlayer()" style="font-size:16px; color:var(--icon-color); margin-top:6px; font-weight:700; cursor:pointer; text-decoration:underline;"></div>
@@ -1611,13 +1653,13 @@ html body{font-family:var(--fb)}
             document.documentElement.removeAttribute('data-theme');
             document.getElementById('meta-theme-color').content = '#f4f4f3';
         }
-        localStorage.setItem('themeMode2', mode);
+        localStorage.setItem('themeMode3', mode);
         updatePlayerBlurBg();
     }
     
     function initTheme() 
     {
-        let mode = localStorage.getItem('themeMode2') || 'dark';
+        let mode = localStorage.getItem('themeMode3') || 'system';
         document.getElementById('theme-select').value = mode;
         applyTheme(mode);
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => 
@@ -2351,12 +2393,27 @@ html body{font-family:var(--fb)}
         return text.split('\n');
     }
 
+
+    // プレイヤー開閉で背面をぼかす
+    (function () {
+        const f = document.getElementById('full');
+        new MutationObserver(() => document.body.classList.toggle('player-open', f.classList.contains('active'))).observe(f, { attributes: true, attributeFilter: ['class'] });
+    })();
+    // 歌詞ビューの高さ = 上端からタイトル行の手前まで（コントロール位置は不変）
+    function layoutLyrics() {
+        const v = document.getElementById('f-lyrics-view'), f = document.getElementById('full'), t = document.getElementById('seeker');
+        if (!v || !t || !v.classList.contains('active')) return;
+        const top = parseFloat(getComputedStyle(v).top) || 64;
+        v.style.height = Math.max(140, t.getBoundingClientRect().top - f.getBoundingClientRect().top - top - 6) + 'px';
+    }
+    addEventListener('resize', layoutLyrics);
     function toggleLyrics() 
     {
         const view = document.getElementById('f-lyrics-view');
         isEditingLyrics = false; lastLyricIdx = -2;
         const isActive = view.classList.toggle('active');
         document.getElementById('full').classList.toggle('lyrics-on', isActive);
+        if (isActive) requestAnimationFrame(layoutLyrics); else view.style.height = '';
         
         if(isActive) 
         {
@@ -2744,7 +2801,7 @@ html body{font-family:var(--fb)}
         lv.classList.remove('active'); document.getElementById('full').classList.remove('lyrics-on');
         lastLyricIdx = -2;
         document.getElementById('f-img').style.opacity = "1";
-        if (wasLyrics) setTimeout(toggleLyrics, 0);
+        if (wasLyrics) toggleLyrics();
         
         updateFavBtn(t.favorite);
         updatePlayerBlurBg();
