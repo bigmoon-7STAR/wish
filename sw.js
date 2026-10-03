@@ -1,28 +1,21 @@
-// --- サービスワーカー強制停止・キャッシュ削除スクリプト ---
+// --- サービスワーカー停止・キャッシュ削除スクリプト ---
+// 古いSWが残っていても、このファイルに差し替えると自分自身を解除し、キャッシュも全削除する。
 
-self.addEventListener('install', (e) => {
-  // 新しいサービスワーカーを待機させずにすぐアクティブにする
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    // 全てのキャッシュを物理的に削除する
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          console.log('Deleting cache:', cacheName);
-          return caches.delete(cacheName);
-        })
-      );
-    }).then(() => {
-      // 制御を即座に開始し、クライアント（index.html）をリロードさせる準備
-      return self.clients.claim();
-    })
-  );
-});
+  e.waitUntil((async () => {
+    // 全キャッシュを削除
+    const names = await caches.keys();
+    await Promise.all(names.map((n) => caches.delete(n)));
 
-// 何もキャッシュせず、常にネットワークへ直接見に行くようにする
-self.addEventListener('fetch', (e) => {
-  return; 
+    // 制御中のページを取得してから自分自身を登録解除
+    const clients = await self.clients.matchAll({ type: 'window' });
+    await self.registration.unregister();
+
+    // ページを再読み込みして、最新のファイルをネットワークから取得させる
+    clients.forEach((c) => c.navigate(c.url).catch(() => {}));
+  })());
 });
