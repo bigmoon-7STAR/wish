@@ -1065,7 +1065,6 @@ body::after{content:'';position:fixed;inset:0;z-index:9000;pointer-events:none;b
 #left-btn,#right-btn,.modal-close-btn,#settings-header-btn,#artist-setup-header-btn{width:40px;height:40px;min-width:40px!important;padding:0!important;border-radius:50%;background:var(--gl)!important;border:1px solid var(--gl-bd)!important;box-shadow:var(--gl-sm);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--ink)!important;font-size:14px!important;display:flex;align-items:center;justify-content:center}
 #left-btn:active,#right-btn:active,.modal-close-btn:active{transform:scale(.94)}
 #right-btn i{background:none!important;box-shadow:none!important;width:auto!important;height:auto!important;color:var(--ink)!important;font-size:14px!important}
-#settings-header-btn,#artist-setup-header-btn{margin-right:8px}
 .search-container{padding:2px 16px 10px;background:transparent;backdrop-filter:none;border:0}
 #search-input,.bulk-search-input{border:1px solid var(--line);border-radius:999px;background:var(--gl-flat);box-shadow:inset 0 1px 0 rgba(255,255,255,.07);padding:12px 16px 12px 40px;font-size:13px;color:var(--ink);backdrop-filter:var(--blur);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:15px center}
 #search-input::placeholder{color:var(--sub)}
@@ -1254,7 +1253,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
 .lyric-line-active{transform:none!important}
 .lyric-line-active::after{content:'';display:inline-block;width:.5em;height:1.05em;margin-left:5px;vertical-align:-.15em;background:currentColor;opacity:.7;animation:caret 1s steps(1) infinite}
 @keyframes caret{50%{opacity:0}}
-#full.lyrics-on #f-lyrics-view{top:calc(var(--sat) + 22px)}
+#full.lyrics-on #f-lyrics-view{top:calc(var(--sat) + 22px)!important;bottom:auto!important}
 #full.lyrics-on #lyrics-content-scroll{padding-top:30px!important}
 /* 歌詞設定ボタン（右上の角・コンパクト） */
 #lyric-close{top:calc(var(--sat) + 12px);right:14px;left:auto;transform:none;width:38px;height:38px;padding:0;gap:0;justify-content:center;border-radius:50%}
@@ -1280,7 +1279,6 @@ body.player-open > .ui-sheet,body.player-open > #upload-toast{filter:none!import
 .header-top{position:relative}
 .header-top h2{position:absolute;left:50%;transform:translateX(-50%);margin:0;max-width:52%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .header-top > div{gap:8px;min-width:0!important}
-#settings-header-btn{display:none!important}
 #left-btn,#right-btn,#artist-setup-header-btn{width:40px;height:40px;min-width:40px;padding:0!important;margin:0!important;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gl)!important;border:1px solid var(--gl-bd)!important;box-shadow:var(--gl-sm);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--ink)!important;font-size:15px!important}
 body.editing #left-btn{background:var(--seg)!important}
 .card{position:relative}
@@ -1508,7 +1506,6 @@ body.editing #left-btn{background:var(--seg)!important}
     <button class="tab-item active" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-layer-group"></i><span id="lbl-tab-library">Library</span></button>
     <button class="tab-item" id="tab-play" onclick="switchTab('playlist')"><i class="fa-solid fa-heart-pulse"></i><span id="lbl-tab-playlist">Playlist</span></button>
 </div>
-    <button class="tab-circle" onclick="openSettings()" aria-label="Settings"><i class="fa-solid fa-gear"></i></button>
 </div>
 
 <input type="file" id="audio-upload" multiple style="display:none">
@@ -2013,8 +2010,8 @@ body.editing #left-btn{background:var(--seg)!important}
         tagSuggest.style.display = 'none';
         artistFilter.style.display = 'none';
         
-        if (artistSetupBtn) artistSetupBtn.style.display = currentArtist ? 'inline-block' : 'none';
-        if (settingsBtn) settingsBtn.style.display = (currentView === 'artists' && !currentArtist) ? 'inline-block' : 'none';
+        if (artistSetupBtn) artistSetupBtn.style.display = currentArtist ? 'flex' : 'none';
+        if (settingsBtn) settingsBtn.style.display = (currentView === 'artists' && !currentArtist) ? 'flex' : 'none';
         
         rightBtn.style.display = (currentView === 'artists' && !currentArtist && !isEditing) ? 'none' : 'flex';
 
@@ -2103,7 +2100,7 @@ body.editing #left-btn{background:var(--seg)!important}
                     const iconClass = h.type === 'parent' ? 'artist-icon artist-parent-icon' : (h.type === 'child' ? 'artist-icon artist-child-icon' : 'artist-icon artist-parent-icon');
                     const iconStyle = h.type === 'child' && h.color ? `border-color: ${h.color};` : '';
                     
-                    const iconHtml = iconSrc ? `<img loading="lazy" decoding="async" src="${iconSrc}" class="${iconClass}" style="${iconStyle}">` : `<div class="${iconClass}" style="${iconStyle}"><i class="fa-solid ${h.type==='parent'?'fa-users':'fa-user'}" style="font-size:24px;"></i></div>`;
+                    const iconHtml = iconSrc ? `<img decoding="async" src="${iconSrc}" class="${iconClass}" style="${iconStyle}">` : `<div class="${iconClass}" style="${iconStyle}"><i class="fa-solid ${h.type==='parent'?'fa-users':'fa-user'}" style="font-size:24px;"></i></div>`;
                     
                     let starClass = (h.meta && h.meta.favorite) ? 'star-icon active' : 'star-icon';
                     
@@ -2190,7 +2187,7 @@ body.editing #left-btn{background:var(--seg)!important}
                     
                     return `<div class="card ${isEditing && !p.isVirtual?'editing':''}" onclick="${isEditing && !p.isVirtual ? `openPlEdit(${p.id})` : `openPlaylist(${jsArg(p.id)})`}">
                         ${!p.isVirtual ? `<div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-x"></i></div>` : ''}
-                        <img loading="lazy" decoding="async" src="${p.cover || (firstSong && firstSong.cover) || PH}" class="card-img">
+                        <img decoding="async" src="${p.cover || (firstSong && firstSong.cover) || PH}" class="card-img">
                         ${p.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
                         <div class="card-info">
                             <div class="card-title">${esc(p.name)}</div>
@@ -2234,7 +2231,7 @@ body.editing #left-btn{background:var(--seg)!important}
                         artistFilter.innerHTML = matchedArts.map(a => 
                         {
                             const firstSong = tracks.find(t => hasArtist(t, a));
-                            const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img loading="lazy" decoding="async" src="${artistMeta[a].icon}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : (firstSong && firstSong.cover ? `<img loading="lazy" decoding="async" src="${firstSong.cover}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : `<div class="placeholder"><i class="fa-solid fa-user"></i></div>`);
+                            const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img decoding="async" src="${artistMeta[a].icon}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : (firstSong && firstSong.cover ? `<img decoding="async" src="${firstSong.cover}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : `<div class="placeholder"><i class="fa-solid fa-user"></i></div>`);
                             return `<div class="bulk-artist-icon-chip" onclick="toggleArtistFilter(${jsArg(a)})">${icon}<span>${a}</span></div>`;
                         }).join('');
                     }
@@ -2270,7 +2267,7 @@ body.editing #left-btn{background:var(--seg)!important}
                         <div class="list-item" onclick="playSong(${t.id},'pl')" ontouchstart="handleTouchStart(event, '${t.id}')" ontouchmove="handleTouchMove(event, '${t.id}')" ontouchend="handleTouchEnd(event, '${t.id}')">
                             <div style="position:relative; margin-right:16px;">
                                 ${t.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:-5px; left:-5px; font-size:12px; z-index:5;"></i>' : ''}
-                                <img loading="lazy" decoding="async" src="${t.cover||PH}" style="margin-right:0;">
+                                <img decoding="async" src="${t.cover||PH}" style="margin-right:0;">
                             </div>
                             <div style="flex:1;">
                                 <div style="font-weight:800; font-size:14px; display:flex; align-items:center; gap:5px;">${esc(t.name)}</div>
@@ -2377,7 +2374,7 @@ body.editing #left-btn{background:var(--seg)!important}
         container.innerHTML = list.map(t => `
             <div class="card ${isEditing?'editing':''}" onclick="isEditing?openEdit(${t.id}):playSong(${t.id},'lib')">
                 <div class="del-badge" onclick="event.stopPropagation(); deleteSong(${t.id})"><i class="fa-solid fa-trash-can"></i></div>
-                <img loading="lazy" decoding="async" src="${t.cover||PH}" class="card-img">
+                <img decoding="async" src="${t.cover||PH}" class="card-img">
                 ${t.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
                 <div class="card-info">
                     <div class="card-title">${esc(t.name)}</div>
@@ -2485,10 +2482,10 @@ body.editing #left-btn{background:var(--seg)!important}
     })();
     // 歌詞ビューの高さ = 上端からタイトル行の手前まで（コントロール位置は不変）
     function layoutLyrics() {
-        const v = document.getElementById('f-lyrics-view'), f = document.getElementById('full'), t = document.getElementById('seeker');
-        if (!v || !t || !v.classList.contains('active')) return;
-        const top = parseFloat(getComputedStyle(v).top) || 64;
-        v.style.height = Math.max(140, t.getBoundingClientRect().top - f.getBoundingClientRect().top - top - 6) + 'px';
+        const v = document.getElementById('f-lyrics-view'), f = document.getElementById('full'), sk = document.getElementById('seeker');
+        if (!v || !sk || !v.classList.contains('active')) return;
+        const fr = f.getBoundingClientRect(), top = parseFloat(getComputedStyle(v).top) || 22;
+        v.style.height = Math.max(140, sk.getBoundingClientRect().top - fr.top - top - 8) + 'px';
     }
     addEventListener('resize', layoutLyrics);
 
@@ -2538,13 +2535,21 @@ body.editing #left-btn{background:var(--seg)!important}
     ['change', 'pointerup', 'pointercancel', 'touchend', 'mouseup'].forEach(ev => document.getElementById('seeker').addEventListener(ev, endSeek));
     // --- アップロードの軽量化 ---
     const COVER_MAX = 480;
+    function blobToDataURL(b) { return new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(b); }); }
     function shrinkBlobToDataURL(blob, max, q) {
-        return createImageBitmap(blob).then(bm => {
-            const k = Math.min(1, max / Math.max(bm.width, bm.height)), c = document.createElement('canvas');
-            c.width = Math.round(bm.width * k); c.height = Math.round(bm.height * k);
-            c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height); if (bm.close) bm.close();
-            return c.toDataURL('image/jpeg', q || .82);
-        }).catch(() => null);
+        return new Promise(res => {
+            const url = URL.createObjectURL(blob), im = new Image();
+            im.onload = () => {
+                try {
+                    const k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas');
+                    c.width = Math.max(1, Math.round(im.naturalWidth * k)); c.height = Math.max(1, Math.round(im.naturalHeight * k));
+                    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+                    URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', q || .82));
+                } catch (e) { URL.revokeObjectURL(url); res(null); }
+            };
+            im.onerror = () => { URL.revokeObjectURL(url); res(null); };
+            im.src = url;
+        }).then(d => d || (blob.size < 1500000 ? blobToDataURL(blob) : null));
     }
     function readTags(f) { return new Promise(res => jsmediatags.read(f, { onSuccess: t => res(t.tags), onError: () => res(null) })); }
     async function buildTrack(f) {
@@ -2688,7 +2693,7 @@ body.editing #left-btn{background:var(--seg)!important}
                 ${tracks.map(t => `
                 <label class="check-item" data-search="${t.name.toLowerCase()} ${getDisplayArtistString(t.artist).toLowerCase()}">
                     <input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}>
-                    <img loading="lazy" decoding="async" src="${t.cover||PH}" style="width:48px; height:48px; border-radius:12px; margin-right:15px; object-fit:cover;">
+                    <img decoding="async" src="${t.cover||PH}" style="width:48px; height:48px; border-radius:12px; margin-right:15px; object-fit:cover;">
                     <div style="flex:1;"><b style="font-size:14px;">${esc(t.name)}</b><br><span style="font-size:11px; color:var(--icon-color);">${esc(getDisplayArtistString(t.artist))}</span></div>
                 </label>`).join('')}
             </div>`;
@@ -2714,7 +2719,7 @@ body.editing #left-btn{background:var(--seg)!important}
             suggest.innerHTML = matchedArtists.map(a => 
             {
                 const firstSong = tracks.find(t => hasArtist(t, a));
-                const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img loading="lazy" decoding="async" src="${artistMeta[a].icon}">` : (firstSong && firstSong.cover ? `<img loading="lazy" decoding="async" src="${firstSong.cover}">` : `<div class="placeholder" style="width:42px;height:42px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-user"></i></div>`);
+                const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img decoding="async" src="${artistMeta[a].icon}">` : (firstSong && firstSong.cover ? `<img decoding="async" src="${firstSong.cover}">` : `<div class="placeholder" style="width:42px;height:42px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-user"></i></div>`);
                 return `<div class="bulk-artist-icon-chip" onclick="document.getElementById('bulk-search-box').value=${jsArg(a)}; filterBulk(${jsArg(a)})">${icon}<span>${a}</span></div>`;
             }).join('');
         } 
@@ -3562,7 +3567,7 @@ body.editing #left-btn{background:var(--seg)!important}
     {
         const list = document.getElementById('queue-list');
         const nextTracks = playingTracks.slice(currentTrackIdx + 1);
-        list.innerHTML = nextTracks.map((t, i) => `<div class="list-item" onclick="currentTrackIdx=${currentTrackIdx+1+i}; loadTrack(playingTracks[currentTrackIdx])"><img loading="lazy" decoding="async" src="${t.cover||PH}" style="width:40px; height:40px;"><div><div style="font-weight:800;">${esc(t.name)}</div><div style="font-size:11px; color:var(--icon-color);">${esc(getDisplayArtistString(t.artist))}</div></div></div>`).join('') || '<div style="padding:50px; text-align:center; color:var(--sub);">Queue is empty</div>';
+        list.innerHTML = nextTracks.map((t, i) => `<div class="list-item" onclick="currentTrackIdx=${currentTrackIdx+1+i}; loadTrack(playingTracks[currentTrackIdx])"><img decoding="async" src="${t.cover||PH}" style="width:40px; height:40px;"><div><div style="font-weight:800;">${esc(t.name)}</div><div style="font-size:11px; color:var(--icon-color);">${esc(getDisplayArtistString(t.artist))}</div></div></div>`).join('') || '<div style="padding:50px; text-align:center; color:var(--sub);">Queue is empty</div>';
     }
 </script>
 
