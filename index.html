@@ -1173,6 +1173,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9000;pointer-events:none;b
 .hw-card{position:relative}
 .hw-card::before{content:'';position:absolute;inset:12px;pointer-events:none;opacity:.4;background:linear-gradient(var(--ink),var(--ink)) top left/10px 1px no-repeat,linear-gradient(var(--ink),var(--ink)) top left/1px 10px no-repeat,linear-gradient(var(--ink),var(--ink)) top right/10px 1px no-repeat,linear-gradient(var(--ink),var(--ink)) top right/1px 10px no-repeat,linear-gradient(var(--ink),var(--ink)) bottom left/10px 1px no-repeat,linear-gradient(var(--ink),var(--ink)) bottom left/1px 10px no-repeat,linear-gradient(var(--ink),var(--ink)) bottom right/10px 1px no-repeat,linear-gradient(var(--ink),var(--ink)) bottom right/1px 10px no-repeat}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Hina+Mincho&family=Courier+Prime:wght@400;700&family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style id="bg-fonts">
 :root{--bg:#f4f4f3;--bg-rgb:244,244,243;--fb:"Sora","Zen Kaku Gothic New",-apple-system,"Hiragino Sans",sans-serif;--fd:var(--fb);--fm:var(--fb);
@@ -1244,6 +1245,73 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
 .tab-item.active,.tab-item.active i,.tab-item.active span{color:var(--ink)}
 #timer-btn{background:var(--seg)!important;color:var(--ink)!important}
 </style>
+<style id="ui-batch">
+@font-face{font-family:"LyricDX";src:local("DX타자체"),local("DXTajache"),local("DX Tajache"),url("DXTajache.woff2") format("woff2"),url("DXTajache.ttf") format("truetype"),url("fonts/DXTajache.ttf") format("truetype");font-display:swap}
+:root{--fl:"LyricDX","Courier Prime","Hina Mincho","Nanum Gothic Coding",serif}
+/* 歌詞: タイプライター調・位置を上へ */
+#f-lyrics-view,#lyrics-content-scroll>div{font-family:var(--fl)!important;font-weight:400!important}
+#lyrics-content-scroll>div{font-size:19px;line-height:1.75;letter-spacing:.03em}
+.lyric-line-active{transform:none!important}
+.lyric-line-active::after{content:'';display:inline-block;width:.5em;height:1.05em;margin-left:5px;vertical-align:-.15em;background:currentColor;opacity:.7;animation:caret 1s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+#full.lyrics-on #f-lyrics-view{top:calc(var(--sat) + 22px)}
+#full.lyrics-on #lyrics-content-scroll{padding-top:30px!important}
+/* 歌詞設定ボタン（右上の角・コンパクト） */
+#lyric-close{top:calc(var(--sat) + 12px);right:14px;left:auto;transform:none;width:38px;height:38px;padding:0;gap:0;justify-content:center;border-radius:50%}
+#lyric-close span{display:none}
+#lyric-close:active{transform:scale(.94)}
+#lyric-menu{display:none;position:absolute;top:calc(var(--sat) + 58px);right:14px;z-index:61;flex-direction:column;gap:2px;padding:6px;border-radius:22px;background:var(--gl);border:1px solid var(--gl-bd);box-shadow:var(--gl-sh);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+#lyric-menu.show{display:flex}
+#full:not(.lyrics-on) #lyric-menu{display:none!important}
+#lyric-menu button{display:flex;align-items:center;gap:10px;padding:11px 14px;border:0;background:none;color:var(--ink);font:500 13px var(--fb);border-radius:16px;text-align:left;white-space:nowrap}
+#lyric-menu button i{width:16px;text-align:center;opacity:.8}
+#lyric-menu button.on{background:var(--seg)}
+/* ライトモードも背景をぼかす */
+#bg-art i{filter:blur(34px)}
+[data-theme="dark"] #bg-art i{filter:blur(46px)}
+body.player-open > .ui-sheet,body.player-open > #upload-toast{filter:none!important}
+/* 次の曲リスト */
+.queue-panel{background:rgba(var(--bg-rgb),.5)!important;backdrop-filter:blur(30px) saturate(140%)!important;-webkit-backdrop-filter:blur(30px) saturate(140%)!important}
+.queue-panel > div:first-child{border-bottom:0!important;padding:calc(var(--sat) + 20px) 22px 12px!important}
+.queue-panel h3{font-family:var(--fdot);font-weight:900!important;font-size:19px!important;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)!important}
+.queue-panel > div:first-child button{background:var(--gl)!important;border:1px solid var(--gl-bd)!important;box-shadow:var(--gl-sm);color:var(--ink)!important;border-radius:999px!important;font-family:var(--fdot);font-weight:700!important;letter-spacing:.1em;padding:8px 16px!important}
+.queue-panel .list-item{margin:0 16px 12px}
+/* ヘッダー: タイトルを中央固定・右上ボタンの位置とサイズを揃える */
+.header-top{position:relative}
+.header-top h2{position:absolute;left:50%;transform:translateX(-50%);margin:0;max-width:52%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.header-top > div{gap:8px;min-width:0!important}
+#settings-header-btn{display:none!important}
+#left-btn,#right-btn,#artist-setup-header-btn{width:40px;height:40px;min-width:40px;padding:0!important;margin:0!important;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gl)!important;border:1px solid var(--gl-bd)!important;box-shadow:var(--gl-sm);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--ink)!important;font-size:15px!important}
+body.editing #left-btn{background:var(--seg)!important}
+.card{position:relative}
+.card.editing .card-img{outline:1.5px dashed var(--ink2);outline-offset:3px}
+.card.editing::after{content:'\f303';font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;top:8px;left:8px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:11px;background:var(--gl);border:1px solid var(--gl-bd);color:var(--ink);backdrop-filter:var(--blur)}
+/* アーティスト行 */
+.artist-list-item{display:flex!important;align-items:center;gap:14px;padding:10px 16px!important}
+.artist-icon-container{flex:0 0 52px;margin-right:0!important}
+.artist-list-item > div:nth-child(2){flex:1;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 検索行: スマホで並び替えが画面外に出ない */
+.search-bar-row{gap:8px;flex-wrap:nowrap;min-width:0}
+#search-input{min-width:0;flex:1 1 0}
+#sort-order-btn{flex:none}
+.sort-select{flex:0 1 auto;max-width:92px;min-width:0;text-overflow:ellipsis}
+/* 再生バー */
+.seeker{touch-action:none}
+/* 共通ダイアログ */
+.ui-sheet{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.28);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.ui-sheet.show{display:flex}
+.ui-card{width:min(86vw,360px);max-height:76dvh;display:flex;flex-direction:column;padding:20px;border-radius:28px;background:var(--gl);border:1px solid var(--gl-bd);box-shadow:var(--gl-sh);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
+.ui-title{font-family:var(--fdot);font-weight:900;font-size:16px;letter-spacing:.16em;color:var(--ink);margin-bottom:14px}
+.ui-actions{display:flex;gap:10px;margin-top:16px}
+.ui-btn{flex:1;padding:12px;border-radius:999px;border:1px solid var(--gl-bd);background:var(--gl);box-shadow:var(--gl-sm);color:var(--ink);font-family:var(--fdot);font-weight:700;font-size:13px;letter-spacing:.12em}
+.ui-btn.primary{background:var(--seg)}
+#ui-picker-list{overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.ui-row{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:18px;border:1px solid var(--gl-bd);background:var(--gl-flat);color:var(--ink);font:500 14px var(--fb);text-align:left}
+.ui-row.on{background:var(--seg)}.ui-row.unlink{color:var(--sub)}
+.ui-empty{padding:18px;text-align:center;color:var(--sub);font-size:13px}
+#upload-toast{position:fixed;top:calc(var(--sat) + 64px);left:50%;transform:translateX(-50%) translateY(-8px);opacity:0;pointer-events:none;z-index:9500;padding:9px 16px;border-radius:999px;font-family:var(--fdot);font-weight:700;font-size:12px;letter-spacing:.14em;background:var(--gl);border:1px solid var(--gl-bd);box-shadow:var(--gl-sm);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--ink);transition:opacity .25s,transform .25s}
+#upload-toast.show{opacity:1;transform:translateX(-50%)}
+</style>
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -1288,7 +1356,12 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
 </div>
 
 <div class="full-player" id="full">
-    <button id="lyric-close" onclick="toggleLyrics()" aria-label="Back to cover"><i class="fa-solid fa-compact-disc"></i><span>COVER</span></button>
+    <button id="lyric-close" onclick="toggleLyricMenu()" aria-label="Lyrics settings"><i class="fa-solid fa-sliders"></i></button>
+    <div id="lyric-menu">
+        <button onclick="lyricMenuAct('paint')"><i class="fa-solid fa-palette"></i>歌詞の色</button>
+        <button id="lm-timing" onclick="lyricMenuAct('timing')"><i class="fa-solid fa-stopwatch"></i>タイミング記録</button>
+        <button onclick="lyricMenuAct('cover')"><i class="fa-solid fa-compact-disc"></i>ジャケットに戻る</button>
+    </div>
     <div id="bg-blur-overlay"><div class="bg-sphere"></div></div>
     <div id="swipe-handle" style="padding:25px; text-align:center; cursor:pointer;"><div style="width:40px; height:5px; border-radius:10px; background:rgba(166,203,227,0.4); margin:0 auto;"></div></div>
     
@@ -1442,6 +1515,16 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
 <input type="file" id="artist-icon-upload" style="display:none" accept="image/*" onchange="saveArtistIcon(event)">
 <audio id="audio-element"></audio>
 
+<div id="ui-prompt" class="ui-sheet" onclick="if(event.target===this)uiPromptClose(null)"><div class="ui-card">
+    <div class="ui-title" id="ui-prompt-title"></div>
+    <input id="ui-prompt-input" class="edit-input" autocomplete="off" onkeydown="if(event.key==='Enter')uiPromptClose(this.value)">
+    <div class="ui-actions"><button class="ui-btn" onclick="uiPromptClose(null)">CANCEL</button><button class="ui-btn primary" onclick="uiPromptClose(document.getElementById('ui-prompt-input').value)">OK</button></div>
+</div></div>
+<div id="ui-picker" class="ui-sheet" onclick="if(event.target===this)uiPickerClose(undefined)"><div class="ui-card">
+    <div class="ui-title" id="ui-picker-title"></div>
+    <div id="ui-picker-list"></div>
+    <div class="ui-actions"><button class="ui-btn" onclick="uiPickerClose(undefined)">CANCEL</button></div>
+</div></div>
 <script>
     let db;
     let shownIds = [], shownPlIds = null, queueOriginal = [];
@@ -1813,6 +1896,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
             playingTracks = playingTracks.map(x => tracks.find(t => t.id === x.id) || x);
             if (currentPlaylistId !== null && !playlists.some(x => x.id == currentPlaylistId)) currentPlaylistId = null;
             render();
+            if (!window._shrinkStarted) { window._shrinkStarted = true; setTimeout(shrinkOldCovers, 1500); }
         };
     }
 
@@ -2019,7 +2103,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
                     const iconClass = h.type === 'parent' ? 'artist-icon artist-parent-icon' : (h.type === 'child' ? 'artist-icon artist-child-icon' : 'artist-icon artist-parent-icon');
                     const iconStyle = h.type === 'child' && h.color ? `border-color: ${h.color};` : '';
                     
-                    const iconHtml = iconSrc ? `<img src="${iconSrc}" class="${iconClass}" style="${iconStyle}">` : `<div class="${iconClass}" style="${iconStyle}"><i class="fa-solid ${h.type==='parent'?'fa-users':'fa-user'}" style="font-size:24px;"></i></div>`;
+                    const iconHtml = iconSrc ? `<img loading="lazy" decoding="async" src="${iconSrc}" class="${iconClass}" style="${iconStyle}">` : `<div class="${iconClass}" style="${iconStyle}"><i class="fa-solid ${h.type==='parent'?'fa-users':'fa-user'}" style="font-size:24px;"></i></div>`;
                     
                     let starClass = (h.meta && h.meta.favorite) ? 'star-icon active' : 'star-icon';
                     
@@ -2106,7 +2190,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
                     
                     return `<div class="card ${isEditing && !p.isVirtual?'editing':''}" onclick="${isEditing && !p.isVirtual ? `openPlEdit(${p.id})` : `openPlaylist(${jsArg(p.id)})`}">
                         ${!p.isVirtual ? `<div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-x"></i></div>` : ''}
-                        <img src="${p.cover || (firstSong && firstSong.cover) || PH}" class="card-img">
+                        <img loading="lazy" decoding="async" src="${p.cover || (firstSong && firstSong.cover) || PH}" class="card-img">
                         ${p.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
                         <div class="card-info">
                             <div class="card-title">${esc(p.name)}</div>
@@ -2150,7 +2234,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
                         artistFilter.innerHTML = matchedArts.map(a => 
                         {
                             const firstSong = tracks.find(t => hasArtist(t, a));
-                            const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img src="${artistMeta[a].icon}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : `<div class="placeholder"><i class="fa-solid fa-user"></i></div>`);
+                            const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img loading="lazy" decoding="async" src="${artistMeta[a].icon}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : (firstSong && firstSong.cover ? `<img loading="lazy" decoding="async" src="${firstSong.cover}" style="${activeArtistFilter===a?'border-color:var(--icon-color); opacity:1;':'opacity:0.6;'}">` : `<div class="placeholder"><i class="fa-solid fa-user"></i></div>`);
                             return `<div class="bulk-artist-icon-chip" onclick="toggleArtistFilter(${jsArg(a)})">${icon}<span>${a}</span></div>`;
                         }).join('');
                     }
@@ -2186,7 +2270,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
                         <div class="list-item" onclick="playSong(${t.id},'pl')" ontouchstart="handleTouchStart(event, '${t.id}')" ontouchmove="handleTouchMove(event, '${t.id}')" ontouchend="handleTouchEnd(event, '${t.id}')">
                             <div style="position:relative; margin-right:16px;">
                                 ${t.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:-5px; left:-5px; font-size:12px; z-index:5;"></i>' : ''}
-                                <img src="${t.cover||PH}" style="margin-right:0;">
+                                <img loading="lazy" decoding="async" src="${t.cover||PH}" style="margin-right:0;">
                             </div>
                             <div style="flex:1;">
                                 <div style="font-weight:800; font-size:14px; display:flex; align-items:center; gap:5px;">${esc(t.name)}</div>
@@ -2221,7 +2305,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         }
         
         rightBtn.innerHTML = `<i class="fa-solid ${currentArtist ? 'fa-play' : currentPlaylistId !== null ? 'fa-list-check' : currentView === 'playlist' ? 'fa-folder-plus' : currentView === 'artists' ? 'fa-user-plus' : 'fa-arrow-up'}"></i>`;
-        renderHomeWidget();
+        renderHomeWidget(); document.body.classList.toggle('editing', isEditing);
         // Restore Scroll Position safely
         setTimeout(() => {
             let key = currentView;
@@ -2293,7 +2377,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         container.innerHTML = list.map(t => `
             <div class="card ${isEditing?'editing':''}" onclick="isEditing?openEdit(${t.id}):playSong(${t.id},'lib')">
                 <div class="del-badge" onclick="event.stopPropagation(); deleteSong(${t.id})"><i class="fa-solid fa-trash-can"></i></div>
-                <img src="${t.cover||PH}" class="card-img">
+                <img loading="lazy" decoding="async" src="${t.cover||PH}" class="card-img">
                 ${t.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
                 <div class="card-info">
                     <div class="card-title">${esc(t.name)}</div>
@@ -2407,10 +2491,94 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         v.style.height = Math.max(140, t.getBoundingClientRect().top - f.getBoundingClientRect().top - top - 6) + 'px';
     }
     addEventListener('resize', layoutLyrics);
+
+    // --- 歌詞設定メニュー ---
+    function toggleLyricMenu() { document.getElementById('lyric-menu').classList.toggle('show'); }
+    function lyricMenuAct(a) {
+        document.getElementById('lyric-menu').classList.remove('show');
+        if (a === 'paint') openLyricPaint();
+        else if (a === 'timing') { isEditingLyrics = !isEditingLyrics; document.getElementById('lm-timing').classList.toggle('on', isEditingLyrics); }
+        else toggleLyrics();
+    }
+    // --- 共通ダイアログ ---
+    let _uiPr = null, _uiPk = null;
+    function uiPrompt(title, ph, val) {
+        return new Promise(res => {
+            _uiPr = res; const i = document.getElementById('ui-prompt-input');
+            document.getElementById('ui-prompt-title').textContent = title; i.value = val || ''; i.placeholder = ph || '';
+            document.getElementById('ui-prompt').classList.add('show'); setTimeout(() => i.focus(), 60);
+        });
+    }
+    function uiPromptClose(v) {
+        document.getElementById('ui-prompt').classList.remove('show');
+        if (_uiPr) { const r = _uiPr; _uiPr = null; r(v && String(v).trim() ? String(v).trim() : null); }
+    }
+    function uiPicker(title, items, current) {
+        return new Promise(res => {
+            _uiPk = res; document.getElementById('ui-picker-title').textContent = title;
+            const rows = (current ? [`<button class="ui-row unlink" onclick="uiPickerClose('')"><i class="fa-solid fa-link-slash"></i>解除</button>`] : [])
+                .concat(items.map(n => `<button class="ui-row ${n === current ? 'on' : ''}" onclick="uiPickerClose(${jsArg(n)})">${esc(n)}</button>`));
+            document.getElementById('ui-picker-list').innerHTML = rows.join('') || '<div class="ui-empty">アーティストがいません</div>';
+            document.getElementById('ui-picker').classList.add('show');
+        });
+    }
+    function uiPickerClose(v) {
+        document.getElementById('ui-picker').classList.remove('show');
+        if (_uiPk) { const r = _uiPk; _uiPk = null; r(v); }
+    }
+    // --- 再生バーのドラッグを滑らかに ---
+    let seeking = false, _seekT = 0;
+    function paintSeek(v) {
+        const d = audio.duration; if (isNaN(d) || !d) return;
+        const p = v / d * 100;
+        document.getElementById('seeker').style.background = `linear-gradient(to right, var(--ink) ${p}%, var(--wavebg) ${p}%)`;
+        document.getElementById('cur-time').innerText = formatTime(v);
+    }
+    function endSeek() { if (!seeking) return; audio.currentTime = parseFloat(document.getElementById('seeker').value); seeking = false; }
+    ['change', 'pointerup', 'pointercancel', 'touchend', 'mouseup'].forEach(ev => document.getElementById('seeker').addEventListener(ev, endSeek));
+    // --- アップロードの軽量化 ---
+    const COVER_MAX = 480;
+    function shrinkBlobToDataURL(blob, max, q) {
+        return createImageBitmap(blob).then(bm => {
+            const k = Math.min(1, max / Math.max(bm.width, bm.height)), c = document.createElement('canvas');
+            c.width = Math.round(bm.width * k); c.height = Math.round(bm.height * k);
+            c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height); if (bm.close) bm.close();
+            return c.toDataURL('image/jpeg', q || .82);
+        }).catch(() => null);
+    }
+    function readTags(f) { return new Promise(res => jsmediatags.read(f, { onSuccess: t => res(t.tags), onError: () => res(null) })); }
+    async function buildTrack(f) {
+        const tg = await readTags(f); let c = null;
+        if (tg && tg.picture) c = await shrinkBlobToDataURL(new Blob([new Uint8Array(tg.picture.data)], { type: tg.picture.format || 'image/jpeg' }), COVER_MAX, .82);
+        return { name: (tg && tg.title) || f.name, artist: (tg && tg.artist) || 'Unknown', year: (tg && tg.year) || '', cover: c, data: f, lyrics: '', favorite: false };
+    }
+    function toast(msg) {
+        let t = document.getElementById('upload-toast');
+        if (!t) { t = document.createElement('div'); t.id = 'upload-toast'; document.body.appendChild(t); }
+        if (msg == null) { t.classList.remove('show'); return; }
+        t.textContent = msg; t.classList.add('show');
+    }
+    function addSongs(list) {
+        return new Promise(res => { const tx = db.transaction('songs', 'readwrite'); list.forEach(t => tx.objectStore('songs').add(t)); tx.oncomplete = () => res(); tx.onerror = () => res(); });
+    }
+    async function shrinkOldCovers() {
+        if (localStorage.getItem('coversShrunk2')) return;
+        const big = tracks.filter(t => t.cover && t.cover.startsWith('data:') && t.cover.length > 250000);
+        for (let i = 0; i < big.length; i++) {
+            const t = big[i]; toast(`OPTIMIZING ${i + 1} / ${big.length}`);
+            try {
+                const d = await shrinkBlobToDataURL(await (await fetch(t.cover)).blob(), COVER_MAX, .82);
+                if (d && d.length < t.cover.length) { t.cover = d; await new Promise(r => { const tx = db.transaction('songs', 'readwrite'); tx.objectStore('songs').put(t); tx.oncomplete = r; tx.onerror = r; }); }
+            } catch (e) {}
+            await new Promise(r => setTimeout(r, 30));
+        }
+        localStorage.setItem('coversShrunk2', '1'); toast(null); if (big.length) loadAll();
+    }
     function toggleLyrics() 
     {
         const view = document.getElementById('f-lyrics-view');
         isEditingLyrics = false; lastLyricIdx = -2;
+        document.getElementById('lyric-menu').classList.remove('show'); const _lt = document.getElementById('lm-timing'); if (_lt) _lt.classList.remove('on');
         const isActive = view.classList.toggle('active');
         document.getElementById('full').classList.toggle('lyrics-on', isActive);
         if (isActive) requestAnimationFrame(layoutLyrics); else view.style.height = '';
@@ -2425,12 +2593,8 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
             let colors = track?.lyricColors || [];
             let lines = splitLyricsToStanzas(text);
             const hasSync = track && track.lyricTimings && Object.keys(track.lyricTimings).length > 0;
-            
-            const paintBtn = `<button onclick="event.stopPropagation(); openLyricPaint()" style="position:absolute; top:25px; left:25px; background:rgba(0,0,0,0.1); border:none; color:var(--icon-color); padding:12px; border-radius:12px; z-index:50;"><i class="fa-solid fa-palette"></i></button>`;
-            
-            const timingBtn = `<button onclick="event.stopPropagation(); toggleTimingMode(this)" style="position:absolute; top:25px; right:25px; background:rgba(0,0,0,0.1); border:none; color:var(--icon-color); padding:12px; border-radius:12px; z-index:50;"><i class="fa-solid fa-stopwatch"></i></button>`;
             setTimeout(() => updateLyricsHighlight(audio.currentTime), 0);
-            view.innerHTML = paintBtn + timingBtn + `<div id="lyrics-content-scroll" class="${hasSync ? '' : 'nosync'}" style="width:100%; height:100%; overflow-y:auto; padding-top:40px; padding-bottom:80px; scroll-behavior: smooth;">` + lines.map((l, i) => `<div id="lyric-line-${i}" onclick="event.stopPropagation(); handleLyricTap(${i})" style="color:${colors[i] || 'inherit'}; width:100%; word-wrap:break-word; padding:10px 0; cursor:pointer;">${esc(l)}</div>`).join('') + `</div>`;
+            view.innerHTML = `<div id="lyrics-content-scroll" class="${hasSync ? '' : 'nosync'}" style="width:100%; height:100%; overflow-y:auto; padding-top:40px; padding-bottom:80px; scroll-behavior: smooth;">` + lines.map((l, i) => `<div id="lyric-line-${i}" onclick="event.stopPropagation(); handleLyricTap(${i})" style="color:${colors[i] || 'inherit'}; width:100%; word-wrap:break-word; padding:10px 0; cursor:pointer;">${esc(l)}</div>`).join('') + `</div>`;
         } 
         else 
         {
@@ -2477,7 +2641,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         const el = document.getElementById('lyric-line-' + idx);
         if (!el) return;
         el.classList.add('lyric-line-active');
-        sc.scrollTo({ top: el.offsetTop - sc.clientHeight * 0.28, behavior: 'smooth' });
+        sc.scrollTo({ top: el.offsetTop - sc.clientHeight * 0.2, behavior: 'smooth' });
     }
 
     function goToArtistFromPlayer() 
@@ -2524,7 +2688,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
                 ${tracks.map(t => `
                 <label class="check-item" data-search="${t.name.toLowerCase()} ${getDisplayArtistString(t.artist).toLowerCase()}">
                     <input type="checkbox" value="${t.id}" ${pl.songIds.includes(t.id)?'checked':''}>
-                    <img src="${t.cover||PH}" style="width:48px; height:48px; border-radius:12px; margin-right:15px; object-fit:cover;">
+                    <img loading="lazy" decoding="async" src="${t.cover||PH}" style="width:48px; height:48px; border-radius:12px; margin-right:15px; object-fit:cover;">
                     <div style="flex:1;"><b style="font-size:14px;">${esc(t.name)}</b><br><span style="font-size:11px; color:var(--icon-color);">${esc(getDisplayArtistString(t.artist))}</span></div>
                 </label>`).join('')}
             </div>`;
@@ -2550,7 +2714,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
             suggest.innerHTML = matchedArtists.map(a => 
             {
                 const firstSong = tracks.find(t => hasArtist(t, a));
-                const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img src="${artistMeta[a].icon}">` : (firstSong && firstSong.cover ? `<img src="${firstSong.cover}">` : `<div class="placeholder" style="width:42px;height:42px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-user"></i></div>`);
+                const icon = (artistMeta[a] && artistMeta[a].icon) ? `<img loading="lazy" decoding="async" src="${artistMeta[a].icon}">` : (firstSong && firstSong.cover ? `<img loading="lazy" decoding="async" src="${firstSong.cover}">` : `<div class="placeholder" style="width:42px;height:42px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-user"></i></div>`);
                 return `<div class="bulk-artist-icon-chip" onclick="document.getElementById('bulk-search-box').value=${jsArg(a)}; filterBulk(${jsArg(a)})">${icon}<span>${a}</span></div>`;
             }).join('');
         } 
@@ -2604,7 +2768,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         render(); 
     }
     
-    function handleHeaderRight() 
+    async function handleHeaderRight() 
     { 
         if(currentArtist) 
         { 
@@ -2622,7 +2786,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         }
         else if(currentView==='playlist') 
         { 
-            let n = prompt("Playlist Name:"); 
+            let n = await uiPrompt("NEW PLAYLIST", "Playlist name"); 
             if(n) 
             {
                 db.transaction("playlists","readwrite").objectStore("playlists").add({ name: n, songIds: [], tag: "", cover: null, favorite: false, isVirtual: false }).onsuccess = loadAll; 
@@ -2630,7 +2794,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         } 
         else if(currentView==='artists') 
         { 
-            let n = prompt("Artist Name:"); 
+            let n = await uiPrompt("NEW ARTIST", "Artist name"); 
             if(n) 
             {
                 db.transaction("artistMeta","readwrite").objectStore("artistMeta").put({ name: n, icon: null, favorite: false, members: [], syncColor: '' }).onsuccess = loadAll; 
@@ -2773,8 +2937,8 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
 
     function seekAudio(val)
     {
-        audio.currentTime = val;
-        updateLyricsHighlight(val);
+        const v = parseFloat(val); seeking = true; paintSeek(v); updateLyricsHighlight(v);
+        const now = performance.now(); if (now - _seekT > 120) { _seekT = now; audio.currentTime = v; }
     }
 
     function loadTrack(t) 
@@ -2843,6 +3007,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
 
     audio.ontimeupdate = () => 
     { 
+        if (seeking) return;
         if(!isNaN(audio.duration))
         { 
             const s = document.getElementById('seeker'); 
@@ -3195,12 +3360,13 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
 
     function promptLinkArtistMember(i)
     {
-        let name = prompt("Enter existing Artist Name to link:");
-        if (name)
+        const cur = currentMembersEdit[i].linked || '';
+        uiPicker('LINK ARTIST', getAllArtists().filter(n => n !== editingArtistSetupName), cur).then(n =>
         {
-            currentMembersEdit[i].linked = name;
+            if (n === undefined) return;
+            currentMembersEdit[i].linked = n || null;
             renderArtistSetup('');
-        }
+        });
     }
 
     function saveArtistSetup() 
@@ -3328,39 +3494,18 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
         };
     }
 
-    document.getElementById('audio-upload').onchange = (e) => 
+    document.getElementById('audio-upload').onchange = async (e) =>
     {
-        const files = Array.from(e.target.files); e.target.value = ''; 
-        if (files.length === 0) return;
-        
-        // Fast Add Optimization to prevent delay
-        let promises = Array.from(files).map(f => {
-            return new Promise((resolve) => {
-                jsmediatags.read(f, { 
-                    onSuccess: (tag) => 
-                    {
-                        let c = null; 
-                        if(tag.tags.picture)
-                        {
-                            let d = tag.tags.picture.data, s = ""; 
-                            for(let i=0; i<d.length; i++) s += String.fromCharCode(d[i]);
-                            c = `data:${tag.tags.picture.format};base64,${btoa(s)}`;
-                        }
-                        resolve({ name: tag.tags.title || f.name, artist: tag.tags.artist || "Unknown", year: tag.tags.year || "", cover: c, data: f, lyrics: "", favorite: false });
-                    },
-                    onError: () => 
-                    {
-                        resolve({ name: f.name, artist: "Unknown", year: "", cover: null, data: f, lyrics: "", favorite: false });
-                    }
-                });
-            });
-        });
-
-        Promise.all(promises).then(newTracks => {
-            const tx = db.transaction("songs", "readwrite");
-            newTracks.forEach(t => tx.objectStore("songs").add(t));
-            tx.oncomplete = () => loadAll();
-        });
+        const files = Array.from(e.target.files); e.target.value = '';
+        if (!files.length) return;
+        let batch = [];
+        for (let i = 0; i < files.length; i++) {
+            toast(`UPLOAD ${i + 1} / ${files.length}`);
+            batch.push(await buildTrack(files[i]));
+            if (batch.length >= 4 || i === files.length - 1) { await addSongs(batch); batch = []; }
+            await new Promise(r => setTimeout(r, 16));
+        }
+        toast(null); loadAll();
     };
 
     let touchStartX = 0;
@@ -3417,7 +3562,7 @@ body.player-open > :not(#full):not(#bg-art):not(.modal):not(script):not(audio):n
     {
         const list = document.getElementById('queue-list');
         const nextTracks = playingTracks.slice(currentTrackIdx + 1);
-        list.innerHTML = nextTracks.map((t, i) => `<div class="list-item" onclick="currentTrackIdx=${currentTrackIdx+1+i}; loadTrack(playingTracks[currentTrackIdx])"><img src="${t.cover||PH}" style="width:40px; height:40px;"><div><div style="font-weight:800;">${esc(t.name)}</div><div style="font-size:11px; color:var(--icon-color);">${esc(getDisplayArtistString(t.artist))}</div></div></div>`).join('') || '<div style="padding:50px; text-align:center; color:#ccc;">Queue is empty</div>';
+        list.innerHTML = nextTracks.map((t, i) => `<div class="list-item" onclick="currentTrackIdx=${currentTrackIdx+1+i}; loadTrack(playingTracks[currentTrackIdx])"><img loading="lazy" decoding="async" src="${t.cover||PH}" style="width:40px; height:40px;"><div><div style="font-weight:800;">${esc(t.name)}</div><div style="font-size:11px; color:var(--icon-color);">${esc(getDisplayArtistString(t.artist))}</div></div></div>`).join('') || '<div style="padding:50px; text-align:center; color:var(--sub);">Queue is empty</div>';
     }
 </script>
 
