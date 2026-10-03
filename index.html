@@ -1283,7 +1283,6 @@ body.player-open > .ui-sheet,body.player-open > #upload-toast{filter:none!import
 body.editing #left-btn{background:var(--seg)!important}
 .card{position:relative}
 .card.editing .card-img{outline:1.5px dashed var(--ink2);outline-offset:3px}
-.card.editing::after{content:'\f303';font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;top:8px;left:8px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:11px;background:var(--gl);border:1px solid var(--gl-bd);color:var(--ink);backdrop-filter:var(--blur)}
 /* アーティスト行 */
 .artist-list-item{display:flex!important;align-items:center;gap:14px;padding:10px 16px!important}
 .artist-icon-container{flex:0 0 52px;margin-right:0!important}
@@ -1310,6 +1309,7 @@ body.editing #left-btn{background:var(--seg)!important}
 #upload-toast{position:fixed;top:calc(var(--sat) + 64px);left:50%;transform:translateX(-50%) translateY(-8px);opacity:0;pointer-events:none;z-index:9500;padding:9px 16px;border-radius:999px;font-family:var(--fdot);font-weight:700;font-size:12px;letter-spacing:.14em;background:var(--gl);border:1px solid var(--gl-bd);box-shadow:var(--gl-sm);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--ink);transition:opacity .25s,transform .25s}
 #upload-toast.show{opacity:1;transform:translateX(-50%)}
 </style>
+<style id="fav-edit">#pl-edit-modal.virtual .modal-body > div:nth-child(2),#pl-edit-modal.virtual .modal-body > div:last-child{display:none}</style>
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -1865,7 +1865,7 @@ body.editing #left-btn{background:var(--seg)!important}
                 name: "Favorites",
                 songIds: [], 
                 tag: "★",
-                cover: PH,
+                cover: localStorage.getItem('favCover') || PH,
                 favorite: true,
                 isVirtual: true
             });
@@ -2185,7 +2185,7 @@ body.editing #left-btn{background:var(--seg)!important}
                     
                     const tagsHtml = p.tag ? p.tag.split(/[,、]/).map(tg => `<div class="card-tag">${tg.trim()}</div>`).join(' ') : '';
                     
-                    return `<div class="card ${isEditing && !p.isVirtual?'editing':''}" onclick="${isEditing && !p.isVirtual ? `openPlEdit(${p.id})` : `openPlaylist(${jsArg(p.id)})`}">
+                    return `<div class="card ${isEditing?'editing':''}" onclick="${isEditing ? `openPlEdit(${jsArg(p.id)})` : `openPlaylist(${jsArg(p.id)})`}">
                         ${!p.isVirtual ? `<div class="del-badge" onclick="event.stopPropagation(); deletePlaylist(${p.id})"><i class="fa-solid fa-x"></i></div>` : ''}
                         <img decoding="async" src="${p.cover || (firstSong && firstSong.cover) || PH}" class="card-img">
                         ${p.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
@@ -3236,6 +3236,7 @@ body.editing #left-btn{background:var(--seg)!important}
         tempPlImg = pl.cover; 
         document.getElementById('pl-edit-img').src = tempPlImg || PH; 
         updateTagSuggest(""); 
+        document.getElementById('pl-edit-modal').classList.toggle('virtual', !!pl.isVirtual);
         document.getElementById('pl-edit-modal').style.display = 'flex'; 
     }
     
@@ -3247,6 +3248,12 @@ body.editing #left-btn{background:var(--seg)!important}
     function savePlEdit() 
     { 
         const pl = playlists.find(p => p.id === editingPlId || p.id == editingPlId); 
+        if (pl.isVirtual)
+        {
+            try { if (tempPlImg && tempPlImg !== PH) localStorage.setItem('favCover', tempPlImg); else localStorage.removeItem('favCover'); } catch (e) { alert('画像が大きすぎて保存できませんでした'); return; }
+            closePlEdit(); loadAll(); return;
+        }
+        
         pl.name = document.getElementById('pl-edit-name').value; 
         pl.tag = currentPlTags.join(',');
         pl.cover = tempPlImg; 
@@ -3258,19 +3265,15 @@ body.editing #left-btn{background:var(--seg)!important}
         }; 
     }
     
-    function previewPlImg(e) 
-    { 
-        const f = e.target.files[0]; 
-        if(f)
-        { 
-            const r = new FileReader(); 
-            r.onload = (ev) => 
-            { 
-                tempPlImg = ev.target.result; 
-                document.getElementById('pl-edit-img').src = tempPlImg; 
-            }; 
-            r.readAsDataURL(f); 
-        } 
+    function previewPlImg(e)
+    {
+        const f = e.target.files[0]; e.target.value = '';
+        if (!f) return;
+        shrinkBlobToDataURL(f, 640, .86).then(d =>
+        {
+            const show = u => { tempPlImg = u; document.getElementById('pl-edit-img').src = u; };
+            if (d) show(d); else { const r = new FileReader(); r.onload = ev => show(ev.target.result); r.readAsDataURL(f); }
+        });
     }
     
     function updateArtistSuggest(v) 
