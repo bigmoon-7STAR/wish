@@ -1352,6 +1352,12 @@ body .tab-pill .tab-item span{max-height:calc(14px * (1 - var(--tm)));opacity:ma
 body .tab-pill .tab-item i{font-size:calc(17px - 1px * var(--tm))!important;transition:none!important}
 body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;will-change:bottom}
 </style>
+<style id="tab-two">
+:root{--tw-min:124px}
+#tab-pill-main{display:flex;gap:calc(4px * (1 - var(--tm)))}
+#tab-pill-main .tab-item{flex:1 1 0;min-width:0;padding-left:0;padding-right:0}
+#tab-pill-main .tab-item:first-child{flex-grow:calc(1 - var(--tm));opacity:max(0, calc(1 - var(--tm) * 1.6));overflow:hidden;padding:0}
+</style>
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -3166,9 +3172,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         set('seekbackward', null); set('seekforward', null);
         set('previoustrack', () => prev());
         set('nexttrack', () => next(false));
-        set('play', () => { mediaPlay(); });
-        set('pause', () => { mediaPause(); });
-        set('stop', () => { mediaPause(); audio.currentTime = 0; });
+        set('play', null); set('pause', null); set('stop', null);
         set('seekto', d => { if (d && d.seekTime != null) { audio.currentTime = d.seekTime; updatePositionState(); } });
     }
     initMediaSession();
@@ -3271,7 +3275,8 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     };
     
     audio.onpause = () => 
-    { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; updatePositionState();
+    { clearInterval(window._fadeTimer); audio.volume = 1;
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; updatePositionState();
         document.getElementById('full').classList.remove('playing'); 
         document.getElementById('m-pp').className = 'fa-solid fa-play'; 
         document.getElementById('f-pp').className = 'fa-solid fa-play'; 
