@@ -1329,22 +1329,28 @@ body.selmode .tab-bar,body.selmode #mini{display:none!important}
 </style>
 <style id="tab-min-del">
 /* 下のタブ: Safari 風にスクロールで最小化 */
-.tab-bar{transition:width .34s cubic-bezier(.3,.8,.3,1),height .34s cubic-bezier(.3,.8,.3,1),bottom .34s cubic-bezier(.3,.8,.3,1)}
 .tab-pill{overflow:hidden}
-.tab-item span{max-height:14px;overflow:hidden;transition:max-height .25s,opacity .2s}
-.tab-item i{transition:font-size .3s}
-.mini-player{transition:bottom .34s cubic-bezier(.3,.8,.3,1)}
-body.tab-min .tab-bar{width:172px!important;height:48px!important;bottom:calc(10px + var(--sab))!important}
-body.tab-min .tab-pill{padding:4px}
-body.tab-min .tab-item{height:40px;gap:0}
-body.tab-min .tab-item span{max-height:0;opacity:0}
-body.tab-min .tab-item i{font-size:16px}
-body.tab-min .mini-player{bottom:calc(68px + var(--sab))}
 /* 編集モードの削除ボタン */
 .del-badge{top:8px!important;left:8px!important;width:34px!important;height:34px!important;border:1px solid rgba(255,255,255,.3)!important;background:rgba(16,16,18,.55)!important;color:#fff!important;font-size:13px!important;box-shadow:0 4px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.2)!important;backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);transition:transform .15s,background .15s}
 .del-badge:active{transform:scale(.88);background:rgba(150,28,28,.75)!important}
 /* アーティスト画面の編集モード: 設定アイコンを右端へ、追加ボタンはその左へ */
 body.editing #settings-header-btn{order:9}
+</style>
+<style id="edit-pill">
+#tab-pill-edit{display:none;grid-template-columns:repeat(2,1fr)}
+body.edit-lib #tab-pill-main{display:none}
+body.edit-lib #tab-pill-edit{display:grid}
+</style>
+<style id="tab-smooth">
+:root{--tm:0;--tw-open:calc(100% - 28px);--tw-min:172px}
+body.edit-lib{--tw-open:240px;--tw-min:150px}
+/* --tm (0=通常, 1=最小) に連動して連続的に変化 */
+body .tab-bar{width:calc(var(--tw-open) * (1 - var(--tm)) + var(--tw-min) * var(--tm))!important;height:calc(68px - 20px * var(--tm))!important;bottom:calc(12px + var(--sab) - 2px * var(--tm))!important;will-change:width,height}
+body .tab-pill{padding:calc(6px - 2px * var(--tm))}
+body .tab-pill .tab-item{height:calc(56px - 16px * var(--tm))!important;gap:calc(3px * (1 - var(--tm)))!important;transition:none!important}
+body .tab-pill .tab-item span{max-height:calc(14px * (1 - var(--tm)));opacity:max(0, calc(1 - var(--tm) * 1.7));overflow:hidden;transition:none!important}
+body .tab-pill .tab-item i{font-size:calc(17px - 1px * var(--tm))!important;transition:none!important}
+body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;will-change:bottom}
 </style>
 </head>
 <body>
@@ -1537,11 +1543,12 @@ body.editing #settings-header-btn{order:9}
 </div>
 
 <div class="tab-bar">
-    <div class="tab-pill">
+    <div class="tab-pill" id="tab-pill-main">
     <button class="tab-item" id="tab-artist" onclick="switchTab('artists')"><i class="fa-solid fa-user-astronaut"></i><span id="lbl-tab-artist">Artist</span></button>
     <button class="tab-item active" id="tab-lib" onclick="switchTab('library')"><i class="fa-solid fa-layer-group"></i><span id="lbl-tab-library">Library</span></button>
     <button class="tab-item" id="tab-play" onclick="switchTab('playlist')"><i class="fa-solid fa-heart-pulse"></i><span id="lbl-tab-playlist">Playlist</span></button>
 </div>
+    <div class="tab-pill" id="tab-pill-edit"><button class="tab-item" onclick="toggleSelMode(true)"><i class="fa-solid fa-circle-check"></i><span>SELECT</span></button><button class="tab-item" onclick="handleHeaderLeft()"><i class="fa-solid fa-check"></i><span>DONE</span></button></div>
 </div>
 
 <input type="file" id="audio-upload" multiple style="display:none">
@@ -1620,7 +1627,7 @@ body.editing #settings-header-btn{order:9}
             <div class="hw-tag"><span>■ PANEL / HOME</span><span>${String(tracks.length).padStart(3, '0')} TRK · ${String(playlists.filter(p => !p.isVirtual).length).padStart(2, '0')} PL</span></div>
             <div class="hw-last"><div><small>LAST PLAYED</small><b>${t ? esc(t.name) : '—'}</b></div>
             <div class="hw-btns"><button onclick="${t ? `playSong(${t.id},'lib')` : ''}"><i class="fa-solid fa-play"></i></button><button onclick="playShuffleAll()"><i class="fa-solid fa-shuffle"></i></button></div></div>
-            <div class="hw-up"><button class="hw-circ" onclick="${up}"><i class="fa-solid fa-arrow-up"></i></button><button class="hw-pill" onclick="${up}">Upload</button><button class="hw-pill" onclick="toggleSelMode(true)">Select</button></div></div>`;
+            <div class="hw-up"><button class="hw-circ" onclick="${up}"><i class="fa-solid fa-arrow-up"></i></button><button class="hw-pill" onclick="${up}">Upload</button></div></div>`;
     }
 
 
@@ -1671,6 +1678,15 @@ body.editing #settings-header-btn{order:9}
     try { scrollPositions = JSON.parse(localStorage.getItem('scrollPositions3') || '{}') || {}; } catch (e) {}
     const contentContainer = document.getElementById('content');
     let scrollKeyShown = null, scrollRestoring = false, _scrollSaveT = 0, _lastY = 0;
+    let tmCur = 0, tmTar = 0, tmRaf = 0, tmIdle = 0;
+    function tmStep()
+    {
+        const d = tmTar - tmCur;
+        tmCur = Math.abs(d) < .002 ? tmTar : tmCur + d * .16;
+        document.body.style.setProperty('--tm', tmCur.toFixed(4));
+        tmRaf = tmCur === tmTar ? 0 : requestAnimationFrame(tmStep);
+    }
+    function tmGo() { if (!tmRaf) tmRaf = requestAnimationFrame(tmStep); }
     function currentScrollKey()
     {
         if (currentView === 'playlist') return currentPlaylistId !== null ? 'pl:' + currentPlaylistId : 'playlist';
@@ -1690,12 +1706,11 @@ body.editing #settings-header-btn{order:9}
         const y = e.target.scrollTop;
         if (scrollKeyShown) setScrollPos(scrollKeyShown, y);
         clearTimeout(_scrollSaveT); _scrollSaveT = setTimeout(persistScroll, 400);
-        // Safari 風: 下へスクロールでタブバーを最小化、上へで復帰
-        const d = y - _lastY;
-        if (y < 40) document.body.classList.remove('tab-min');
-        else if (d > 10) document.body.classList.add('tab-min');
-        else if (d < -10) document.body.classList.remove('tab-min');
-        if (Math.abs(d) > 10) _lastY = y;
+        // Safari 風: スクロール量に連動してタブバーを少しずつ縮める（離したら近い側へ滑らかに寄せる）
+        const d = y - _lastY; _lastY = y;
+        if (y < 24) tmTar = 0; else tmTar = Math.min(1, Math.max(0, tmTar + d / 190));
+        tmGo();
+        clearTimeout(tmIdle); tmIdle = setTimeout(() => { tmTar = (y < 24 || tmTar < .5) ? 0 : 1; tmGo(); }, 140);
     }, { passive: true });
     addEventListener('pagehide', () => { if (window._dataLoaded && scrollKeyShown) setScrollPos(scrollKeyShown, contentContainer.scrollTop); persistScroll(); });
     document.addEventListener('visibilitychange', () => { if (document.hidden && window._dataLoaded) { if (scrollKeyShown) setScrollPos(scrollKeyShown, contentContainer.scrollTop); persistScroll(); } });
@@ -2382,11 +2397,11 @@ body.editing #settings-header-btn{order:9}
         
         rightBtn.innerHTML = `<i class="fa-solid ${currentArtist ? 'fa-play' : currentPlaylistId !== null ? 'fa-list-check' : currentView === 'playlist' ? 'fa-folder-plus' : currentView === 'artists' ? 'fa-user-plus' : 'fa-arrow-up'}"></i>`;
         if (selMode && currentView !== 'library') { selMode = false; selIds.clear(); document.body.classList.remove('selmode'); }
-        renderHomeWidget(); document.body.classList.toggle('editing', isEditing);
+        renderHomeWidget(); document.body.classList.toggle('editing', isEditing); document.body.classList.toggle('edit-lib', isEditing && currentView === 'library');
         // Restore Scroll Position (画面ごと)
         const _key = currentScrollKey(), _y = scrollPositions[_key] || 0;
         scrollKeyShown = _key; scrollRestoring = true;
-        document.body.classList.remove('tab-min'); _lastY = _y;
+        tmTar = 0; tmGo(); _lastY = _y;
         contentContainer.scrollTop = _y;
         requestAnimationFrame(() => { contentContainer.scrollTop = _y; requestAnimationFrame(() => { contentContainer.scrollTop = _y; scrollRestoring = false; }); });
     }
@@ -2746,7 +2761,7 @@ body.editing #settings-header-btn{order:9}
     }
     // ---------- ライブラリの選択モード ----------
     function toggleSelMode(on) {
-        selMode = on === undefined ? !selMode : on; if (!selMode) selIds.clear();
+        selMode = on === undefined ? !selMode : on; if (!selMode) selIds.clear(); else isEditing = false;
         document.body.classList.toggle('selmode', selMode); updateSelBar(); render();
     }
     function toggleSel(id) {
@@ -3142,18 +3157,19 @@ body.editing #settings-header-btn{order:9}
                 if (old) setTimeout(() => URL.revokeObjectURL(old), 5000);
             }).catch(() => {});
         navigator.mediaSession.playbackState = audio.paused ? 'paused' : 'playing';
+        initMediaSession();
     }
     function initMediaSession()
     {
         if (!('mediaSession' in navigator)) return;
         const set = (a, f) => { try { navigator.mediaSession.setActionHandler(a, f); } catch (e) {} };
+        set('seekbackward', null); set('seekforward', null);
+        set('previoustrack', () => prev());
+        set('nexttrack', () => next(false));
         set('play', () => { mediaPlay(); });
         set('pause', () => { mediaPause(); });
         set('stop', () => { mediaPause(); audio.currentTime = 0; });
-        set('previoustrack', () => prev());
-        set('nexttrack', () => next(false));
         set('seekto', d => { if (d && d.seekTime != null) { audio.currentTime = d.seekTime; updatePositionState(); } });
-        set('seekbackward', null); set('seekforward', null);
     }
     initMediaSession();
 
@@ -3248,7 +3264,7 @@ body.editing #settings-header-btn{order:9}
     };
     
     audio.onplay = () => 
-    { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; updatePositionState();
+    { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; initMediaSession(); updatePositionState();
         document.getElementById('full').classList.add('playing'); 
         document.getElementById('m-pp').className = 'fa-solid fa-pause'; 
         document.getElementById('f-pp').className = 'fa-solid fa-pause'; 
@@ -3261,6 +3277,7 @@ body.editing #settings-header-btn{order:9}
         document.getElementById('f-pp').className = 'fa-solid fa-play'; 
     };
     
+    audio.onplaying = () => initMediaSession();
     audio.onloadedmetadata = audio.ondurationchange = audio.onseeked = updatePositionState;
     audio.onended = () => 
     { 
