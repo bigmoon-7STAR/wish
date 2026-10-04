@@ -1358,6 +1358,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 #tab-pill-main .tab-item{flex:1 1 0;min-width:0;padding-left:0;padding-right:0}
 #tab-pill-main .tab-item:first-child{flex-grow:calc(1 - var(--tm));opacity:max(0, calc(1 - var(--tm) * 1.6));overflow:hidden;padding:0}
 </style>
+<style id="artist-roles">.card-sub .ar-ms{opacity:.78}.card-sub .ar-sub{opacity:.5}.ui-seg{margin-bottom:10px}.ui-seg button{font-size:11px;padding:9px 4px;letter-spacing:.06em}</style>
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -1564,7 +1565,8 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 <div id="ui-import" class="ui-sheet"><div class="ui-card">
     <div class="ui-title" id="imp-title"></div>
     <div class="ui-field">ARTIST (ALL FILES)</div>
-    <input id="imp-artist" class="edit-input" placeholder="Add artist name to every file" autocomplete="off" style="margin-bottom:0">
+    <input id="imp-artist" class="edit-input" placeholder="Add artist name to every file" autocomplete="off" style="margin-bottom:8px">
+    <div class="ui-seg" id="imp-roles"><button data-r="main" class="on" onclick="impRole('main')">MAIN</button><button data-r="main/sub" onclick="impRole('main/sub')">MAIN/SUB</button><button data-r="sub" onclick="impRole('sub')">SUB</button></div>
     <div id="imp-chips" class="ui-chips"></div>
     <div class="ui-field">PLAYLIST</div>
     <button id="imp-pl" class="ui-row" onclick="impPickPl()"><i class="fa-solid fa-list"></i><span>Add to playlist</span><b id="imp-pl-label">NONE</b></button>
@@ -1574,6 +1576,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 <div id="ui-bulk" class="ui-sheet"><div class="ui-card">
     <div class="ui-title" id="bulk-title"></div>
     <div class="ui-seg"><button id="bulk-m-replace" class="on" onclick="bulkMode('replace')">REPLACE</button><button id="bulk-m-add" onclick="bulkMode('add')">ADD</button></div>
+    <div class="ui-seg" id="bulk-roles"><button data-r="main" class="on" onclick="bulkRole('main')">MAIN</button><button data-r="main/sub" onclick="bulkRole('main/sub')">MAIN/SUB</button><button data-r="sub" onclick="bulkRole('sub')">SUB</button></div>
     <input id="bulk-artist" class="edit-input" placeholder="Artist name" autocomplete="off" style="margin-bottom:0">
     <div id="bulk-chips" class="ui-chips"></div>
     <div class="ui-actions"><button class="ui-btn" onclick="bulkClose(false)">CANCEL</button><button class="ui-btn primary" onclick="bulkClose(true)">APPLY</button></div>
@@ -2437,15 +2440,29 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         tx.oncomplete = loadAll;
     }
 
+    const ROLE_RANK = { 'main': 0, 'main/sub': 1, 'sub': 2 };
+    function artistsByRole(data)
+    {
+        try {
+            const p = JSON.parse(data);
+            if (Array.isArray(p)) return p.map((a, i) => ({ name: a.name, role: a.role || 'main', i }))
+                .sort((x, y) => (ROLE_RANK[x.role] ?? 0) - (ROLE_RANK[y.role] ?? 0) || x.i - y.i);
+        } catch (e) {}
+        return null;
+    }
     function getDisplayArtistString(artistData)
     {
         if (!artistData) return "Unknown";
-        try {
-            let parsed = JSON.parse(artistData);
-            return parsed.map(a => a.name).join(', ');
-        } catch(e) {
-            return artistData;
-        }
+        const l = artistsByRole(artistData);
+        return l ? l.map(a => a.name).join(', ') : artistData;
+    }
+    function getDisplayArtistRich(artistData)
+    {
+        if (!artistData) return "Unknown";
+        const l = artistsByRole(artistData);
+        if (!l) return esc(artistData);
+        const cls = { 'main': 'ar-main', 'main/sub': 'ar-ms', 'sub': 'ar-sub' };
+        return l.map(a => `<span class="${cls[a.role] || 'ar-main'}" title="${esc(a.role)}">${esc(a.name)}</span>`).join(', ');
     }
 
     function getDisplayArtistHTML(artistData)
@@ -2478,7 +2495,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
                 ${t.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
                 <div class="card-info">
                     <div class="card-title">${esc(t.name)}</div>
-                    <div class="card-sub">${esc(getDisplayArtistString(t.artist))} ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
+                    <div class="card-sub">${getDisplayArtistRich(t.artist)} ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
                 </div>
             </div>`).join('');
     }
@@ -2690,8 +2707,8 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         try { const p = JSON.parse(a); if (Array.isArray(p)) return p.map(x => ({ name: x.name, role: x.role || 'main' })); } catch (e) {}
         return String(a || '').split(/[,、/]/).map(x => x.trim()).filter(x => x && x !== 'Unknown').map(n => ({ name: n, role: 'main' }));
     }
-    function withArtist(t, name) { const l = artistList(t.artist); if (!l.some(x => x.name === name)) l.push({ name, role: 'main' }); t.artist = JSON.stringify(l); }
-    function setArtist(t, name) { t.artist = JSON.stringify([{ name, role: 'main' }]); }
+    function withArtist(t, name, role) { role = role || 'main'; const l = artistList(t.artist), e = l.find(x => x.name === name); if (e) e.role = role; else l.push({ name, role }); t.artist = JSON.stringify(l); }
+    function setArtist(t, name, role) { t.artist = JSON.stringify([{ name, role: role || 'main' }]); }
     function trackKey(name, artist, year) {
         const n = v => String(v == null ? '' : v).normalize('NFKC').trim().toLowerCase();
         return n(name) + '|' + getArtistNames(artist).map(n).sort().join(',') + '|' + n(year);
@@ -2728,13 +2745,13 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         return new Promise(res => {
             _impRes = res; _impTarget = { type: 'none' };
             document.getElementById('imp-title').textContent = `IMPORT · ${n} FILE${n > 1 ? 'S' : ''}`;
-            document.getElementById('imp-artist').value = ''; document.getElementById('imp-chips').innerHTML = artistChips('imp-artist');
+            document.getElementById('imp-artist').value = ''; document.getElementById('imp-chips').innerHTML = artistChips('imp-artist'); impRole('main');
             updateImpPl(); document.getElementById('ui-import').classList.add('show');
         });
     }
     function impClose(ok) {
         document.getElementById('ui-import').classList.remove('show');
-        const r = _impRes; _impRes = null; if (r) r(ok ? { artist: document.getElementById('imp-artist').value.trim(), target: _impTarget } : null);
+        const r = _impRes; _impRes = null; if (r) r(ok ? { artist: document.getElementById('imp-artist').value.trim(), role: _impRole, target: _impTarget } : null);
     }
     async function impPickPl() { const t = await choosePlaylistTarget(); if (t) { _impTarget = t; updateImpPl(); } }
     function updateImpPl() { const t = _impTarget; document.getElementById('imp-pl-label').textContent = t.type === 'none' ? 'NONE' : t.type === 'new' ? 'NEW · ' + t.name : t.name; }
@@ -2753,7 +2770,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
                 let cover = null;
                 if (tg && tg.picture) cover = await shrinkBlobToDataURL(new Blob([new Uint8Array(tg.picture.data)], { type: tg.picture.format || 'image/jpeg' }), COVER_MAX, .82);
                 const t = { name, artist: artistRaw, year, cover, data: f, lyrics: '', favorite: false, srcKey: key };
-                if (opts.artist) withArtist(t, opts.artist);
+                if (opts.artist) withArtist(t, opts.artist, opts.role);
                 batch.push(t); batchKeys.push(key);
                 if (batch.length >= 4) await flush();
             }
@@ -2782,20 +2799,23 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         const t = await choosePlaylistTarget(); if (!t || t.type === 'none') return;
         await savePlaylistTarget(t, [...selIds]); toast(`LIST ${selIds.size} TRACKS`, 2500); toggleSelMode(false); loadAll();
     }
-    let _bulkRes = null, _bulkM = 'replace';
+    let _bulkRes = null, _bulkM = 'replace', _bulkRole = 'main', _impRole = 'main';
+    function pickRole(boxId, r) { document.querySelectorAll('#' + boxId + ' button').forEach(b => b.classList.toggle('on', b.dataset.r === r)); }
+    function bulkRole(r) { _bulkRole = r; pickRole('bulk-roles', r); }
+    function impRole(r) { _impRole = r; pickRole('imp-roles', r); }
     function bulkMode(m) { _bulkM = m; document.getElementById('bulk-m-replace').classList.toggle('on', m === 'replace'); document.getElementById('bulk-m-add').classList.toggle('on', m === 'add'); }
     function selBulkArtist() {
         if (!selIds.size) return;
         document.getElementById('bulk-title').textContent = `EDIT ARTIST · ${selIds.size}`;
         document.getElementById('bulk-artist').value = ''; document.getElementById('bulk-chips').innerHTML = artistChips('bulk-artist');
-        bulkMode('replace'); document.getElementById('ui-bulk').classList.add('show');
+        bulkMode('replace'); bulkRole('main'); document.getElementById('ui-bulk').classList.add('show');
     }
     function bulkClose(ok) {
         document.getElementById('ui-bulk').classList.remove('show');
         if (!ok) return;
         const name = document.getElementById('bulk-artist').value.trim(); if (!name) return;
         const tx = db.transaction('songs', 'readwrite'), st = tx.objectStore('songs'); let n = 0;
-        selIds.forEach(id => { const t = tracks.find(x => x.id === id); if (!t) return; if (_bulkM === 'add') withArtist(t, name); else setArtist(t, name); st.put(t); n++; });
+        selIds.forEach(id => { const t = tracks.find(x => x.id === id); if (!t) return; if (_bulkM === 'add') withArtist(t, name, _bulkRole); else setArtist(t, name, _bulkRole); st.put(t); n++; });
         tx.oncomplete = () => { toast(`UPDATED ${n} TRACKS`, 2500); toggleSelMode(false); loadAll(); };
     }
     function toggleLyrics() 
