@@ -1310,6 +1310,42 @@ body.editing #left-btn{background:var(--seg)!important}
 #upload-toast.show{opacity:1;transform:translateX(-50%)}
 </style>
 <style id="fav-edit">#pl-edit-modal.virtual .modal-body > div:nth-child(2),#pl-edit-modal.virtual .modal-body > div:last-child{display:none}</style>
+<style id="import-bulk">
+.ui-seg{display:flex;gap:6px;padding:4px;border-radius:999px;background:var(--gl-flat);border:1px solid var(--gl-bd);margin-bottom:12px}
+.ui-seg button{flex:1;padding:10px;border:0;border-radius:999px;background:none;color:var(--sub);font:700 12px var(--fdot);letter-spacing:.12em}
+.ui-seg button.on{background:var(--seg);color:var(--ink)}
+.ui-chips{display:flex;flex-wrap:wrap;gap:8px;max-height:112px;overflow-y:auto;margin-top:12px}
+.ui-field{font:700 11px var(--fdot);letter-spacing:.16em;color:var(--sub);margin:14px 0 6px}
+.ui-note{font-size:11px;line-height:1.5;color:var(--sub);margin-top:12px}
+.ui-row span{flex:0 0 auto}.ui-row b{margin-left:auto;font-weight:500;color:var(--sub);font-size:12px;max-width:52%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ui-import .ui-card,#ui-bulk .ui-card{overflow-y:auto}
+#sel-bar{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + var(--sab));width:calc(100% - 28px);max-width:402px;height:64px;z-index:1000;align-items:center;gap:4px;padding:6px 8px 6px 16px;border-radius:999px;background:var(--gl);border:1px solid var(--gl-bd);box-shadow:var(--gl-sh);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);color:var(--ink)}
+#sel-bar span{flex:1;min-width:0;font:700 11px var(--fdot);letter-spacing:.12em;white-space:nowrap}#sel-bar span b{font-size:15px}
+#sel-bar button{height:44px;padding:0 11px;flex:none;border-radius:999px;border:1px solid var(--gl-bd);background:var(--gl-flat);color:var(--ink);font:700 11px var(--fdot);letter-spacing:.08em;white-space:nowrap}
+body.selmode #sel-bar{display:flex}
+body.selmode .tab-bar,body.selmode #mini{display:none!important}
+.card.sel-on .card-img{outline:2px solid var(--ink);outline-offset:3px}
+.card.sel-on::after{content:'\f00c';font-family:"Font Awesome 6 Free";font-weight:900;position:absolute;top:8px;left:8px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:12px;background:var(--ink);color:var(--bg);z-index:5}
+</style>
+<style id="tab-min-del">
+/* 下のタブ: Safari 風にスクロールで最小化 */
+.tab-bar{transition:width .34s cubic-bezier(.3,.8,.3,1),height .34s cubic-bezier(.3,.8,.3,1),bottom .34s cubic-bezier(.3,.8,.3,1)}
+.tab-pill{overflow:hidden}
+.tab-item span{max-height:14px;overflow:hidden;transition:max-height .25s,opacity .2s}
+.tab-item i{transition:font-size .3s}
+.mini-player{transition:bottom .34s cubic-bezier(.3,.8,.3,1)}
+body.tab-min .tab-bar{width:172px!important;height:48px!important;bottom:calc(10px + var(--sab))!important}
+body.tab-min .tab-pill{padding:4px}
+body.tab-min .tab-item{height:40px;gap:0}
+body.tab-min .tab-item span{max-height:0;opacity:0}
+body.tab-min .tab-item i{font-size:16px}
+body.tab-min .mini-player{bottom:calc(68px + var(--sab))}
+/* 編集モードの削除ボタン */
+.del-badge{top:8px!important;left:8px!important;width:34px!important;height:34px!important;border:1px solid rgba(255,255,255,.3)!important;background:rgba(16,16,18,.55)!important;color:#fff!important;font-size:13px!important;box-shadow:0 4px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.2)!important;backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);transition:transform .15s,background .15s}
+.del-badge:active{transform:scale(.88);background:rgba(150,28,28,.75)!important}
+/* アーティスト画面の編集モード: 設定アイコンを右端へ、追加ボタンはその左へ */
+body.editing #settings-header-btn{order:9}
+</style>
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -1510,8 +1546,27 @@ body.editing #left-btn{background:var(--seg)!important}
 
 <input type="file" id="audio-upload" multiple style="display:none">
 <input type="file" id="artist-icon-upload" style="display:none" accept="image/*" onchange="saveArtistIcon(event)">
-<audio id="audio-element"></audio>
+<audio id="audio-element" playsinline preload="auto"></audio>
 
+<div id="ui-import" class="ui-sheet"><div class="ui-card">
+    <div class="ui-title" id="imp-title"></div>
+    <div class="ui-field">ARTIST (ALL FILES)</div>
+    <input id="imp-artist" class="edit-input" placeholder="Add artist name to every file" autocomplete="off" style="margin-bottom:0">
+    <div id="imp-chips" class="ui-chips"></div>
+    <div class="ui-field">PLAYLIST</div>
+    <button id="imp-pl" class="ui-row" onclick="impPickPl()"><i class="fa-solid fa-list"></i><span>Add to playlist</span><b id="imp-pl-label">NONE</b></button>
+    <div class="ui-note">同じタイトル・情報の曲は取り込みをスキップします（プレイリストには追加されます）</div>
+    <div class="ui-actions"><button class="ui-btn" onclick="impClose(false)">CANCEL</button><button class="ui-btn primary" onclick="impClose(true)">IMPORT</button></div>
+</div></div>
+<div id="ui-bulk" class="ui-sheet"><div class="ui-card">
+    <div class="ui-title" id="bulk-title"></div>
+    <div class="ui-seg"><button id="bulk-m-replace" class="on" onclick="bulkMode('replace')">REPLACE</button><button id="bulk-m-add" onclick="bulkMode('add')">ADD</button></div>
+    <input id="bulk-artist" class="edit-input" placeholder="Artist name" autocomplete="off" style="margin-bottom:0">
+    <div id="bulk-chips" class="ui-chips"></div>
+    <div class="ui-actions"><button class="ui-btn" onclick="bulkClose(false)">CANCEL</button><button class="ui-btn primary" onclick="bulkClose(true)">APPLY</button></div>
+</div></div>
+<div id="sel-bar"><span><b id="sel-count">0</b> SELECTED</span>
+    <button onclick="selAll()">ALL</button><button onclick="selBulkArtist()">ARTIST</button><button onclick="selToPlaylist()">LIST</button><button onclick="toggleSelMode(false)" aria-label="Cancel"><i class="fa-solid fa-xmark"></i></button></div>
 <div id="ui-prompt" class="ui-sheet" onclick="if(event.target===this)uiPromptClose(null)"><div class="ui-card">
     <div class="ui-title" id="ui-prompt-title"></div>
     <input id="ui-prompt-input" class="edit-input" autocomplete="off" onkeydown="if(event.key==='Enter')uiPromptClose(this.value)">
@@ -1525,6 +1580,7 @@ body.editing #left-btn{background:var(--seg)!important}
 <script>
     let db;
     let shownIds = [], shownPlIds = null, queueOriginal = [];
+    let selMode = false; const selIds = new Set();
     const PH = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a8a8a8"/><stop offset="1" stop-color="#2a2a2a"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/><path d="M58 24v38.5a9 9 0 1 1-5-8V34l-18 4v28.5a9 9 0 1 1-5-8V30z" fill="#fff" fill-opacity=".9"/></svg>');
     document.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.dataset.fb) { t.dataset.fb = 1; t.src = PH; } }, true);
     function makeDefaultIcon() {
@@ -1564,7 +1620,7 @@ body.editing #left-btn{background:var(--seg)!important}
             <div class="hw-tag"><span>■ PANEL / HOME</span><span>${String(tracks.length).padStart(3, '0')} TRK · ${String(playlists.filter(p => !p.isVirtual).length).padStart(2, '0')} PL</span></div>
             <div class="hw-last"><div><small>LAST PLAYED</small><b>${t ? esc(t.name) : '—'}</b></div>
             <div class="hw-btns"><button onclick="${t ? `playSong(${t.id},'lib')` : ''}"><i class="fa-solid fa-play"></i></button><button onclick="playShuffleAll()"><i class="fa-solid fa-shuffle"></i></button></div></div>
-            <div class="hw-up"><button class="hw-circ" onclick="${up}"><i class="fa-solid fa-arrow-up"></i></button><button class="hw-pill" onclick="${up}">Upload</button></div></div>`;
+            <div class="hw-up"><button class="hw-circ" onclick="${up}"><i class="fa-solid fa-arrow-up"></i></button><button class="hw-pill" onclick="${up}">Upload</button><button class="hw-pill" onclick="toggleSelMode(true)">Select</button></div></div>`;
     }
 
 
@@ -1611,16 +1667,38 @@ body.editing #left-btn{background:var(--seg)!important}
     let searchQueries = { artists: '', library: '', playlist: '', playlistDetail: '', bulkAdd: '' };
     let activeArtistFilter = null; 
     
-    let scrollPositions = { library: 0, artists: 0, playlist: 0, playlistDetail: 0 };
+    let scrollPositions = {};
+    try { scrollPositions = JSON.parse(localStorage.getItem('scrollPositions3') || '{}') || {}; } catch (e) {}
     const contentContainer = document.getElementById('content');
-    
-    contentContainer.addEventListener('scroll', (e) => 
+    let scrollKeyShown = null, scrollRestoring = false, _scrollSaveT = 0, _lastY = 0;
+    function currentScrollKey()
     {
-        let key = currentView;
-        if (currentView === 'playlist' && currentPlaylistId !== null) key = 'playlistDetail';
-        else if (currentView === 'artists' && currentArtist !== null) key = 'artistDetail';
-        scrollPositions[key] = e.target.scrollTop;
+        if (currentView === 'playlist') return currentPlaylistId !== null ? 'pl:' + currentPlaylistId : 'playlist';
+        if (currentView === 'artists') return currentArtist !== null ? 'art:' + currentArtist : 'artists';
+        return 'library';
+    }
+    function persistScroll()
+    {
+        const keys = Object.keys(scrollPositions);
+        if (keys.length > 80) keys.slice(0, keys.length - 80).forEach(k => delete scrollPositions[k]);
+        try { localStorage.setItem('scrollPositions3', JSON.stringify(scrollPositions)); } catch (e) {}
+    }
+    function setScrollPos(k, y) { delete scrollPositions[k]; scrollPositions[k] = Math.round(y); }
+    contentContainer.addEventListener('scroll', (e) =>
+    {
+        if (scrollRestoring || !window._dataLoaded) return;
+        const y = e.target.scrollTop;
+        if (scrollKeyShown) setScrollPos(scrollKeyShown, y);
+        clearTimeout(_scrollSaveT); _scrollSaveT = setTimeout(persistScroll, 400);
+        // Safari 風: 下へスクロールでタブバーを最小化、上へで復帰
+        const d = y - _lastY;
+        if (y < 40) document.body.classList.remove('tab-min');
+        else if (d > 10) document.body.classList.add('tab-min');
+        else if (d < -10) document.body.classList.remove('tab-min');
+        if (Math.abs(d) > 10) _lastY = y;
     }, { passive: true });
+    addEventListener('pagehide', () => { if (window._dataLoaded && scrollKeyShown) setScrollPos(scrollKeyShown, contentContainer.scrollTop); persistScroll(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden && window._dataLoaded) { if (scrollKeyShown) setScrollPos(scrollKeyShown, contentContainer.scrollTop); persistScroll(); } });
 
     let currentLang = localStorage.getItem('appLang') || 'en';
     
@@ -1888,7 +1966,7 @@ body.editing #left-btn{background:var(--seg)!important}
         {
             tracks = s; playlists = p; artistMeta = {};
             m.forEach(x => artistMeta[x.name] = x);
-            initAutoPlaylists();
+            initAutoPlaylists(); window._dataLoaded = true;
             // 編集後の古いオブジェクトで上書き保存しないよう、再生キューも最新に差し替える
             playingTracks = playingTracks.map(x => tracks.find(t => t.id === x.id) || x);
             if (currentPlaylistId !== null && !playlists.some(x => x.id == currentPlaylistId)) currentPlaylistId = null;
@@ -1996,6 +2074,7 @@ body.editing #left-btn{background:var(--seg)!important}
 
     function render() 
     {
+        if (window._dataLoaded && scrollKeyShown && scrollKeyShown !== currentScrollKey()) setScrollPos(scrollKeyShown, contentContainer.scrollTop);
         const display = document.getElementById('main-display');
         const title = document.getElementById('view-title');
         const rightBtn = document.getElementById('right-btn');
@@ -2302,14 +2381,14 @@ body.editing #left-btn{background:var(--seg)!important}
         }
         
         rightBtn.innerHTML = `<i class="fa-solid ${currentArtist ? 'fa-play' : currentPlaylistId !== null ? 'fa-list-check' : currentView === 'playlist' ? 'fa-folder-plus' : currentView === 'artists' ? 'fa-user-plus' : 'fa-arrow-up'}"></i>`;
+        if (selMode && currentView !== 'library') { selMode = false; selIds.clear(); document.body.classList.remove('selmode'); }
         renderHomeWidget(); document.body.classList.toggle('editing', isEditing);
-        // Restore Scroll Position safely
-        setTimeout(() => {
-            let key = currentView;
-            if (currentView === 'playlist' && currentPlaylistId !== null) key = 'playlistDetail';
-            else if (currentView === 'artists' && currentArtist !== null) key = 'artistDetail';
-            contentContainer.scrollTop = scrollPositions[key] || 0;
-        }, 10);
+        // Restore Scroll Position (画面ごと)
+        const _key = currentScrollKey(), _y = scrollPositions[_key] || 0;
+        scrollKeyShown = _key; scrollRestoring = true;
+        document.body.classList.remove('tab-min'); _lastY = _y;
+        contentContainer.scrollTop = _y;
+        requestAnimationFrame(() => { contentContainer.scrollTop = _y; requestAnimationFrame(() => { contentContainer.scrollTop = _y; scrollRestoring = false; }); });
     }
 
     function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -2372,7 +2451,7 @@ body.editing #left-btn{background:var(--seg)!important}
         
         shownIds = list.map(t => t.id);
         container.innerHTML = list.map(t => `
-            <div class="card ${isEditing?'editing':''}" onclick="isEditing?openEdit(${t.id}):playSong(${t.id},'lib')">
+            <div class="card ${isEditing?'editing':''} ${selIds.has(t.id)?'sel-on':''}" data-id="${t.id}" onclick="selMode?toggleSel(${t.id}):(isEditing?openEdit(${t.id}):playSong(${t.id},'lib'))">
                 <div class="del-badge" onclick="event.stopPropagation(); deleteSong(${t.id})"><i class="fa-solid fa-trash-can"></i></div>
                 <img decoding="async" src="${t.cover||PH}" class="card-img">
                 ${t.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
@@ -2531,7 +2610,7 @@ body.editing #left-btn{background:var(--seg)!important}
         document.getElementById('seeker').style.background = `linear-gradient(to right, var(--ink) ${p}%, var(--wavebg) ${p}%)`;
         document.getElementById('cur-time').innerText = formatTime(v);
     }
-    function endSeek() { if (!seeking) return; audio.currentTime = parseFloat(document.getElementById('seeker').value); seeking = false; }
+    function endSeek() { if (!seeking) return; clearTimeout(_seekEndT); audio.currentTime = parseFloat(document.getElementById('seeker').value); seeking = false; updatePositionState(); }
     ['change', 'pointerup', 'pointercancel', 'touchend', 'mouseup'].forEach(ev => document.getElementById('seeker').addEventListener(ev, endSeek));
     // --- アップロードの軽量化 ---
     const COVER_MAX = 480;
@@ -2551,20 +2630,25 @@ body.editing #left-btn{background:var(--seg)!important}
             im.src = url;
         }).then(d => d || (blob.size < 1500000 ? blobToDataURL(blob) : null));
     }
-    function readTags(f) { return new Promise(res => jsmediatags.read(f, { onSuccess: t => res(t.tags), onError: () => res(null) })); }
+    function readTags(f) { return new Promise(res => { if (typeof jsmediatags === 'undefined') return res(null); try { jsmediatags.read(f, { onSuccess: t => res(t.tags), onError: () => res(null) }); } catch (e) { res(null); } }); }
     async function buildTrack(f) {
         const tg = await readTags(f); let c = null;
         if (tg && tg.picture) c = await shrinkBlobToDataURL(new Blob([new Uint8Array(tg.picture.data)], { type: tg.picture.format || 'image/jpeg' }), COVER_MAX, .82);
         return { name: (tg && tg.title) || f.name, artist: (tg && tg.artist) || 'Unknown', year: (tg && tg.year) || '', cover: c, data: f, lyrics: '', favorite: false };
     }
-    function toast(msg) {
+    function toast(msg, autoHide) {
         let t = document.getElementById('upload-toast');
         if (!t) { t = document.createElement('div'); t.id = 'upload-toast'; document.body.appendChild(t); }
         if (msg == null) { t.classList.remove('show'); return; }
         t.textContent = msg; t.classList.add('show');
+        clearTimeout(window._toastT); if (autoHide) window._toastT = setTimeout(() => t.classList.remove('show'), autoHide);
     }
     function addSongs(list) {
-        return new Promise(res => { const tx = db.transaction('songs', 'readwrite'); list.forEach(t => tx.objectStore('songs').add(t)); tx.oncomplete = () => res(); tx.onerror = () => res(); });
+        return new Promise(res => {
+            const ids = [], tx = db.transaction('songs', 'readwrite');
+            list.forEach(t => { const rq = tx.objectStore('songs').add(t); rq.onsuccess = () => ids.push(rq.result); });
+            tx.oncomplete = () => res(ids); tx.onerror = () => res(ids);
+        });
     }
     async function shrinkOldCovers() {
         if (localStorage.getItem('coversShrunk2')) return;
@@ -2578,6 +2662,120 @@ body.editing #left-btn{background:var(--seg)!important}
             await new Promise(r => setTimeout(r, 30));
         }
         localStorage.setItem('coversShrunk2', '1'); toast(null); if (big.length) loadAll();
+    }
+
+    // ---------- アーティスト操作 ----------
+    function artistList(a) {
+        try { const p = JSON.parse(a); if (Array.isArray(p)) return p.map(x => ({ name: x.name, role: x.role || 'main' })); } catch (e) {}
+        return String(a || '').split(/[,、/]/).map(x => x.trim()).filter(x => x && x !== 'Unknown').map(n => ({ name: n, role: 'main' }));
+    }
+    function withArtist(t, name) { const l = artistList(t.artist); if (!l.some(x => x.name === name)) l.push({ name, role: 'main' }); t.artist = JSON.stringify(l); }
+    function setArtist(t, name) { t.artist = JSON.stringify([{ name, role: 'main' }]); }
+    function trackKey(name, artist, year) {
+        const n = v => String(v == null ? '' : v).normalize('NFKC').trim().toLowerCase();
+        return n(name) + '|' + getArtistNames(artist).map(n).sort().join(',') + '|' + n(year);
+    }
+    function artistChips(inputId) { return getAllArtists().map(a => `<button class="artist-chip" onclick="document.getElementById('${inputId}').value=${jsArg(a)}">${esc(a)}</button>`).join(''); }
+    // ---------- プレイリストの選択／保存 ----------
+    function uiChoose(title, rows) {
+        return new Promise(res => {
+            _uiPk = res; document.getElementById('ui-picker-title').textContent = title;
+            document.getElementById('ui-picker-list').innerHTML = rows.map(r => `<button class="ui-row" onclick="uiPickerClose(${jsArg(r.value)})"><i class="fa-solid ${r.icon || 'fa-circle'}"></i>${esc(r.label)}</button>`).join('');
+            document.getElementById('ui-picker').classList.add('show');
+        });
+    }
+    async function choosePlaylistTarget() {
+        const pls = playlists.filter(p => !p.isVirtual);
+        const v = await uiChoose('PLAYLIST', [{ label: '追加しない', value: 'none', icon: 'fa-ban' }, { label: '新しいプレイリストを作成', value: 'new', icon: 'fa-folder-plus' }]
+            .concat(pls.map(p => ({ label: p.name, value: 'pl:' + p.id, icon: 'fa-list' }))));
+        if (v === undefined) return undefined;
+        if (v === 'none') return { type: 'none' };
+        if (v === 'new') { const n = await uiPrompt('NEW PLAYLIST', 'Playlist name'); return n ? { type: 'new', name: n } : undefined; }
+        const p = pls.find(x => String(x.id) === v.slice(3)); return p ? { type: 'existing', id: p.id, name: p.name } : undefined;
+    }
+    function savePlaylistTarget(target, ids) {
+        return new Promise(res => {
+            const tx = db.transaction('playlists', 'readwrite'), st = tx.objectStore('playlists');
+            if (target.type === 'new') st.add({ name: target.name, songIds: [...new Set(ids)], tag: '', cover: null, favorite: false, isVirtual: false });
+            else { const pl = playlists.find(p => p.id === target.id); if (pl) { pl.songIds = pl.songIds.concat([...new Set(ids)].filter(x => !pl.songIds.includes(x))); st.put(pl); } }
+            tx.oncomplete = () => res(); tx.onerror = () => res();
+        });
+    }
+    // ---------- 取り込みダイアログ ----------
+    let _impRes = null, _impTarget = { type: 'none' };
+    function uiImport(n) {
+        return new Promise(res => {
+            _impRes = res; _impTarget = { type: 'none' };
+            document.getElementById('imp-title').textContent = `IMPORT · ${n} FILE${n > 1 ? 'S' : ''}`;
+            document.getElementById('imp-artist').value = ''; document.getElementById('imp-chips').innerHTML = artistChips('imp-artist');
+            updateImpPl(); document.getElementById('ui-import').classList.add('show');
+        });
+    }
+    function impClose(ok) {
+        document.getElementById('ui-import').classList.remove('show');
+        const r = _impRes; _impRes = null; if (r) r(ok ? { artist: document.getElementById('imp-artist').value.trim(), target: _impTarget } : null);
+    }
+    async function impPickPl() { const t = await choosePlaylistTarget(); if (t) { _impTarget = t; updateImpPl(); } }
+    function updateImpPl() { const t = _impTarget; document.getElementById('imp-pl-label').textContent = t.type === 'none' ? 'NONE' : t.type === 'new' ? 'NEW · ' + t.name : t.name; }
+    async function runImport(files, opts) {
+        const keyMap = new Map(); tracks.forEach(t => { keyMap.set(trackKey(t.name, t.artist, t.year), t.id); if (t.srcKey) keyMap.set(t.srcKey, t.id); });
+        const newIds = [], dupIds = []; let batch = [], batchKeys = [], skipped = 0;
+        const flush = async () => { if (!batch.length) return; const ids = await addSongs(batch); ids.forEach((id, i) => { keyMap.set(batchKeys[i], id); newIds.push(id); }); batch = []; batchKeys = []; };
+        for (let i = 0; i < files.length; i++) {
+            toast(`UPLOAD ${i + 1} / ${files.length}`);
+            const f = files[i], tg = await readTags(f);
+            const name = (tg && tg.title) || f.name, artistRaw = (tg && tg.artist) || 'Unknown', year = (tg && tg.year) || '';
+            const key = trackKey(name, artistRaw, year);
+            if (batchKeys.includes(key)) await flush();
+            if (keyMap.has(key)) { dupIds.push(keyMap.get(key)); skipped++; }
+            else {
+                let cover = null;
+                if (tg && tg.picture) cover = await shrinkBlobToDataURL(new Blob([new Uint8Array(tg.picture.data)], { type: tg.picture.format || 'image/jpeg' }), COVER_MAX, .82);
+                const t = { name, artist: artistRaw, year, cover, data: f, lyrics: '', favorite: false, srcKey: key };
+                if (opts.artist) withArtist(t, opts.artist);
+                batch.push(t); batchKeys.push(key);
+                if (batch.length >= 4) await flush();
+            }
+            await new Promise(r => setTimeout(r, 16));
+        }
+        await flush();
+        const all = [...new Set([...newIds, ...dupIds])];
+        if (opts.target && opts.target.type !== 'none' && all.length) await savePlaylistTarget(opts.target, all);
+        toast(`ADDED ${newIds.length} · SKIPPED ${skipped}` + (opts.target && opts.target.type !== 'none' ? ` · LIST ${all.length}` : ''), 3200);
+        loadAll();
+    }
+    // ---------- ライブラリの選択モード ----------
+    function toggleSelMode(on) {
+        selMode = on === undefined ? !selMode : on; if (!selMode) selIds.clear();
+        document.body.classList.toggle('selmode', selMode); updateSelBar(); render();
+    }
+    function toggleSel(id) {
+        if (selIds.has(id)) selIds.delete(id); else selIds.add(id);
+        const el = document.querySelector(`.card[data-id="${id}"]`); if (el) el.classList.toggle('sel-on', selIds.has(id));
+        updateSelBar();
+    }
+    function updateSelBar() { document.getElementById('sel-count').textContent = selIds.size; }
+    function selAll() { const all = shownIds.length && shownIds.every(i => selIds.has(i)); selIds.clear(); if (!all) shownIds.forEach(i => selIds.add(i)); updateSelBar(); render(); }
+    async function selToPlaylist() {
+        if (!selIds.size) return;
+        const t = await choosePlaylistTarget(); if (!t || t.type === 'none') return;
+        await savePlaylistTarget(t, [...selIds]); toast(`LIST ${selIds.size} TRACKS`, 2500); toggleSelMode(false); loadAll();
+    }
+    let _bulkRes = null, _bulkM = 'replace';
+    function bulkMode(m) { _bulkM = m; document.getElementById('bulk-m-replace').classList.toggle('on', m === 'replace'); document.getElementById('bulk-m-add').classList.toggle('on', m === 'add'); }
+    function selBulkArtist() {
+        if (!selIds.size) return;
+        document.getElementById('bulk-title').textContent = `EDIT ARTIST · ${selIds.size}`;
+        document.getElementById('bulk-artist').value = ''; document.getElementById('bulk-chips').innerHTML = artistChips('bulk-artist');
+        bulkMode('replace'); document.getElementById('ui-bulk').classList.add('show');
+    }
+    function bulkClose(ok) {
+        document.getElementById('ui-bulk').classList.remove('show');
+        if (!ok) return;
+        const name = document.getElementById('bulk-artist').value.trim(); if (!name) return;
+        const tx = db.transaction('songs', 'readwrite'), st = tx.objectStore('songs'); let n = 0;
+        selIds.forEach(id => { const t = tracks.find(x => x.id === id); if (!t) return; if (_bulkM === 'add') withArtist(t, name); else setArtist(t, name); st.put(t); n++; });
+        tx.oncomplete = () => { toast(`UPDATED ${n} TRACKS`, 2500); toggleSelMode(false); loadAll(); };
     }
     function toggleLyrics() 
     {
@@ -2624,7 +2822,7 @@ body.editing #left-btn{background:var(--seg)!important}
         {
             if (track.lyricTimings && track.lyricTimings[idx] !== undefined)
             {
-                seekAudio(track.lyricTimings[idx]);
+                audio.currentTime = track.lyricTimings[idx]; updatePositionState();
             }
         }
     }
@@ -2810,31 +3008,41 @@ body.editing #left-btn{background:var(--seg)!important}
     // Smooth Volume Transition for Play/Pause to prevent stuttering
     function fadeVolume(target, duration, callback)
     {
-        clearInterval(window._fadeTimer);
-        const steps = 20;
-        const stepTime = duration / steps;
-        const stepVol = (target - audio.volume) / steps;
-        
+        clearInterval(window._fadeTimer); window._fadeCb = callback || null;
+        if (document.hidden) { audio.volume = target; window._fadeCb = null; if (callback) callback(); return; }
+        const steps = 20, stepTime = duration / steps, stepVol = (target - audio.volume) / steps;
         let currentStep = 0;
-        let fadeInterval = window._fadeTimer = setInterval(() => 
+        window._fadeTimer = setInterval(() =>
         {
             currentStep++;
-            let newVol = audio.volume + stepVol;
-            if (newVol > 1) newVol = 1;
-            if (newVol < 0) newVol = 0;
-            audio.volume = newVol;
-            
+            audio.volume = Math.min(1, Math.max(0, audio.volume + stepVol));
             if (currentStep >= steps)
             {
-                clearInterval(fadeInterval);
-                audio.volume = target;
-                if (callback) callback();
+                clearInterval(window._fadeTimer); audio.volume = target;
+                const cb = window._fadeCb; window._fadeCb = null; if (cb) cb();
             }
         }, stepTime);
+    }
+    // 画面オフ／バックグラウンドではタイマーが止まるため、フェードを即時完了させる
+    document.addEventListener('visibilitychange', () =>
+    {
+        if (!document.hidden) return;
+        clearInterval(window._fadeTimer);
+        const cb = window._fadeCb; window._fadeCb = null;
+        if (cb) cb(); else audio.volume = 1;
+    });
+    function mediaPlay() { clearInterval(window._fadeTimer); window._fadeCb = null; audio.volume = 1; return audio.play().catch(() => {}); }
+    function mediaPause() { clearInterval(window._fadeTimer); window._fadeCb = null; audio.pause(); audio.volume = 1; }
+    function updatePositionState()
+    {
+        if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState) return;
+        const d = audio.duration; if (!isFinite(d) || d <= 0) return;
+        try { navigator.mediaSession.setPositionState({ duration: d, playbackRate: audio.playbackRate || 1, position: Math.min(Math.max(audio.currentTime, 0), d) }); } catch (e) {}
     }
 
     function togglePlay() 
     { 
+        if (document.hidden) { if (audio.paused) mediaPlay(); else mediaPause(); return; }
         if (audio.paused)
         {
             audio.volume = 0;
@@ -2918,32 +3126,43 @@ body.editing #left-btn{background:var(--seg)!important}
         document.documentElement.style.setProperty('--blur-bg', `url("${(t && t.cover) || PH}")`);
     }
     
+    let _artUrl = null;
     function setupMediaSession(t)
     {
-        if ('mediaSession' in navigator) 
-        {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: t.name,
-                artist: getDisplayArtistString(t.artist),
-                artwork: [
-                    { src: t.cover || PH, sizes: '512x512', type: 'image/jpeg' }
-                ]
-            });
-
-            navigator.mediaSession.setActionHandler('play', togglePlay);
-            navigator.mediaSession.setActionHandler('pause', togglePlay);
-            navigator.mediaSession.setActionHandler('seekto', (details) => {
-                seekAudio(details.seekTime);
-            });
-            navigator.mediaSession.setActionHandler('previoustrack', prev);
-            navigator.mediaSession.setActionHandler('nexttrack', () => next(false));
-        }
+        if (!('mediaSession' in navigator)) return;
+        const mk = (src, type) => new MediaMetadata({ title: t.name, artist: getDisplayArtistString(t.artist), album: 'Music Studio',
+            artwork: src ? [96, 128, 192, 256, 384, 512].map(z => ({ src, sizes: z + 'x' + z, type: type || 'image/jpeg' })) : [] });
+        navigator.mediaSession.metadata = mk(t.cover && t.cover.startsWith('data:') ? t.cover : null);
+        if (t.cover && t.cover.startsWith('data:'))
+            fetch(t.cover).then(r => r.blob()).then(b =>
+            {
+                if (playingTracks[currentTrackIdx] !== t) return;
+                const u = URL.createObjectURL(b), old = _artUrl; _artUrl = u;
+                navigator.mediaSession.metadata = mk(u, b.type);
+                if (old) setTimeout(() => URL.revokeObjectURL(old), 5000);
+            }).catch(() => {});
+        navigator.mediaSession.playbackState = audio.paused ? 'paused' : 'playing';
     }
+    function initMediaSession()
+    {
+        if (!('mediaSession' in navigator)) return;
+        const set = (a, f) => { try { navigator.mediaSession.setActionHandler(a, f); } catch (e) {} };
+        set('play', () => { mediaPlay(); });
+        set('pause', () => { mediaPause(); });
+        set('stop', () => { mediaPause(); audio.currentTime = 0; });
+        set('previoustrack', () => prev());
+        set('nexttrack', () => next(false));
+        set('seekto', d => { if (d && d.seekTime != null) { audio.currentTime = d.seekTime; updatePositionState(); } });
+        set('seekbackward', null); set('seekforward', null);
+    }
+    initMediaSession();
 
+    let _seekEndT = 0;
     function seekAudio(val)
     {
         const v = parseFloat(val); seeking = true; paintSeek(v); updateLyricsHighlight(v);
         const now = performance.now(); if (now - _seekT > 120) { _seekT = now; audio.currentTime = v; }
+        clearTimeout(_seekEndT); _seekEndT = setTimeout(endSeek, 700);
     }
 
     function loadTrack(t) 
@@ -2976,10 +3195,8 @@ body.editing #left-btn{background:var(--seg)!important}
         updatePlayerBlurBg();
         setupMediaSession(t);
         
-        audio.volume = 0;
-        audio.play().then(() => {
-            fadeVolume(1.0, 300);
-        }).catch(e => console.log("Auto-play blocked", e));
+        if (document.hidden) mediaPlay();
+        else { audio.volume = 0; audio.play().then(() => fadeVolume(1.0, 300)).catch(e => console.log("Auto-play blocked", e)); }
     }
     
     function checkMarquee(elId, text) 
@@ -3026,29 +3243,25 @@ body.editing #left-btn{background:var(--seg)!important}
             
             updateLyricsHighlight(audio.currentTime);
 
-            if ('mediaSession' in navigator && navigator.mediaSession.setPositionState) 
-            {
-                navigator.mediaSession.setPositionState({
-                    duration: audio.duration,
-                    playbackRate: audio.playbackRate,
-                    position: audio.currentTime
-                });
-            }
+            { const _n = Date.now(); if (_n - (window._psT || 0) > 1000) { window._psT = _n; updatePositionState(); } }
         } 
     };
     
     audio.onplay = () => 
-    { document.getElementById('full').classList.add('playing'); 
+    { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; updatePositionState();
+        document.getElementById('full').classList.add('playing'); 
         document.getElementById('m-pp').className = 'fa-solid fa-pause'; 
         document.getElementById('f-pp').className = 'fa-solid fa-pause'; 
     };
     
     audio.onpause = () => 
-    { document.getElementById('full').classList.remove('playing'); 
+    { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; updatePositionState();
+        document.getElementById('full').classList.remove('playing'); 
         document.getElementById('m-pp').className = 'fa-solid fa-play'; 
         document.getElementById('f-pp').className = 'fa-solid fa-play'; 
     };
     
+    audio.onloadedmetadata = audio.ondurationchange = audio.onseeked = updatePositionState;
     audio.onended = () => 
     { 
         next(true); 
@@ -3506,14 +3719,9 @@ body.editing #left-btn{background:var(--seg)!important}
     {
         const files = Array.from(e.target.files); e.target.value = '';
         if (!files.length) return;
-        let batch = [];
-        for (let i = 0; i < files.length; i++) {
-            toast(`UPLOAD ${i + 1} / ${files.length}`);
-            batch.push(await buildTrack(files[i]));
-            if (batch.length >= 4 || i === files.length - 1) { await addSongs(batch); batch = []; }
-            await new Promise(r => setTimeout(r, 16));
-        }
-        toast(null); loadAll();
+        const opts = await uiImport(files.length);
+        if (!opts) return;
+        runImport(files, opts);
     };
 
     let touchStartX = 0;
