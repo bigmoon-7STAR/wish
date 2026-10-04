@@ -1359,6 +1359,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 #tab-pill-main .tab-item:first-child{flex-grow:calc(1 - var(--tm));opacity:max(0, calc(1 - var(--tm) * 1.6));overflow:hidden;padding:0}
 </style>
 <style id="artist-roles">.card-sub .ar-ms{opacity:.78}.card-sub .ar-sub{opacity:.5}.ui-seg{margin-bottom:10px}.ui-seg button{font-size:11px;padding:9px 4px;letter-spacing:.06em}</style>
+<style id="note-toast">#upload-toast{max-width:88vw;white-space:normal;text-align:center;line-height:1.5}.ar-ms{opacity:.8}</style>
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -1576,6 +1577,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 <div id="ui-bulk" class="ui-sheet"><div class="ui-card">
     <div class="ui-title" id="bulk-title"></div>
     <div class="ui-seg"><button id="bulk-m-replace" class="on" onclick="bulkMode('replace')">REPLACE</button><button id="bulk-m-add" onclick="bulkMode('add')">ADD</button></div>
+    <div class="ui-note" id="bulk-note" style="margin:-2px 0 10px"></div>
     <div class="ui-seg" id="bulk-roles"><button data-r="main" class="on" onclick="bulkRole('main')">MAIN</button><button data-r="main/sub" onclick="bulkRole('main/sub')">MAIN/SUB</button><button data-r="sub" onclick="bulkRole('sub')">SUB</button></div>
     <input id="bulk-artist" class="edit-input" placeholder="Artist name" autocomplete="off" style="margin-bottom:0">
     <div id="bulk-chips" class="ui-chips"></div>
@@ -2454,15 +2456,18 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     {
         if (!artistData) return "Unknown";
         const l = artistsByRole(artistData);
-        return l ? l.map(a => a.name).join(', ') : artistData;
+        if (!l) return artistData;
+        const lead = l.filter(a => a.role !== 'sub').map(a => a.name), subs = l.filter(a => a.role === 'sub').map(a => a.name);
+        return lead.join(',') + (lead.length && subs.length ? ' / ' : '') + subs.join(',');
     }
     function getDisplayArtistRich(artistData)
     {
         if (!artistData) return "Unknown";
         const l = artistsByRole(artistData);
         if (!l) return esc(artistData);
-        const cls = { 'main': 'ar-main', 'main/sub': 'ar-ms', 'sub': 'ar-sub' };
-        return l.map(a => `<span class="${cls[a.role] || 'ar-main'}" title="${esc(a.role)}">${esc(a.name)}</span>`).join(', ');
+        const one = a => `<span class="${a.role === 'sub' ? 'ar-sub' : a.role === 'main/sub' ? 'ar-ms' : 'ar-main'}" title="${esc(a.role)}">${esc(a.name)}</span>`;
+        const lead = l.filter(a => a.role !== 'sub').map(one), subs = l.filter(a => a.role === 'sub').map(one);
+        return lead.join(',<wbr>') + (lead.length && subs.length ? ' / ' : '') + subs.join(',<wbr>');
     }
 
     function getDisplayArtistHTML(artistData)
@@ -2784,7 +2789,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     }
     // ---------- ライブラリの選択モード ----------
     function toggleSelMode(on) {
-        selMode = on === undefined ? !selMode : on; if (!selMode) selIds.clear(); else isEditing = false;
+        selMode = on === undefined ? !selMode : on; if (!selMode) selIds.clear(); else { isEditing = false; toast('曲をタップして選び、下の ARTIST でアーティストをまとめて編集できます', 4200); }
         document.body.classList.toggle('selmode', selMode); updateSelBar(); render();
     }
     function toggleSel(id) {
@@ -2803,7 +2808,10 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     function pickRole(boxId, r) { document.querySelectorAll('#' + boxId + ' button').forEach(b => b.classList.toggle('on', b.dataset.r === r)); }
     function bulkRole(r) { _bulkRole = r; pickRole('bulk-roles', r); }
     function impRole(r) { _impRole = r; pickRole('imp-roles', r); }
-    function bulkMode(m) { _bulkM = m; document.getElementById('bulk-m-replace').classList.toggle('on', m === 'replace'); document.getElementById('bulk-m-add').classList.toggle('on', m === 'add'); }
+    function bulkMode(m) {
+        _bulkM = m; document.getElementById('bulk-m-replace').classList.toggle('on', m === 'replace'); document.getElementById('bulk-m-add').classList.toggle('on', m === 'add');
+        document.getElementById('bulk-note').textContent = m === 'replace' ? '選んだ曲のアーティストを、下の名前1人に置き換えます。' : '下の名前を追加します。すでに付いている曲では、役割（MAIN / MAIN/SUB / SUB）だけを変更します。';
+    }
     function selBulkArtist() {
         if (!selIds.size) return;
         document.getElementById('bulk-title').textContent = `EDIT ARTIST · ${selIds.size}`;
@@ -2970,6 +2978,12 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 
     function switchTab(v) 
     { 
+        if (v === currentView && !selMode)
+        {
+            const sc = document.getElementById('content');
+            if (sc.scrollTop > 8) { sc.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+            if (currentArtist === null && currentPlaylistId === null) return;
+        }
         currentView=v; 
         currentArtist=null; 
         currentPlaylistId=null; 
@@ -3072,7 +3086,22 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         const cb = window._fadeCb; window._fadeCb = null;
         if (cb) cb(); else audio.volume = 1;
     });
-    function mediaPlay() { clearInterval(window._fadeTimer); window._fadeCb = null; audio.volume = 1; return audio.play().catch(() => {}); }
+    function mediaPlay() { clearInterval(window._fadeTimer); window._fadeCb = null; audio.volume = 1; const t = audio.currentTime; return audio.play().then(() => verifyPlaying(t)).catch(() => recoverPlay()); }
+    // 再生中になっているのに進まない（OS側で音声セッションが切れた）場合は、読み込み直して同じ位置から再開
+    let _recovering = false;
+    function verifyPlaying(t0)
+    {
+        setTimeout(() => { if (!audio.paused && !audio.ended && !audio.seeking && Math.abs(audio.currentTime - t0) < .05) recoverPlay(); }, 1100);
+    }
+    function recoverPlay()
+    {
+        if (_recovering || !audio.src) return; _recovering = true;
+        const pos = audio.currentTime || 0;
+        const go = () => { try { audio.currentTime = pos; } catch (e) {} audio.volume = 1; audio.play().catch(() => {}).then(() => { _recovering = false; }); };
+        audio.load();
+        if (audio.readyState >= 1) go(); else audio.addEventListener('loadedmetadata', go, { once: true });
+        setTimeout(() => { _recovering = false; }, 4000);
+    }
     function mediaPause() { clearInterval(window._fadeTimer); window._fadeCb = null; audio.pause(); audio.volume = 1; }
     function updatePositionState()
     {
@@ -3192,7 +3221,9 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         set('seekbackward', null); set('seekforward', null);
         set('previoustrack', () => prev());
         set('nexttrack', () => next(false));
-        set('play', null); set('pause', null); set('stop', null);
+        set('play', () => { mediaPlay(); });
+        set('pause', () => { mediaPause(); });
+        set('stop', () => { mediaPause(); audio.currentTime = 0; });
         set('seekto', d => { if (d && d.seekTime != null) { audio.currentTime = d.seekTime; updatePositionState(); } });
     }
     initMediaSession();
@@ -3288,7 +3319,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     };
     
     audio.onplay = () => 
-    { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; initMediaSession(); updatePositionState();
+    { if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'; updatePositionState(); verifyPlaying(audio.currentTime);
         document.getElementById('full').classList.add('playing'); 
         document.getElementById('m-pp').className = 'fa-solid fa-pause'; 
         document.getElementById('f-pp').className = 'fa-solid fa-pause'; 
@@ -3302,7 +3333,6 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         document.getElementById('f-pp').className = 'fa-solid fa-play'; 
     };
     
-    audio.onplaying = () => initMediaSession();
     audio.onloadedmetadata = audio.ondurationchange = audio.onseeked = updatePositionState;
     audio.onended = () => 
     { 
