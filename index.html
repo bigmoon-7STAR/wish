@@ -1345,12 +1345,12 @@ body.edit-lib #tab-pill-edit{display:grid}
 :root{--tm:0;--tw-open:calc(100% - 28px);--tw-min:172px}
 body.edit-lib{--tw-open:240px;--tw-min:150px}
 /* --tm (0=通常, 1=最小) に連動して連続的に変化 */
-body .tab-bar{width:calc(var(--tw-open) * (1 - var(--tm)) + var(--tw-min) * var(--tm))!important;height:calc(68px - 20px * var(--tm))!important;bottom:calc(12px + var(--sab) - 2px * var(--tm))!important;will-change:width,height}
+body .tab-bar{width:calc(var(--tw-open) * (1 - var(--tm)) + var(--tw-min) * var(--tm))!important;height:calc(64px - 18px * var(--tm))!important;bottom:calc(12px + var(--sab) - 2px * var(--tm))!important;will-change:width,height}
 body .tab-pill{padding:calc(6px - 2px * var(--tm))}
-body .tab-pill .tab-item{height:calc(56px - 16px * var(--tm))!important;gap:calc(3px * (1 - var(--tm)))!important;transition:none!important}
+body .tab-pill .tab-item{height:calc(52px - 14px * var(--tm))!important;gap:calc(3px * (1 - var(--tm)))!important;transition:none!important}
 body .tab-pill .tab-item span{max-height:calc(14px * (1 - var(--tm)));opacity:max(0, calc(1 - var(--tm) * 1.7));overflow:hidden;transition:none!important}
 body .tab-pill .tab-item i{font-size:calc(17px - 1px * var(--tm))!important;transition:none!important}
-body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;will-change:bottom}
+body .mini-player{bottom:calc(86px + var(--sab) - 20px * var(--tm))!important;will-change:bottom}
 </style>
 <style id="tab-two">
 :root{--tw-min:124px}
@@ -1360,6 +1360,12 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 </style>
 <style id="artist-roles">.card-sub .ar-ms{opacity:.78}.card-sub .ar-sub{opacity:.5}.ui-seg{margin-bottom:10px}.ui-seg button{font-size:11px;padding:9px 4px;letter-spacing:.06em}</style>
 <style id="note-toast">#upload-toast{max-width:88vw;white-space:normal;text-align:center;line-height:1.5}.ar-ms{opacity:.8}</style>
+<style id="ar-wrap-fix">.card-sub .ar-wrap{flex:1 1 auto;min-width:0;line-height:1.5;letter-spacing:.04em;word-break:break-word}.card-sub .card-year{flex:none;margin-left:8px}.card-sub .ar-ms{opacity:.8}.card-sub .ar-sub{opacity:.55}</style>
+<style id="bg-hidden">body.bg-hidden #bg-art{display:none}body.bg-hidden *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;animation:none!important}body.bg-hidden::before,body.bg-hidden::after,html:has(body.bg-hidden)::after{display:none!important}</style>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Music Studio">
 </head>
 <body>
 <div id="bg-art"><i></i><i></i><i></i></div>
@@ -1577,7 +1583,6 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
 <div id="ui-bulk" class="ui-sheet"><div class="ui-card">
     <div class="ui-title" id="bulk-title"></div>
     <div class="ui-seg"><button id="bulk-m-replace" class="on" onclick="bulkMode('replace')">REPLACE</button><button id="bulk-m-add" onclick="bulkMode('add')">ADD</button></div>
-    <div class="ui-note" id="bulk-note" style="margin:-2px 0 10px"></div>
     <div class="ui-seg" id="bulk-roles"><button data-r="main" class="on" onclick="bulkRole('main')">MAIN</button><button data-r="main/sub" onclick="bulkRole('main/sub')">MAIN/SUB</button><button data-r="sub" onclick="bulkRole('sub')">SUB</button></div>
     <input id="bulk-artist" class="edit-input" placeholder="Artist name" autocomplete="off" style="margin-bottom:0">
     <div id="bulk-chips" class="ui-chips"></div>
@@ -1642,6 +1647,31 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     }
 
 
+
+    // --- バックグラウンド: 一覧のDOM・画像・ぼかし効果を手放してメモリを減らす（OS に強制終了されにくくする）---
+    let _domDropped = false;
+    function syncPlayUI()
+    {
+        const p = !audio.paused;
+        ['m-pp', 'f-pp'].forEach(id => { document.getElementById(id).className = p ? 'fa-solid fa-pause' : 'fa-solid fa-play'; });
+        document.getElementById('full').classList.toggle('playing', p);
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = p ? 'playing' : 'paused';
+    }
+    function dropBackgroundDom()
+    {
+        if (_domDropped || !window._dataLoaded) return;
+        if (scrollKeyShown) setScrollPos(scrollKeyShown, contentContainer.scrollTop); persistScroll();
+        _domDropped = true; scrollRestoring = true;
+        document.getElementById('main-display').innerHTML = ''; document.getElementById('home-widget').innerHTML = '';
+        document.body.classList.add('bg-hidden');
+    }
+    function restoreForeground()
+    {
+        document.body.classList.remove('bg-hidden'); syncPlayUI();
+        if (_domDropped) { _domDropped = false; render(); }
+    }
+    document.addEventListener('visibilitychange', () => { if (document.hidden) dropBackgroundDom(); else restoreForeground(); });
+    addEventListener('pageshow', e => { if (e.persisted) restoreForeground(); });
     function applyShuffle() {
         const cur = playingTracks[currentTrackIdx], rest = playingTracks.filter(x => x !== cur);
         for (let i = rest.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]]; }
@@ -2500,7 +2530,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
                 ${t.favorite ? '<i class="fa-solid fa-star star-icon active" style="position:absolute; top:15px; right:15px; font-size:18px; filter:drop-shadow(0 2px 5px rgba(0,0,0,0.4)); z-index:10;"></i>' : ''}
                 <div class="card-info">
                     <div class="card-title">${esc(t.name)}</div>
-                    <div class="card-sub">${getDisplayArtistRich(t.artist)} ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
+                    <div class="card-sub"><span class="ar-wrap">${getDisplayArtistRich(t.artist)}</span> ${t.year ? `<span class="card-year">${t.year}</span>`:''}</div>
                 </div>
             </div>`).join('');
     }
@@ -2789,7 +2819,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     }
     // ---------- ライブラリの選択モード ----------
     function toggleSelMode(on) {
-        selMode = on === undefined ? !selMode : on; if (!selMode) selIds.clear(); else { isEditing = false; toast('曲をタップして選び、下の ARTIST でアーティストをまとめて編集できます', 4200); }
+        selMode = on === undefined ? !selMode : on; if (!selMode) selIds.clear(); else { isEditing = false; }
         document.body.classList.toggle('selmode', selMode); updateSelBar(); render();
     }
     function toggleSel(id) {
@@ -2802,7 +2832,12 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     async function selToPlaylist() {
         if (!selIds.size) return;
         const t = await choosePlaylistTarget(); if (!t || t.type === 'none') return;
-        await savePlaylistTarget(t, [...selIds]); toast(`LIST ${selIds.size} TRACKS`, 2500); toggleSelMode(false); loadAll();
+        const ids = [...selIds];
+        toast(`LIST ${ids.length} TRACKS`, 2500); toggleSelMode(false);
+        await savePlaylistTarget(t, ids); reloadPlaylists();
+    }
+    function reloadPlaylists() {
+        db.transaction('playlists').objectStore('playlists').getAll().onsuccess = e => { playlists = e.target.result; initAutoPlaylists(); render(); };
     }
     let _bulkRes = null, _bulkM = 'replace', _bulkRole = 'main', _impRole = 'main';
     function pickRole(boxId, r) { document.querySelectorAll('#' + boxId + ' button').forEach(b => b.classList.toggle('on', b.dataset.r === r)); }
@@ -2810,7 +2845,6 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     function impRole(r) { _impRole = r; pickRole('imp-roles', r); }
     function bulkMode(m) {
         _bulkM = m; document.getElementById('bulk-m-replace').classList.toggle('on', m === 'replace'); document.getElementById('bulk-m-add').classList.toggle('on', m === 'add');
-        document.getElementById('bulk-note').textContent = m === 'replace' ? '選んだ曲のアーティストを、下の名前1人に置き換えます。' : '下の名前を追加します。すでに付いている曲では、役割（MAIN / MAIN/SUB / SUB）だけを変更します。';
     }
     function selBulkArtist() {
         if (!selIds.size) return;
@@ -2822,9 +2856,12 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         document.getElementById('ui-bulk').classList.remove('show');
         if (!ok) return;
         const name = document.getElementById('bulk-artist').value.trim(); if (!name) return;
-        const tx = db.transaction('songs', 'readwrite'), st = tx.objectStore('songs'); let n = 0;
-        selIds.forEach(id => { const t = tracks.find(x => x.id === id); if (!t) return; if (_bulkM === 'add') withArtist(t, name, _bulkRole); else setArtist(t, name, _bulkRole); st.put(t); n++; });
-        tx.oncomplete = () => { toast(`UPDATED ${n} TRACKS`, 2500); toggleSelMode(false); loadAll(); };
+        const changed = [];
+        selIds.forEach(id => { const t = tracks.find(x => x.id === id); if (!t) return; if (_bulkM === 'add') withArtist(t, name, _bulkRole); else setArtist(t, name, _bulkRole); changed.push(t); });
+        toast(`UPDATED ${changed.length} TRACKS`, 2500);
+        toggleSelMode(false);                       // いま表示を更新（DB 待ちなし）
+        const tx = db.transaction('songs', 'readwrite'), st = tx.objectStore('songs');
+        changed.forEach(t => st.put(t));            // 保存は裏で
     }
     function toggleLyrics() 
     {
@@ -2976,12 +3013,22 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         }
     }
 
+    function scrollTopAnim(el)
+    {
+        cancelAnimationFrame(window._stRaf);
+        try { window.scrollTo(0, 0); } catch (e) {}
+        const y0 = el.scrollTop; if (y0 <= 0) return;
+        const t0 = performance.now(), dur = Math.min(560, 240 + y0 / 5);
+        const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.scrollTop = y0 * (1 - e); if (k < 1) window._stRaf = requestAnimationFrame(step); };
+        window._stRaf = requestAnimationFrame(step);
+    }
+    document.getElementById('content').addEventListener('touchstart', () => cancelAnimationFrame(window._stRaf), { passive: true });
     function switchTab(v) 
     { 
         if (v === currentView && !selMode)
         {
             const sc = document.getElementById('content');
-            if (sc.scrollTop > 8) { sc.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+            if (sc.scrollTop > 8 || window.scrollY > 0) { scrollTopAnim(sc); return; }
             if (currentArtist === null && currentPlaylistId === null) return;
         }
         currentView=v; 
@@ -3086,7 +3133,24 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
         const cb = window._fadeCb; window._fadeCb = null;
         if (cb) cb(); else audio.volume = 1;
     });
-    function mediaPlay() { clearInterval(window._fadeTimer); window._fadeCb = null; audio.volume = 1; const t = audio.currentTime; return audio.play().then(() => verifyPlaying(t)).catch(() => recoverPlay()); }
+    function mediaPlay()
+    {
+        clearInterval(window._fadeTimer); window._fadeCb = null; audio.volume = 1;
+        // 一時停止から時間が経っている／バックグラウンドを挟んだ場合は、OS 側の音声セッションが切れていることがあるため読み込み直す
+        if (window._pauseAt && Date.now() - window._pauseAt > 3000 && audio.paused) return resumeFresh();
+        const t = audio.currentTime; return audio.play().then(() => verifyPlaying(t)).catch(() => resumeFresh());
+    }
+    function resumeFresh()
+    {
+        const t = playingTracks[currentTrackIdx], pos = audio.currentTime || 0;
+        if (!t || !(t.data instanceof Blob)) { return audio.play().catch(() => {}); }
+        const old = audio.src;
+        audio.src = URL.createObjectURL(t.data);                       // 同じ操作（ユーザー操作の文脈）の中で即 play する
+        if (old && old.startsWith('blob:')) setTimeout(() => URL.revokeObjectURL(old), 3000);
+        audio.addEventListener('loadedmetadata', () => { try { audio.currentTime = pos; } catch (e) {} }, { once: true });
+        audio.volume = 1;
+        return audio.play().then(() => verifyPlaying(pos)).catch(() => {});
+    }
     // 再生中になっているのに進まない（OS側で音声セッションが切れた）場合は、読み込み直して同じ位置から再開
     let _recovering = false;
     function verifyPlaying(t0)
@@ -3326,7 +3390,7 @@ body .mini-player{bottom:calc(90px + var(--sab) - 22px * var(--tm))!important;wi
     };
     
     audio.onpause = () => 
-    { clearInterval(window._fadeTimer); audio.volume = 1;
+    { window._pauseAt = Date.now(); clearInterval(window._fadeTimer); audio.volume = 1;
         if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'; updatePositionState();
         document.getElementById('full').classList.remove('playing'); 
         document.getElementById('m-pp').className = 'fa-solid fa-play'; 
